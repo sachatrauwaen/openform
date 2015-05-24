@@ -1,0 +1,79 @@
+﻿{
+    "type": "object",
+    "properties": {
+        "Notifications": {
+            "title": "Email Notifications",
+            "type": "array",
+            "items": {
+                "title": "Notification",
+                "type": "object",
+                "properties": {
+                    "From": {
+                        "title": "From",
+                        "type": "string",
+                        "enum": [ "host", "admin", "form", "custom" ]
+                    },
+                    "FromName": {
+                        "title": "From Name",
+                        "type": "string",
+                        "dependencies": "From"
+                    },
+                    "FromEmail": {
+                        "title": "From Email",
+                        "type": "string",
+                        "dependencies": "From"
+                    },
+                    "To": {
+                        "title": "To",
+                        "type": "string",
+                        "enum": [ "host", "admin", "form", "custom" ]
+                    },
+                    "ToName": {
+                        "title": "To Name",
+                        "type": "string",
+                        "dependencies": "To"
+                    },
+                    "ToEmail": {
+                        "title": "To Email",
+                        "type": "string",
+                        "required": true,
+                        "dependencies": "To"
+                    },
+                    "ReplyTo": {
+                        "title": "ReplyTo",
+                        "type": "string",
+                        "enum": [ "host", "admin", "form", "custom" ]
+                    },
+                    "ReplyToName": {
+                        "title": "ReplyTo Name",
+                        "type": "string",
+                        "dependencies": "ReplyTo"
+                    },
+                    "ReplyToEmail": {
+                        "title": "ReplyTo Email",
+                        "type": "string",
+                        "dependencies": "ReplyTo"
+                    },
+                    "EmailSubject": {
+                        "title": "Email subject",
+                        "type": "string"
+                    },
+                    "EmailBody": {
+                        "title": "Email body",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "Settings": {
+            "title": "Settings",
+            "type": "object",
+            "properties": {
+                "Message": {
+                    "title": "Message After Submit",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

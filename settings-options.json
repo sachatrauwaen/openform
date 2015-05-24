@@ -1,0 +1,80 @@
+﻿{
+    "fields": {
+        "Notifications": {
+            "fields": {
+                "item": {
+                    "fields": {
+                        "From": {
+                            "title": "From",
+                            "type": "select",
+                            "optionLabels": [ "Host email", "Site admin email", "Form email", "Custom email" ],
+                            "removeDefaultNone": true
+                        },
+                        "FromName": {
+                            "title": "From Name",
+                            "dependencies": {
+                                "From": "custom"
+                            }
+                        },
+                        "FromEmail": {
+                            "title": "From Email",
+                            "type": "email",
+                            "dependencies": {
+                                "From": "custom"
+                            }
+                        },
+                        "To": {
+                            "title": "To",
+                            "type": "select",
+                            "optionLabels": [ "Host email", "Site admin email", "Form email", "Custom email" ],
+                            "removeDefaultNone": true
+                        },
+                        "ToName": {
+                            "title": "To Name",
+                            "dependencies": {
+                                "To": "custom"
+                            }
+                        },
+                        "ToEmail": {
+                            "title": "To Email",
+                            "type": "email",
+                            "dependencies": {
+                                "To": "custom"
+                            }
+                        },
+                        "ReplyTo": {
+                            "title": "ReplyTo",
+                            "type": "select",
+                            "optionLabels": [ "Host email", "Site admin email", "Form email", "Custom email" ]
+                        },
+                        "ReplyToName": {
+                            "title": "ReplyTo Name",
+                            "dependencies": {
+                                "ReplyTo": "custom"
+                            }
+                        },
+                        "ReplyToEmail": {
+                            "title": "ReplyTo Email",
+                            "type": "email",
+                            "dependencies": {
+                                "ReplyTo": "custom"
+                            }
+                        },
+                        "EmailSubject": {
+                        },
+                        "EmailBody": {
+                            "type": "wysihtml"
+                        }
+                    }
+                }
+            }
+        },
+        "Settings": {
+            "fields": {
+                "Message": {
+                    "type": "wysihtml"
+                }
+            }
+        }
+    }
+}
