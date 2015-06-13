@@ -10,6 +10,7 @@
 #region Using Statements
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -26,6 +27,7 @@ using System.Text;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Users;
 using Satrabel.OpenForm.Components;
+using Satrabel.OpenContent.Components.Json;
 using Satrabel.OpenContent.Components.Handlebars;
 
 #endregion
@@ -36,8 +38,6 @@ namespace Satrabel.OpenForm.Components
     public class OpenFormAPIController : DnnApiController
     {
         private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(OpenFormAPIController));
-
-
         public string BaseDir
         {
             get
@@ -59,17 +59,40 @@ namespace Satrabel.OpenForm.Components
                     string schemaFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "schema.json";
                     JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                     json["schema"] = schemaJson;
-                    string optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + PortalSettings.CultureCode + ".json";
-                    if (!File.Exists(optionsFilename))
-                    {
-                        optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options.json";
-                    }
+
+                    // default options
+                    string optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options.json";
                     if (File.Exists(optionsFilename))
                     {
-                        JObject optionsJson = JObject.Parse(File.ReadAllText(optionsFilename));
-                        json["options"] = optionsJson;
+                        string fileContent = File.ReadAllText(optionsFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject optionsJson = JObject.Parse(fileContent);
+                            json["options"] = optionsJson;
+                        }
                     }
-                    int ModuleId = ActiveModule.ModuleID;
+                    // language options
+                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + PortalSettings.CultureCode + ".json";
+                    if (File.Exists(optionsFilename))
+                    {
+                        string fileContent = File.ReadAllText(optionsFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject optionsJson = JObject.Parse(fileContent);
+                            json["options"] = json["options"].JsonMerge(optionsJson);
+                        }
+                    }
+                    // view
+                    string viewFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "view.json";
+                    if (File.Exists(viewFilename))
+                    {
+                        string fileContent = File.ReadAllText(viewFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject viewJson = JObject.Parse(fileContent);
+                            json["view"] = viewJson;
+                        }
+                    }
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
             }
@@ -118,75 +141,102 @@ namespace Satrabel.OpenForm.Components
         }
         public HttpResponseMessage Submit(JObject form)
         {
-            var res = new ResultDTO()
+            try
             {
-                Message = "Form sunmitted."
-            };
-            string FormEmail = (form != null && form["email"] == null) ? "" : form["email"].ToString();
-            string FormName = (form != null && form["name"] == null) ? "" : form["name"].ToString();
+                var res = new ResultDTO()
+                {
+                    Message = "Form submitted."
+                };
 
-            int ModuleId = ActiveModule.ModuleID;
-            string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
-            if (!string.IsNullOrEmpty(jsonSettings))
-            {
-                HandlebarsEngine hbs = new HandlebarsEngine();
-                SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
-                StringBuilder FormData = new StringBuilder();
-                if (form != null)
+                int ModuleId = ActiveModule.ModuleID;
+                string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
+                if (!string.IsNullOrEmpty(jsonSettings))
                 {
-                    FormData.Append("<table boder=\"1\">");
-                    foreach (var item in form.Properties())
+                    HandlebarsEngine hbs = new HandlebarsEngine();
+                    SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
+                    StringBuilder FormData = new StringBuilder();
+                    if (form != null)
                     {
-                        FormData.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                        FormData.Append("<table boder=\"1\">");
+                        foreach (var item in form.Properties())
+                        {
+                            FormData.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                        }
+                        FormData.Append("</table>");
+                        //form["FormData"] = FormData.ToString();
                     }
-                    FormData.Append("</table>");
-                    //form["FormData"] = FormData.ToString();
-                }
-                if (settings != null && settings.Notifications != null)
-                {
-                    foreach (var notification in settings.Notifications)
+                    if (settings != null && settings.Notifications != null)
                     {
-                        MailAddress from = GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, FormEmail, FormName);
-                        MailAddress to = GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, FormEmail, FormName);
-                        MailAddress reply = null;
-                        if (!string.IsNullOrEmpty(notification.ReplyToEmail))
+                        foreach (var notification in settings.Notifications)
                         {
-                            reply = new MailAddress(notification.ReplyToEmail, notification.ReplyToName);
-                        }
-                        string body = FormData.ToString();
-                        if (!string.IsNullOrEmpty(notification.EmailBody))
-                        {
-                            body = hbs.Execute(notification.EmailBody, form);
-                        }
-                        SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
-                    }
-                }
-                if (settings != null && settings.Settings != null)
-                {
+                            try
+                            {
+                                MailAddress from = GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
+                                MailAddress to = GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
+                                MailAddress reply = null;
+                                if (!string.IsNullOrEmpty(notification.ReplyTo))
+                                {
+                                    reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
+                                }
+                                string body = FormData.ToString();
+                                if (!string.IsNullOrEmpty(notification.EmailBody))
+                                {
+                                    body = hbs.Execute(notification.EmailBody, form);
+                                }
 
-                    res.Message = hbs.Execute(settings.Settings.Message, form);
+                                string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
+                                if (!string.IsNullOrEmpty(send))
+                                {
+                                    res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
+                                }
+                            }
+                            catch (Exception exc)
+                            {
+                                res.Errors.Add("Notification "+(settings.Notifications.IndexOf(notification)+1)+ " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
+                                Logger.Error(exc);
+                            }
+                        }
+                    }
+                    if (settings != null && settings.Settings != null)
+                    {
+                        res.Message = hbs.Execute(settings.Settings.Message, form);
+                        res.Tracking = settings.Settings.Tracking;
+                    }
                 }
+                OpenFormController ctrl = new OpenFormController();
+                var content = new OpenFormInfo()
+                {
+                    ModuleId = ModuleId,
+                    Json = form.ToString(),
+                    CreatedByUserId = UserInfo.UserID,
+                    CreatedOnDate = DateTime.Now,
+                    LastModifiedByUserId = UserInfo.UserID,
+                    LastModifiedOnDate = DateTime.Now,
+                    Html = "",
+                    Title = "Form submitted - " + DateTime.Now.ToString()
+                };
+                ctrl.AddContent(content);
+                return Request.CreateResponse(HttpStatusCode.OK, res);
             }
-            OpenFormController ctrl = new OpenFormController();
-            var content = new OpenFormInfo()
+            catch (Exception exc)
             {
-                ModuleId = ModuleId,
-                Json = form.ToString(),
-                CreatedByUserId = UserInfo.UserID,
-                CreatedOnDate = DateTime.Now,
-                LastModifiedByUserId = UserInfo.UserID,
-                LastModifiedOnDate = DateTime.Now,
-                Html = "",
-                Title = "Form submitted - " + DateTime.Now.ToString()
-            };
-            ctrl.AddContent(content);
-
-
-
-            return Request.CreateResponse(HttpStatusCode.OK, res);
+                Logger.Error(exc);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
+            }
         }
 
-        private MailAddress GenerateMailAddress(string TypeOfAddress, string Email, string Name, string FormEmail, string FormName)
+        private static string GetProperty(JObject obj, string PropertyName)
+        {
+            string PropertyValue = "";
+            var Property = obj.Children<JProperty>().SingleOrDefault(p => p.Name.ToLower() == PropertyName.ToLower());
+            if (Property != null)
+            {
+                PropertyValue = Property.Value.ToString();
+            }
+            return PropertyValue;
+        }
+
+        private MailAddress GenerateMailAddress(string TypeOfAddress, string Email, string Name, string FormEmailField, string FormNameField, JObject form)
         {
             MailAddress adr = null;
             if (TypeOfAddress == "host")
@@ -200,6 +250,13 @@ namespace Satrabel.OpenForm.Components
             }
             else if (TypeOfAddress == "form")
             {
+                if (string.IsNullOrEmpty(FormNameField))
+                    FormNameField = "name";
+                if (string.IsNullOrEmpty(FormEmailField))
+                    FormEmailField = "email";
+
+                string FormEmail = GetProperty(form, FormEmailField);
+                string FormName = GetProperty(form, FormNameField);
                 adr = new MailAddress(FormEmail, FormName);
             }
             else if (TypeOfAddress == "custom")
@@ -208,7 +265,7 @@ namespace Satrabel.OpenForm.Components
             }
             return adr;
         }
-        private void SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
+        private string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
         {
 
             //string mailFrom
@@ -246,7 +303,7 @@ namespace Satrabel.OpenForm.Components
                             smtpEnableSSL);
 
             //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
-
+            return res;
         }
     }
 
@@ -254,19 +311,26 @@ namespace Satrabel.OpenForm.Components
     {
         public string From { get; set; }
         public string FromName { get; set; }
+        public string FromEmailField { get; set; }
+        public string FromNameField { get; set; }
         public string FromEmail { get; set; }
         public string To { get; set; }
         public string ToName { get; set; }
+        public string ToEmailField { get; set; }
+        public string ToNameField { get; set; }
         public string ToEmail { get; set; }
         public string ReplyTo { get; set; }
         public string ReplyToName { get; set; }
         public string ReplyToEmail { get; set; }
+        public string ReplyToNameField { get; set; }
+        public string ReplyToEmailField { get; set; }
         public string EmailSubject { get; set; }
         public string EmailBody { get; set; }
     }
     public class GenSettingsDTO
     {
         public string Message { get; set; }
+        public string Tracking { get; set; }
     }
 
     public class SettingsDTO
@@ -276,7 +340,13 @@ namespace Satrabel.OpenForm.Components
     }
     class ResultDTO
     {
+        public ResultDTO()
+        {
+            Errors = new List<string>();
+        }
         public string Message { get; set; }
+        public string Tracking { get; set; }
+        public List<string> Errors { get; set; }
     }
 }
 
