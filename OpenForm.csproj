@@ -118,6 +118,13 @@
     <Compile Include="Edit.ascx.designer.cs">
       <DependentUpon>Edit.ascx</DependentUpon>
     </Compile>
+    <Compile Include="EditSettings.ascx.cs">
+      <DependentUpon>EditSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditSettings.ascx.designer.cs">
+      <DependentUpon>EditSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="EditTemplate.ascx.cs">
       <DependentUpon>EditTemplate.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -160,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Edit.ascx" />
+    <Content Include="EditSettings.ascx" />
     <Content Include="EditTemplate.ascx" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
@@ -203,6 +211,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\EditTemplate.ascx.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\EditSettings.ascx.resx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

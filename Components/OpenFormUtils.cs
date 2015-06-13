@@ -57,7 +57,7 @@ namespace Satrabel.OpenForm.Components
                     if (TemplateCat == "Module")
                     {
                         if (scriptName.ToLower().EndsWith("schema"))
-                            scriptName = "";
+                            scriptName = "for this module only";
                         else
                             scriptName = scriptName.Substring(scriptName.LastIndexOf("\\") + 1);
                     }

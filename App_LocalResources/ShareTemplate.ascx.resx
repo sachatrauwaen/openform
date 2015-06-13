@@ -123,6 +123,9 @@
   <data name="cmdImport.Text" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="cmdImport.Text1" xml:space="preserve">
+    <value>Import</value>
+  </data>
   <data name="lblAction.Text" xml:space="preserve">
     <value>Action</value>
   </data>
@@ -137,5 +140,14 @@
   </data>
   <data name="lblWebTemplates.Text" xml:space="preserve">
     <value>Template</value>
+  </data>
+  <data name="lCopyName.Text" xml:space="preserve">
+    <value>To New Name</value>
+  </data>
+  <data name="lCopyTemplates.Text" xml:space="preserve">
+    <value>From Template</value>
+  </data>
+  <data name="lblImportName.Text" xml:space="preserve">
+    <value>New Template Name</value>
   </data>
 </root>

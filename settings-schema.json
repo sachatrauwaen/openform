@@ -7,6 +7,14 @@
             "items": {
                 "title": "Notification",
                 "type": "object",
+                "default": {
+                    "FromNameField": "Name",
+                    "FromEmailField": "Email",
+                    "ToNameField": "Name",
+                    "ToEmailField": "Email",
+                    "ReplyToNameField": "Name",
+                    "ReplyToEmailField": "Email"
+                },
                 "properties": {
                     "From": {
                         "title": "From",
@@ -20,6 +28,16 @@
                     },
                     "FromEmail": {
                         "title": "From Email",
+                        "type": "string",
+                        "dependencies": "From"
+                    },
+                    "FromNameField": {
+                        "title": "From Name Field",
+                        "type": "string",
+                        "dependencies": "From"
+                    },
+                    "FromEmailField": {
+                        "title": "From Email Field",
                         "type": "string",
                         "dependencies": "From"
                     },
@@ -39,6 +57,18 @@
                         "required": true,
                         "dependencies": "To"
                     },
+                    "ToNameField": {
+                        "title": "To Name Field",
+                        "type": "string",
+                        "dependencies": "To",
+                        "default": "Name"
+                    },
+                    "ToEmailField": {
+                        "title": "To Email Field",
+                        "type": "string",
+                        "dependencies": "To",
+                        "default": "Email"
+                    },
                     "ReplyTo": {
                         "title": "ReplyTo",
                         "type": "string",
@@ -53,6 +83,17 @@
                         "title": "ReplyTo Email",
                         "type": "string",
                         "dependencies": "ReplyTo"
+                    },
+                    "ReplyToNameField": {
+                        "title": "ReplyTo Name Field",
+                        "type": "string",
+                        "dependencies": "ReplyTo"
+                    },
+                    "ReplyToEmailField": {
+                        "title": "ReplyTo Email Field",
+                        "type": "string",
+                        "dependencies": "ReplyTo",
+                        "default": "Email"
                     },
                     "EmailSubject": {
                         "title": "Email subject",
@@ -71,6 +112,10 @@
             "properties": {
                 "Message": {
                     "title": "Message After Submit",
+                    "type": "string"
+                },
+                "Tracking": {
+                    "title": "Tracking script (Adwords, ...)",
                     "type": "string"
                 }
             }

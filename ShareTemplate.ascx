@@ -3,16 +3,28 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnnweb" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
+<%-- Custom CSS Registration --%>
+<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/lib/codemirror.css" />
+<%-- Custom JavaScript Registration --%>
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/lib/codemirror.js" Priority="101" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/clike/clike.js" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/vb/vb.js" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/xml/xml.js" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/javascript/javascript.js" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/css/css.js" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Shared/components/CodeEditor/mode/htmlmixed/htmlmixed.js" Priority="103" />
 
 <div class="dnnForm dnnRazorHostEditScript dnnClear" id="dnnEditScript">
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label ID="lblAction" ControlName="scriptList" runat="server" />
-            <asp:RadioButtonList ID="rblAction" runat="server" RepeatLayout="Flow" RepeatColumns="3" AutoPostBack="true" OnSelectedIndexChanged="rblAction_SelectedIndexChanged">
-                <asp:ListItem Text="Import from file"></asp:ListItem>
-                <asp:ListItem Text="Export"></asp:ListItem>
-                <asp:ListItem Text="Import from web"></asp:ListItem>
-            </asp:RadioButtonList>
+            <asp:DropDownList ID="rblAction" runat="server" AutoPostBack="true" OnSelectedIndexChanged="rblAction_SelectedIndexChanged">
+                <asp:ListItem Text="--select--" ></asp:ListItem>
+                <asp:ListItem Text="Import from zip file" Value="importfile"></asp:ListItem>
+                <asp:ListItem Text="Import from web" Value="importweb"></asp:ListItem>
+                <asp:ListItem Text="Copy template" Value="copy"></asp:ListItem>
+                <asp:ListItem Text="Export to zip file" Value="exportfile"></asp:ListItem>
+            </asp:DropDownList>
         </div>
     </fieldset>
 </div>
@@ -23,6 +35,10 @@
             <div class="dnnFormItem">
                 <dnn:Label ID="lblFile" ControlName="fuFile" runat="server" />
                 <asp:FileUpload ID="fuFile" runat="server" />
+            </div>
+            <div class="dnnFormItem">
+                <dnn:Label ID="lblImportName" ControlName="tbImportName" runat="server" />
+                <asp:TextBox runat="server" ID="tbImportName" /> 
             </div>
         </fieldset>
         <ul class="dnnActions dnnClear" style="display:block;padding-left:35%">
@@ -61,7 +77,7 @@
             </div>
             <div class="dnnFormItem">
                 <dnn:Label ID="lblMoreinfo" ControlName="fuFile" runat="server" />
-                <asp:HyperLink ID="hlMoreInfo" runat="server" NavigateUrl="http://www.openextensions.net/templates/open-form" Target="_blank">Template exchange on OpenExtensions.net</asp:HyperLink>
+                <asp:HyperLink ID="hlMoreInfo" runat="server" NavigateUrl="http://www.openextensions.net/templates/open-content" Target="_blank">Template exchange on OpenExtensions.net</asp:HyperLink>
             </div>
         </fieldset>
         <ul class="dnnActions dnnClear" style="display:block;padding-left:35%">
@@ -71,7 +87,26 @@
         </ul>
     </div>
 </asp:PlaceHolder>
-<asp:HyperLink ID="hlTemplateSettings" runat="server">Template Settings...</asp:HyperLink>
+
+<asp:PlaceHolder ID="phCopy" runat="server" Visible="false">
+    <div class="dnnForm dnnImport dnnClear" id="dnnCopy">
+        <fieldset>
+            <div class="dnnFormItem">
+                <dnn:Label ID="lCopyTemplates" ControlName="ddlTemplates" runat="server" />
+                <asp:DropDownList ID="ddlCopyTemplate" runat="server" />
+            </div>
+            <div class="dnnFormItem">
+                <dnn:Label ID="lCopyName" ControlName="tbCopyName" runat="server" />
+                <asp:TextBox runat="server" ID="tbCopyName" /> 
+            </div>
+        </fieldset>
+        <ul class="dnnActions dnnClear" style="display:block;padding-left:35%">
+            <li>
+                <asp:LinkButton ID="lbCopy" resourcekey="cmdCopy" runat="server" CssClass="dnnPrimaryAction" OnClick="lbCopy_Click" />
+            </li>
+        </ul>
+    </div>
+</asp:PlaceHolder>
 
 <script type="text/javascript">
     jQuery(function ($) {

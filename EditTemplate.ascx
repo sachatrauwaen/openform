@@ -70,6 +70,16 @@
 
 
         var setupModule = function () {
+
+
+            $('#<%= cmdCustom.ClientID %>').dnnConfirm({
+                text: '<%= Localization.GetSafeJSString("OverwriteTemplate.Text") %>',
+                yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
+                noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
+                title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
+            });
+
+
             var cm = CodeMirror.fromTextArea($("textarea[id$='txtSource']")[0], {
                 lineNumbers: true,
                 matchBrackets: true,
