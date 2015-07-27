@@ -98,6 +98,7 @@
                         selfControl.refreshValidationState(true);
                         if (selfControl.isValid(true)) {
                             var value = selfControl.getValue();
+                            $(this).prop('disabled', true);
                             //alert(JSON.stringify(value, null, "  "));
                             var href = $(this).attr('href');
                             self.FormSubmit(value, href);
