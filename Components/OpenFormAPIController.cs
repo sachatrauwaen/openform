@@ -153,6 +153,7 @@ namespace Satrabel.OpenForm.Components
                 if (!string.IsNullOrEmpty(jsonSettings))
                 {
                     HandlebarsEngine hbs = new HandlebarsEngine();
+                    dynamic data = null;
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     StringBuilder FormData = new StringBuilder();
                     if (form != null)
@@ -163,7 +164,8 @@ namespace Satrabel.OpenForm.Components
                             FormData.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
                         }
                         FormData.Append("</table>");
-                        //form["FormData"] = FormData.ToString();
+                        data = JsonUtils.JsonToDynamic(form.ToString());
+                        data.FormData = FormData.ToString();
                     }
                     if (settings != null && settings.Notifications != null)
                     {
@@ -181,7 +183,7 @@ namespace Satrabel.OpenForm.Components
                                 string body = FormData.ToString();
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-                                    body = hbs.Execute(notification.EmailBody, form);
+                                    body = hbs.Execute(notification.EmailBody, data);
                                 }
 
                                 string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
@@ -199,7 +201,7 @@ namespace Satrabel.OpenForm.Components
                     }
                     if (settings != null && settings.Settings != null)
                     {
-                        res.Message = hbs.Execute(settings.Settings.Message, form);
+                        res.Message = hbs.Execute(settings.Settings.Message, data);
                         res.Tracking = settings.Settings.Tracking;
                     }
                 }
