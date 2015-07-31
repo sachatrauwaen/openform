@@ -29,11 +29,10 @@
 </asp:Panel>
 
 <asp:Panel ID="ScopeWrapper" runat="server" EnableViewState="false">
-    <div id="OpenForm">
+    <div id="OpenForm" class="OpenForm<%=ModuleId %>">
         <div id="field1" class="alpaca"></div>
         <ul class="dnnActions dnnClear" style="display: block; padding-left: 35%">
-            <li>
-                <asp:HyperLink ID="cmdSave" runat="server" class="btn btn-primary" resourcekey="cmdSave" /></li>
+            <li><asp:HyperLink ID="cmdSave" runat="server" class="btn btn-primary" resourcekey="cmdSave" /></li>
         </ul>
     </div>
     <span id="ResultMessage"></span>
