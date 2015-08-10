@@ -18,6 +18,9 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Security;
 using Satrabel.OpenForm.Components;
+using System.IO;
+using DotNetNuke.Web.Client;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -38,7 +41,7 @@ namespace Satrabel.OpenForm
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
-
+            
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -79,6 +82,10 @@ namespace Satrabel.OpenForm
             {
                 ScopeWrapper.Visible = false;
             }
+            if (TemplateDefined)
+            {
+                IncludeResourses(Template);
+            }
 
         }
 
@@ -93,6 +100,25 @@ namespace Satrabel.OpenForm
         }
 
         #endregion
+
+        private void IncludeResourses(string Template)
+        {
+            if (!(string.IsNullOrEmpty(Template)))
+            {
+                string cssfilename = Path.GetDirectoryName(Template)+ "/template.css";
+                if (File.Exists(Server.MapPath(cssfilename)))
+                {
+                    ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename), FileOrder.Css.PortalCss);
+                }
+                string jsfilename = Path.GetDirectoryName(Template)+ "/template.js";
+                if (File.Exists(Server.MapPath(jsfilename)))
+                {
+                    ClientResourceManager.RegisterScript(Page, Page.ResolveUrl(jsfilename), FileOrder.Js.DefaultPriority);
+                }
+            }
+        }
+
+
         public DotNetNuke.Entities.Modules.Actions.ModuleActionCollection ModuleActions
         {
             get

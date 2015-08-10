@@ -39,6 +39,7 @@
     <span id="ResultMessage"></span>
     <div id="ResultTracking"></div>
 </asp:Panel>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $.alpaca.setDefaultLocale("<%= CurrentCulture %>");
@@ -59,25 +60,6 @@
             var ConnectorClass = Alpaca.getConnectorClass("default");
             connector = new ConnectorClass("default");
             connector.servicesFramework = sf;
-            $.alpaca.Fields.DnnFileField = $.alpaca.Fields.FileField.extend({
-                setup: function () {
-                    this.base();
-                },
-                afterRenderControl: function (model, callback) {
-                    var self = this;
-                    this.base(model, function () {
-                        self.handlePostRender(function () {
-                            callback();
-                        });
-                    });
-                },
-                handlePostRender: function (callback) {
-                    var el = this.control;
-                    self.SetupFileUpload(el);
-                    callback();
-                }
-            });
-            Alpaca.registerFieldClass("file", Alpaca.Fields.DnnFileField);
 
             var view = config.view;
             if (view) {
@@ -102,9 +84,11 @@
                             //alert(JSON.stringify(value, null, "  "));
                             var href = $(this).attr('href');
                             self.FormSubmit(value, href);
+                            $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                         }
                         return false;
                     });
+                    $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf ]);
                 }
             });
         }).fail(function (xhr, result, status) {
@@ -131,37 +115,5 @@
                 alert("Uh-oh, something broke: " + status);
             });
         };
-        self.SetupFileUpload = function (fileupload) {
-            $(fileupload).fileupload({
-                dataType: 'json',
-                url: sf.getServiceRoot('OpenForm') + "FileUpload/UploadFile",
-                maxFileSize: 25000000,
-                formData: { example: 'test' },
-                beforeSend: sf.setModuleHeaders,
-                add: function (e, data) {
-                    //data.context = $(opts.progressContextSelector);
-                    //data.context.find($(opts.progressFileNameSelector)).html(data.files[0].name);
-                    //data.context.show('fade');
-                    data.submit();
-                },
-                progress: function (e, data) {
-                    if (data.context) {
-                        var progress = parseInt(data.loaded / data.total * 100, 10);
-                        data.context.find(opts.progressBarSelector).css('width', progress + '%').find('span').html(progress + '%');
-                    }
-                },
-                done: function (e, data) {
-                    if (data.result) {
-                        $.each(data.result, function (index, file) {
-                            //$('<p/>').text(file.name).appendTo($(e.target).parent().parent());
-                            //$('<img/>').attr('src', file.url).appendTo($(e.target).parent().parent());
-
-                            $(e.target).closest('.alpaca-container').find('.alpaca-field-image input').val(file.url);
-                            $(e.target).closest('.alpaca-container').find('.alpaca-image-display img').attr('src', file.url);
-                        });
-                    }
-                }
-            }).data('loaded', true);
-        }
     });
 </script>
