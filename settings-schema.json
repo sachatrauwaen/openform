@@ -19,7 +19,7 @@
                     "From": {
                         "title": "From",
                         "type": "string",
-                        "enum": [ "host", "admin", "form", "custom" ]
+                        "enum": [ "host", "admin", "form", "custom", "current" ]
                     },
                     "FromName": {
                         "title": "From Name",
@@ -44,7 +44,7 @@
                     "To": {
                         "title": "To",
                         "type": "string",
-                        "enum": [ "host", "admin", "form", "custom" ]
+                        "enum": [ "host", "admin", "form", "custom", "current" ]
                     },
                     "ToName": {
                         "title": "To Name",
@@ -72,7 +72,7 @@
                     "ReplyTo": {
                         "title": "ReplyTo",
                         "type": "string",
-                        "enum": [ "host", "admin", "form", "custom" ]
+                        "enum": [ "host", "admin", "form", "custom", "current" ]
                     },
                     "ReplyToName": {
                         "title": "ReplyTo Name",

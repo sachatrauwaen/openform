@@ -265,6 +265,10 @@ namespace Satrabel.OpenForm.Components
             {
                 adr = new MailAddress(Email, Name);
             }
+            else if (TypeOfAddress == "current")
+            {
+                adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
+            }
             return adr;
         }
         private string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
