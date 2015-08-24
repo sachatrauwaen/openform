@@ -117,6 +117,14 @@
                 "Tracking": {
                     "title": "Tracking script (Adwords, ...)",
                     "type": "string"
+                },
+                "SiteKey": { 
+                    "title": "reCaptcha Site Key",
+                    "type": "string"
+                },
+                "SecretKey": { 
+                     "title": "reCaptcha Secret Key",
+                    "type": "string"
                 }
             }
         }

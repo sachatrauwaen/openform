@@ -115,6 +115,7 @@
     <Compile Include="Components\OpenFormUtils.cs" />
     <Compile Include="Components\OpenFormAPIController.cs" />
     <Compile Include="Components\OpenFormRouteMapper.cs" />
+    <Compile Include="Components\Recaptcha.cs" />
     <Compile Include="Edit.ascx.designer.cs">
       <DependentUpon>Edit.ascx</DependentUpon>
     </Compile>
