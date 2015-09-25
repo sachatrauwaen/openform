@@ -3,10 +3,6 @@
 <%@ Register TagPrefix="dnncl" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <dnncl:DnnJsInclude ID="DnnJsInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/handlebars/handlebars.js" Priority="106" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnJsInclude ID="DnnJsInclude2" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/alpaca/bootstrap/alpaca.js" Priority="107" ForceProvider="DnnPageHeaderProvider" />
-<script src="/DesktopModules/OpenContent/js/wysihtml/wysihtml-toolbar.js"></script>
-<script src="/DesktopModules/OpenContent/js/wysihtml/parser_rules/advanced.js"></script>
-<script type="text/javascript" src="/DesktopModules/OpenContent/alpaca/js/fields/dnn/ImageField.js"></script>
-<script type="text/javascript" src="/DesktopModules/OpenContent/alpaca/js/fields/dnn/wysihtmlField.js"></script>
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
@@ -31,7 +27,7 @@
         <div id="OpenForm" class="OpenForm<%=ModuleId %>">
             <div id="field1" class="alpaca"></div>
             <asp:Literal ID="lReCaptcha" runat="server" Mode="PassThrough"></asp:Literal>
-            <ul class="dnnActions dnnClear" style="display: block; padding-left: 35%">
+            <ul class="dnnActions dnnClear actions-openform">
                 <li>                    
                     <asp:LinkButton ID="lbSave" runat="server" class="btn btn-primary btn-openform" resourcekey="cmdSave" OnClick="lbSave_Click" />
                 </li>

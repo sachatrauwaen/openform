@@ -171,7 +171,6 @@
     <Content Include="EditSettings.ascx" />
     <Content Include="EditTemplate.ascx" />
     <Content Include="License.txt" />
-    <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="ShareTemplate.ascx" />

@@ -13,42 +13,6 @@ namespace Satrabel.OpenForm {
     public partial class EditSettings {
         
         /// <summary>
-        /// DnnCssInclude2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnCssInclude DnnCssInclude2;
-        
-        /// <summary>
-        /// DnnCssInclude1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnCssInclude DnnCssInclude1;
-        
-        /// <summary>
-        /// DnnJsInclude7 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude7;
-        
-        /// <summary>
-        /// DnnJsInclude8 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude8;
-        
-        /// <summary>
         /// ScopeWrapper control.
         /// </summary>
         /// <remarks>
