@@ -94,6 +94,15 @@ namespace Satrabel.OpenForm {
         protected global::System.Web.UI.WebControls.HyperLink hlEditSettings;
         
         /// <summary>
+        /// phForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phForm;
+        
+        /// <summary>
         /// ScopeWrapper control.
         /// </summary>
         /// <remarks>
@@ -103,12 +112,57 @@ namespace Satrabel.OpenForm {
         protected global::System.Web.UI.WebControls.Panel ScopeWrapper;
         
         /// <summary>
-        /// cmdSave control.
+        /// lReCaptcha control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink cmdSave;
+        protected global::System.Web.UI.WebControls.Literal lReCaptcha;
+        
+        /// <summary>
+        /// lbSave control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lbSave;
+        
+        /// <summary>
+        /// hfOpenForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfOpenForm;
+        
+        /// <summary>
+        /// phResult control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phResult;
+        
+        /// <summary>
+        /// lMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lMessage;
+        
+        /// <summary>
+        /// lTracking control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lTracking;
     }
 }

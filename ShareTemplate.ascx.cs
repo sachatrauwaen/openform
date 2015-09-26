@@ -98,7 +98,7 @@ namespace Satrabel.OpenForm
             {
                 phExport.Visible = true;
                 ddlTemplates.Items.Clear();
-                ddlTemplates.Items.AddRange(OpenContentUtils.GetTemplates(PortalSettings, ModuleId, "", GetModuleSubDir()).ToArray());
+                ddlTemplates.Items.AddRange(OpenContentUtils.GetTemplates(PortalSettings, ModuleId, (FileUri)null, GetModuleSubDir()).ToArray());
             }
             else if (rblAction.SelectedValue == "importweb") // Import from web
             {
@@ -116,7 +116,7 @@ namespace Satrabel.OpenForm
             {
                 phCopy.Visible = true;
                 ddlCopyTemplate.Items.Clear();
-                ddlCopyTemplate.Items.AddRange(OpenContentUtils.GetTemplates(PortalSettings, ModuleId, "", GetModuleSubDir()).ToArray());
+                ddlCopyTemplate.Items.AddRange(OpenContentUtils.GetTemplates(PortalSettings, ModuleId, (FileUri)null, GetModuleSubDir()).ToArray());
             }
         }
         protected void cmdImport_Click(object sender, EventArgs e)

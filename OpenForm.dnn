@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="01.02.00">
+    <package name="OpenForm" type="Module" version="01.03.00">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module</description>
       <iconFile>Images/icon_extensions.png</iconFile>

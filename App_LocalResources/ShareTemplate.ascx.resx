@@ -150,4 +150,7 @@
   <data name="lblImportName.Text" xml:space="preserve">
     <value>New Template Name</value>
   </data>
+  <data name="cmdCopy.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
 </root>

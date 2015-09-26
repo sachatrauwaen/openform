@@ -16,6 +16,8 @@ using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Framework;
 using Satrabel.OpenContent.Components;
 using Satrabel.OpenForm.Components;
+using Satrabel.OpenContent.Components.Alpaca;
+using System.IO;
 
 
 #endregion
@@ -30,8 +32,12 @@ namespace Satrabel.OpenForm
 		{
 			base.OnInit(e);
             hlCancel.NavigateUrl = Globals.NavigateURL();
-            ServicesFramework.Instance.RequestAjaxScriptSupport();
-            ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+            //ServicesFramework.Instance.RequestAjaxScriptSupport();
+            //ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+            AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext);
+            alpaca.VirtualDirectory = "/DesktopModules/OpenForm";
+            alpaca.Prefix = "settings";
+            alpaca.RegisterAll();
 		}
 
 		protected override void OnLoad(EventArgs e)

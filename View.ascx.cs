@@ -21,6 +21,9 @@ using Satrabel.OpenForm.Components;
 using System.IO;
 using DotNetNuke.Web.Client;
 using DotNetNuke.Web.Client.ClientResourceManagement;
+using Newtonsoft.Json;
+using Satrabel.OpenContent.Components.Handlebars;
+using System.Web.UI;
 
 #endregion
 
@@ -36,21 +39,45 @@ namespace Satrabel.OpenForm
         {
 
             base.OnInit(e);
-            cmdSave.NavigateUrl = Globals.NavigateURL("", "result=1");
+            //cmdSave.NavigateUrl = Globals.NavigateURL("", "result=1");
             ServicesFramework.Instance.RequestAjaxScriptSupport();
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
-            
+
         }
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            string Template = ModuleContext.Settings["template"] as string;
             if (!Page.IsPostBack)
             {
-                string Template = ModuleContext.Settings["template"] as string;
-
                 InitForm(Template);
+            }
+            else
+            {
+                if (Request.QueryString["result"] == "submit")
+                {
+                    /*
+                    int id = int.Parse(Request.QueryString["result"]);
+                    OpenFormController ctrl =new OpenFormController();
+                    var content = ctrl.GetContent(id, ModuleId);
+                     */
+                    string json = hfOpenForm.Value;
+                    phForm.Visible = false;
+                    phResult.Visible = true;
+                    string FormData = "";
+                    dynamic data = OpenFormUtils.GenerateFormData(json, out FormData);
+
+                    string jsonSettings = Settings["data"] as string;
+                    SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
+                    if (settings != null && settings.Settings != null)
+                    {
+                        HandlebarsEngine hbs = new HandlebarsEngine();
+                        lMessage.Text = hbs.Execute(settings.Settings.Message, data);
+                        lTracking.Text = settings.Settings.Tracking;
+                    }
+                }
             }
         }
 
@@ -86,6 +113,16 @@ namespace Satrabel.OpenForm
             {
                 IncludeResourses(Template);
             }
+            if (SettingsDefined)
+            {
+                SettingsDTO set = JsonConvert.DeserializeObject<SettingsDTO>(settings);
+                if (!string.IsNullOrEmpty(set.Settings.SiteKey))
+                {
+                    ClientResourceManager.RegisterScript(Page, "https://www.google.com/recaptcha/api.js", FileOrder.Js.DefaultPriority, "DnnPageHeaderProvider");
+
+                    lReCaptcha.Text = "<div class=\"g-recaptcha\" data-sitekey=\"" + set.Settings.SiteKey + "\"></div>";
+                }
+            }
 
         }
 
@@ -105,12 +142,12 @@ namespace Satrabel.OpenForm
         {
             if (!(string.IsNullOrEmpty(Template)))
             {
-                string cssfilename = Path.GetDirectoryName(Template)+ "/template.css";
+                string cssfilename = Path.GetDirectoryName(Template) + "/template.css";
                 if (File.Exists(Server.MapPath(cssfilename)))
                 {
                     ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename), FileOrder.Css.PortalCss);
                 }
-                string jsfilename = Path.GetDirectoryName(Template)+ "/template.js";
+                string jsfilename = Path.GetDirectoryName(Template) + "/template.js";
                 if (File.Exists(Server.MapPath(jsfilename)))
                 {
                     ClientResourceManager.RegisterScript(Page, Page.ResolveUrl(jsfilename), FileOrder.Js.DefaultPriority);
@@ -201,6 +238,18 @@ namespace Satrabel.OpenForm
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
             //InitForm(scriptList.SelectedValue);
 
+        }
+
+        protected void lbSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected string PostBackStr()
+        {
+            //return Page.GetPostBackEventReference(lbSave);
+            PostBackOptions pb = new PostBackOptions(lbSave, null, Globals.NavigateURL("", "result=submit"), false, false, false, true, false, null);
+            return Page.ClientScript.GetPostBackEventReference(pb);
         }
     }
 }
