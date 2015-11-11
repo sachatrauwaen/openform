@@ -24,13 +24,13 @@ using System.IO;
 
 namespace Satrabel.OpenForm
 {
-	public partial class EditSettings : PortalModuleBase
-	{
-		#region Event Handlers
+    public partial class EditSettings : PortalModuleBase
+    {
+        #region Event Handlers
 
-		protected override void OnInit(EventArgs e)
-		{
-			base.OnInit(e);
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
             hlCancel.NavigateUrl = Globals.NavigateURL();
             //ServicesFramework.Instance.RequestAjaxScriptSupport();
             //ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
@@ -38,35 +38,35 @@ namespace Satrabel.OpenForm
             alpaca.VirtualDirectory = "/DesktopModules/OpenForm";
             alpaca.Prefix = "settings";
             alpaca.RegisterAll();
-		}
+        }
 
-		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
-			
-			if (!Page.IsPostBack)
-			{
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!Page.IsPostBack)
+            {
                 hlTemplateExchange.NavigateUrl = EditUrl("ShareTemplate");
                 var scriptFileSetting = Settings["template"] as string;
                 scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, scriptFileSetting).ToArray());
-			}
-		}
-		
-		protected void cmdSave_Click(object sender, EventArgs e)
-		{
+            }
+        }
+
+        protected void cmdSave_Click(object sender, EventArgs e)
+        {
             ModuleController mc = new ModuleController();
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
             mc.UpdateModuleSetting(ModuleId, "data", HiddenField.Value);
             Response.Redirect(Globals.NavigateURL(), true);
             //DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Update Successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
-		}
+        }
 
 
-		protected void cmdCancel_Click(object sender, EventArgs e)
-		{
-		}
+        protected void cmdCancel_Click(object sender, EventArgs e)
+        {
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
 
