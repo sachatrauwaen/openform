@@ -87,17 +87,6 @@
                     <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
                   <moduleControl>
-                    <controlKey>Settings</controlKey>
-                    <controlSrc>DesktopModules/OpenForm/Settings.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>OpenForm Settings</controlTitle>
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-
-                  <moduleControl>
                     <controlKey>EditTemplate</controlKey>
                     <controlSrc>DesktopModules/OpenForm/EditTemplate.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
@@ -119,8 +108,6 @@
                     <viewOrder>0</viewOrder>
                     <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
-
-
                 </moduleControls>
               </moduleDefinition>
             </moduleDefinitions>

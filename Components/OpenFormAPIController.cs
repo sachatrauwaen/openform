@@ -30,7 +30,9 @@ using Satrabel.OpenForm.Components;
 using Satrabel.OpenContent.Components.Json;
 using Satrabel.OpenContent.Components.Handlebars;
 using DotNetNuke.Common;
+using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
+using Satrabel.OpenContent.Components;
 
 #endregion
 
@@ -74,7 +76,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                     // language options
-                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + PortalSettings.CultureCode + ".json";
+                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
@@ -118,7 +120,7 @@ namespace Satrabel.OpenForm.Components
 
                 JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                 json["schema"] = schemaJson;
-                string optionsFilename = path + "settings-options." + PortalSettings.CultureCode + ".json";
+                string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode()  + ".json";
                 if (!File.Exists(optionsFilename))
                 {
                     optionsFilename = path + "settings-options.json";
