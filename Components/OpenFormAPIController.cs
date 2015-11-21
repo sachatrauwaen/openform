@@ -29,6 +29,10 @@ using DotNetNuke.Entities.Users;
 using Satrabel.OpenForm.Components;
 using Satrabel.OpenContent.Components.Json;
 using Satrabel.OpenContent.Components.Handlebars;
+using DotNetNuke.Common;
+using DotNetNuke.Services.Localization;
+using RecaptchaV2.NET;
+using Satrabel.OpenContent.Components;
 
 #endregion
 
@@ -72,7 +76,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                     // language options
-                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + PortalSettings.CultureCode + ".json";
+                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
@@ -116,7 +120,7 @@ namespace Satrabel.OpenForm.Components
 
                 JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                 json["schema"] = schemaJson;
-                string optionsFilename = path + "settings-options." + PortalSettings.CultureCode + ".json";
+                string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode()  + ".json";
                 if (!File.Exists(optionsFilename))
                 {
                     optionsFilename = path + "settings-options.json";
@@ -143,30 +147,49 @@ namespace Satrabel.OpenForm.Components
         {
             try
             {
+                int ModuleId = ActiveModule.ModuleID;
+                OpenFormController ctrl = new OpenFormController();
+                var content = new OpenFormInfo()
+                {
+                    ModuleId = ModuleId,
+                    Json = form.ToString(),
+                    CreatedByUserId = UserInfo.UserID,
+                    CreatedOnDate = DateTime.Now,
+                    LastModifiedByUserId = UserInfo.UserID,
+                    LastModifiedOnDate = DateTime.Now,
+                    Html = "",
+                    Title = "Form submitted - " + DateTime.Now.ToString()
+                };
+                ctrl.AddContent(content);
                 var res = new ResultDTO()
                 {
                     Message = "Form submitted."
                 };
-
-                int ModuleId = ActiveModule.ModuleID;
+                
                 string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
                 if (!string.IsNullOrEmpty(jsonSettings))
                 {
+                    SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
-                    SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
-                    StringBuilder FormData = new StringBuilder();
+                    string FormData = "";
                     if (form != null)
                     {
-                        FormData.Append("<table boder=\"1\">");
-                        foreach (var item in form.Properties())
+                        if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
                         {
-                            FormData.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                            Recaptcha recaptcha = new Recaptcha(settings.Settings.SiteKey, settings.Settings.SecretKey);
+                            RecaptchaValidationResult validationResult = recaptcha.Validate(form["recaptcha"].ToString());
+                            if (!validationResult.Succeeded)
+                            {
+                                return Request.CreateResponse(HttpStatusCode.Forbidden);
+                            }
+                            form.Remove("recaptcha");
                         }
-                        FormData.Append("</table>");
-                        data = JsonUtils.JsonToDynamic(form.ToString());
-                        data.FormData = FormData.ToString();
+
+                        data = OpenFormUtils.GenerateFormData(form.ToString(), out FormData);
                     }
+                    
+
                     if (settings != null && settings.Notifications != null)
                     {
                         foreach (var notification in settings.Notifications)
@@ -180,7 +203,7 @@ namespace Satrabel.OpenForm.Components
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
-                                string body = FormData.ToString();
+                                string body = FormData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
                                     body = hbs.Execute(notification.EmailBody, data);
@@ -203,21 +226,13 @@ namespace Satrabel.OpenForm.Components
                     {
                         res.Message = hbs.Execute(settings.Settings.Message, data);
                         res.Tracking = settings.Settings.Tracking;
+                        if (!string.IsNullOrEmpty(settings.Settings.Tracking))
+                        {
+                            //res.RedirectUrl = Globals.NavigateURL(ActiveModule.TabID, "", "result=" + content.ContentId);
+                        }
                     }
                 }
-                OpenFormController ctrl = new OpenFormController();
-                var content = new OpenFormInfo()
-                {
-                    ModuleId = ModuleId,
-                    Json = form.ToString(),
-                    CreatedByUserId = UserInfo.UserID,
-                    CreatedOnDate = DateTime.Now,
-                    LastModifiedByUserId = UserInfo.UserID,
-                    LastModifiedOnDate = DateTime.Now,
-                    Html = "",
-                    Title = "Form submitted - " + DateTime.Now.ToString()
-                };
-                ctrl.AddContent(content);
+                
                 return Request.CreateResponse(HttpStatusCode.OK, res);
             }
             catch (Exception exc)
@@ -226,7 +241,6 @@ namespace Satrabel.OpenForm.Components
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
-
         private static string GetProperty(JObject obj, string PropertyName)
         {
             string PropertyValue = "";
@@ -337,6 +351,9 @@ namespace Satrabel.OpenForm.Components
     {
         public string Message { get; set; }
         public string Tracking { get; set; }
+        public string SiteKey { get; set; }
+        public string SecretKey { get; set; }
+        
     }
 
     public class SettingsDTO
@@ -353,6 +370,7 @@ namespace Satrabel.OpenForm.Components
         public string Message { get; set; }
         public string Tracking { get; set; }
         public List<string> Errors { get; set; }
+        public string RedirectUrl { get; set; }
     }
 }
 

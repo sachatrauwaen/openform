@@ -1,9 +1,12 @@
 ﻿using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using Newtonsoft.Json.Linq;
+using Satrabel.OpenContent.Components.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.UI.WebControls;
@@ -117,7 +120,25 @@ namespace Satrabel.OpenForm.Components
             }
             return lst;
         }
-
+        public static dynamic GenerateFormData(string form, out string FormData)
+        {
+            dynamic data = null;
+            FormData = "";
+            StringBuilder FormDataS = new StringBuilder();
+            if (form != null)
+            {
+                FormDataS.Append("<table boder=\"1\">");
+                foreach (var item in JObject.Parse(form).Properties())
+                {
+                    FormDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                }
+                FormDataS.Append("</table>");
+                data = JsonUtils.JsonToDynamic(form);
+                data.FormData = FormDataS.ToString();
+                FormData = FormDataS.ToString();
+            }
+            return data;
+        }
         public static string ReverseMapPath(string path)
         {
             string appPath = HostingEnvironment.MapPath("~");

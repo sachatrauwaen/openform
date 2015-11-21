@@ -1,4 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="True" CodeBehind="Edit.ascx.cs" Inherits="Satrabel.OpenForm.Edit" %>
+<%@ Import Namespace="DotNetNuke.Services.Localization" %>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
 <div class="dnnForm dnnEditBasicSettings" id="dnnEditBasicSettings">
     <fieldset>
