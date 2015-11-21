@@ -40,7 +40,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $.alpaca.setDefaultLocale("<%= CurrentCulture %>");
+            $.alpaca.setDefaultLocale("<%= AlpacaCulture %>");
             var moduleScope = $('#<%=ScopeWrapper.ClientID %>'),
                 self = moduleScope,
                 sf = $.ServicesFramework(<%=ModuleId %>);
@@ -61,7 +61,7 @@
 
                 var view = config.view;
                 if (view) {
-                    view.parent = "bootstrap-create";
+                    view.parent = "bootstrap-create";                    
                 } else {
                     view = "bootstrap-create";
                 }

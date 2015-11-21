@@ -24,6 +24,7 @@ using DotNetNuke.Web.Client.ClientResourceManagement;
 using Newtonsoft.Json;
 using Satrabel.OpenContent.Components.Handlebars;
 using System.Web.UI;
+using Satrabel.OpenContent.Components.Alpaca;
 
 #endregion
 
@@ -223,12 +224,12 @@ namespace Satrabel.OpenForm
                 return Actions;
             }
         }
-        public string CurrentCulture
+        public string AlpacaCulture
         {
             get
             {
-                string lang = LocaleController.Instance.GetCurrentLocale(PortalId).Code.Substring(0, 2);
-                return lang + "_" + lang.ToUpper();
+                string cultureCode = LocaleController.Instance.GetCurrentLocale(PortalId).Code;
+                return AlpacaEngine.AlpacaCulture(cultureCode);
             }
         }
 
