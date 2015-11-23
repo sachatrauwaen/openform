@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using Satrabel.OpenContent.Components.Handlebars;
 using System.Web.UI;
 using Satrabel.OpenContent.Components.Alpaca;
+using Satrabel.OpenContent.Components.Uri;
 
 #endregion
 
@@ -82,9 +83,9 @@ namespace Satrabel.OpenForm
             }
         }
 
-        private void InitForm(string Template)
+        private void InitForm(string template)
         {
-            bool TemplateDefined = !string.IsNullOrEmpty(Template);
+            bool TemplateDefined = !string.IsNullOrEmpty(template);
             string settings = ModuleContext.Settings["data"] as string;
             bool SettingsDefined = !string.IsNullOrEmpty(settings);
 
@@ -101,18 +102,18 @@ namespace Satrabel.OpenForm
             {
                 hlEditSettings.NavigateUrl = ModuleContext.EditUrl("EditSettings");
                 hlEditSettings.Visible = true;
-                scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, Template).ToArray());
+                scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, template).ToArray());
                 scriptList.Visible = true;
             }
 
 
-            if (string.IsNullOrEmpty(Template))
+            if (string.IsNullOrEmpty(template))
             {
                 ScopeWrapper.Visible = false;
             }
             if (TemplateDefined)
             {
-                IncludeResourses(Template);
+                IncludeResourses(template);
             }
             if (SettingsDefined)
             {
@@ -139,19 +140,19 @@ namespace Satrabel.OpenForm
 
         #endregion
 
-        private void IncludeResourses(string Template)
+        private void IncludeResourses(string template)
         {
-            if (!(string.IsNullOrEmpty(Template)))
+            if (!(string.IsNullOrEmpty(template)))
             {
-                string cssfilename = Path.GetDirectoryName(Template) + "/template.css";
-                if (File.Exists(Server.MapPath(cssfilename)))
+                var cssfilename =  new FileUri(Path.GetDirectoryName(template) + "/template.css");
+                if (cssfilename.FileExists)
                 {
-                    ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename), FileOrder.Css.PortalCss);
+                    ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename.UrlFilePath), FileOrder.Css.PortalCss);
                 }
-                string jsfilename = Path.GetDirectoryName(Template) + "/template.js";
-                if (File.Exists(Server.MapPath(jsfilename)))
+                var jsfilename = new FileUri(Path.GetDirectoryName(template) + "/template.js");
+                if (jsfilename.FileExists)
                 {
-                    ClientResourceManager.RegisterScript(Page, Page.ResolveUrl(jsfilename), FileOrder.Js.DefaultPriority);
+                    ClientResourceManager.RegisterScript(Page, jsfilename.UrlFilePath, FileOrder.Js.DefaultPriority);
                 }
             }
         }
