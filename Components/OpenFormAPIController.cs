@@ -120,7 +120,7 @@ namespace Satrabel.OpenForm.Components
 
                 JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                 json["schema"] = schemaJson;
-                string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode()  + ".json";
+                string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode() + ".json";
                 if (!File.Exists(optionsFilename))
                 {
                     optionsFilename = path + "settings-options.json";
@@ -165,7 +165,7 @@ namespace Satrabel.OpenForm.Components
                 {
                     Message = "Form submitted."
                 };
-                
+
                 string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
                 if (!string.IsNullOrEmpty(jsonSettings))
                 {
@@ -188,7 +188,7 @@ namespace Satrabel.OpenForm.Components
 
                         data = OpenFormUtils.GenerateFormData(form.ToString(), out FormData);
                     }
-                    
+
 
                     if (settings != null && settings.Notifications != null)
                     {
@@ -217,7 +217,7 @@ namespace Satrabel.OpenForm.Components
                             }
                             catch (Exception exc)
                             {
-                                res.Errors.Add("Notification "+(settings.Notifications.IndexOf(notification)+1)+ " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
+                                res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
                                 Logger.Error(exc);
                             }
                         }
@@ -232,7 +232,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                 }
-                
+
                 return Request.CreateResponse(HttpStatusCode.OK, res);
             }
             catch (Exception exc)
@@ -255,6 +255,7 @@ namespace Satrabel.OpenForm.Components
         private MailAddress GenerateMailAddress(string TypeOfAddress, string Email, string Name, string FormEmailField, string FormNameField, JObject form)
         {
             MailAddress adr = null;
+
             if (TypeOfAddress == "host")
             {
                 adr = new MailAddress(Host.HostEmail, Host.HostTitle);
@@ -283,6 +284,12 @@ namespace Satrabel.OpenForm.Components
             {
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
             }
+
+            if (adr == null)
+            {
+                throw new Exception(string.Format("Can't determine email address. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+            }
+
             return adr;
         }
         private string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
@@ -353,7 +360,7 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public string SiteKey { get; set; }
         public string SecretKey { get; set; }
-        
+
     }
 
     public class SettingsDTO
