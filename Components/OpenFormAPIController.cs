@@ -282,6 +282,11 @@ namespace Satrabel.OpenForm.Components
             }
             else if (TypeOfAddress == "current")
             {
+                if (UserInfo == null)
+                    throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                if (string.IsNullOrEmpty(UserInfo.Email))
+                    throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
             }
 
