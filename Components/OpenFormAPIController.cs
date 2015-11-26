@@ -59,13 +59,13 @@ namespace Satrabel.OpenForm.Components
             {
                 if (!string.IsNullOrEmpty(Template))
                 {
-                    string TemplateFilename = HostingEnvironment.MapPath(Template);
-                    string schemaFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "schema.json";
+                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                     JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                     json["schema"] = schemaJson;
 
                     // default options
-                    string optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options.json";
+                    string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
@@ -76,7 +76,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                     // language options
-                    optionsFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                    optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
@@ -87,7 +87,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                     // view
-                    string viewFilename = Path.GetDirectoryName(TemplateFilename) + "\\" + "view.json";
+                    string viewFilename = Path.GetDirectoryName(templateFilename) + "\\" + "view.json";
                     if (File.Exists(viewFilename))
                     {
                         string fileContent = File.ReadAllText(viewFilename);
