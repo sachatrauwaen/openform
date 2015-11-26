@@ -19,7 +19,6 @@ using Satrabel.OpenForm.Components;
 using Satrabel.OpenContent.Components.Alpaca;
 using System.IO;
 
-
 #endregion
 
 namespace Satrabel.OpenForm
