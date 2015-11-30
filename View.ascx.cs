@@ -163,8 +163,8 @@ namespace Satrabel.OpenForm
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(ModuleContext.GetNextActionID(),
+                var actions = new ModuleActionCollection();
+                actions.Add(ModuleContext.GetNextActionID(),
                           Localization.GetString("EditSettings.Action", LocalResourceFile),
                           ModuleActionType.ContentOptions,
                           "",
@@ -175,7 +175,7 @@ namespace Satrabel.OpenForm
                           true,
                           false);
 
-                Actions.Add(ModuleContext.GetNextActionID(),
+                actions.Add(ModuleContext.GetNextActionID(),
                             Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
                             ModuleActionType.AddContent,
                             "",
@@ -189,7 +189,7 @@ namespace Satrabel.OpenForm
                 var scriptFileSetting = Settings["template"] as string;
                 if (!string.IsNullOrEmpty(scriptFileSetting))
                 {
-                    Actions.Add(ModuleContext.GetNextActionID(),
+                    actions.Add(ModuleContext.GetNextActionID(),
                                Localization.GetString("EditTemplate.Action", LocalResourceFile),
                                ModuleActionType.ContentOptions,
                                "",
@@ -212,7 +212,7 @@ namespace Satrabel.OpenForm
                            true,
                            false);
                 */
-                Actions.Add(ModuleContext.GetNextActionID(),
+                actions.Add(ModuleContext.GetNextActionID(),
                            Localization.GetString("ShareTemplate.Action", LocalResourceFile),
                            ModuleActionType.ContentOptions,
                            "",
@@ -223,10 +223,11 @@ namespace Satrabel.OpenForm
                            true,
                            false);
 
-                return Actions;
+                return actions;
             }
         }
-        public string AlpacaCulture
+
+        protected string AlpacaCulture
         {
             get
             {
