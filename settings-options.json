@@ -7,7 +7,7 @@
                         "From": {
                             "title": "From",
                             "type": "select",
-                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom", "Current user" ],
+                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom", "Current Dnn user" ],
                             "removeDefaultNone": true
                         },
                         "FromName": {
@@ -36,7 +36,7 @@
                         },
                         "To": {
                             "type": "select",
-                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom" , "Current user"],
+                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom" , "Current Dnn user"],
                             "removeDefaultNone": true
                         },
                         "ToName": {
@@ -65,7 +65,7 @@
                         },
                         "ReplyTo": {
                             "type": "select",
-                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom", "Current user" ]
+                            "optionLabels": [ "Host", "Site Admin", "Form Field", "Custom", "Current Dnn user" ]
                         },
                         "ReplyToName": {
                             "dependencies": {
