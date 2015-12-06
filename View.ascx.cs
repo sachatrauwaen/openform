@@ -69,8 +69,8 @@ namespace Satrabel.OpenForm
                     string json = hfOpenForm.Value;
                     phForm.Visible = false;
                     phResult.Visible = true;
-                    string FormData = "";
-                    dynamic data = OpenFormUtils.GenerateFormData(json, out FormData);
+                    string formData = "";
+                    dynamic data = OpenFormUtils.GenerateFormData(json, out formData);
 
                     string jsonSettings = Settings["data"] as string;
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
@@ -86,11 +86,11 @@ namespace Satrabel.OpenForm
 
         private void InitForm(string template)
         {
-            bool TemplateDefined = !string.IsNullOrEmpty(template);
+            bool templateDefined = !string.IsNullOrEmpty(template);
             string settings = ModuleContext.Settings["data"] as string;
-            bool SettingsDefined = !string.IsNullOrEmpty(settings);
+            bool settingsDefined = !string.IsNullOrEmpty(settings);
 
-            if (!TemplateDefined || !SettingsDefined)
+            if (!templateDefined || !settingsDefined)
             {
                 pHelp.Visible = true;
             }
@@ -112,11 +112,11 @@ namespace Satrabel.OpenForm
             {
                 ScopeWrapper.Visible = false;
             }
-            if (TemplateDefined)
+            if (templateDefined)
             {
                 IncludeResourses(template);
             }
-            if (SettingsDefined)
+            if (settingsDefined)
             {
                 SettingsDTO set = JsonConvert.DeserializeObject<SettingsDTO>(settings);
                 if (!string.IsNullOrEmpty(set.Settings.SiteKey))
