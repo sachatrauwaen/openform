@@ -145,12 +145,12 @@ namespace Satrabel.OpenForm
         {
             if (!(string.IsNullOrEmpty(template)))
             {
-                var cssfilename =  new FileUri(Path.GetDirectoryName(template) + "/template.css");
+                var cssfilename =  new FileUri(Path.GetDirectoryName(template) , "template.css");
                 if (cssfilename.FileExists)
                 {
                     ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename.UrlFilePath), FileOrder.Css.PortalCss);
                 }
-                var jsfilename = new FileUri(Path.GetDirectoryName(template) + "/template.js");
+                var jsfilename = new FileUri(Path.GetDirectoryName(template) , "template.js");
                 if (jsfilename.FileExists)
                 {
                     ClientResourceManager.RegisterScript(Page, jsfilename.UrlFilePath, FileOrder.Js.DefaultPriority);
