@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="02.00.01">
+    <package name="OpenForm" type="Module" version="02.01.00">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module</description>
       <iconFile>Images/icon_extensions.png</iconFile>
@@ -33,7 +33,6 @@
             </script>
           </scripts>
         </component>
-
         <component type="ResourceFile">
           <resourceFiles>
             <basePath>DesktopModules/OpenForm</basePath>
@@ -42,7 +41,6 @@
             </resourceFile>
           </resourceFiles>
         </component>
-
         <component type="Module">
           <desktopModule>
             <moduleName>OpenForm</moduleName>

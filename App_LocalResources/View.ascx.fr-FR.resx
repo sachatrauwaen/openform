@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddContent.Action" xml:space="preserve">
-    <value>Submissions</value>
+    <value>Soumissions</value>
   </data>
   <data name="BasicSettings.Text" xml:space="preserve">
     <value>Basic OpenForm Settings</value>
   </data>
   <data name="cmdCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
   </data>
   <data name="cmdSave.Text" xml:space="preserve">
     <value>Envoyer</value>
@@ -132,17 +132,14 @@
   <data name="CollapseAll.Text" xml:space="preserve">
     <value>Collapse All</value>
   </data>
-  <data name="ConfirmDelete.Text" xml:space="preserve">
-    <value>Are you sure you want to delete this Item</value>
-  </data>
   <data name="DeleteItem.Text" xml:space="preserve">
-    <value>Delete</value>
+    <value>Supprimer</value>
   </data>
   <data name="EditItem.Text" xml:space="preserve">
-    <value>Edit</value>
+    <value>Modifier</value>
   </data>
   <data name="EditModule.Text" xml:space="preserve">
-    <value>Add Item</value>
+    <value>Ajouter</value>
   </data>
   <data name="EditSettings.Action" xml:space="preserve">
     <value>Template Settings</value>
