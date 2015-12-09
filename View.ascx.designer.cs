@@ -31,6 +31,33 @@ namespace Satrabel.OpenForm {
         protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude2;
         
         /// <summary>
+        /// DnnJsInclude4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude4;
+        
+        /// <summary>
+        /// DnnJsInclude3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude3;
+        
+        /// <summary>
+        /// DnnCssInclude4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnCssInclude DnnCssInclude4;
+        
+        /// <summary>
         /// pHelp control.
         /// </summary>
         /// <remarks>

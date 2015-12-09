@@ -207,6 +207,9 @@
   <ItemGroup>
     <Content Include="App_LocalResources\EditSettings.ascx.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\View.ascx.fr-FR.resx" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

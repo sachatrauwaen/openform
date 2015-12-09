@@ -69,8 +69,8 @@ namespace Satrabel.OpenForm
                     string json = hfOpenForm.Value;
                     phForm.Visible = false;
                     phResult.Visible = true;
-                    string FormData = "";
-                    dynamic data = OpenFormUtils.GenerateFormData(json, out FormData);
+                    string formData = "";
+                    dynamic data = OpenFormUtils.GenerateFormData(json, out formData);
 
                     string jsonSettings = Settings["data"] as string;
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
@@ -86,11 +86,11 @@ namespace Satrabel.OpenForm
 
         private void InitForm(string template)
         {
-            bool TemplateDefined = !string.IsNullOrEmpty(template);
+            bool templateDefined = !string.IsNullOrEmpty(template);
             string settings = ModuleContext.Settings["data"] as string;
-            bool SettingsDefined = !string.IsNullOrEmpty(settings);
+            bool settingsDefined = !string.IsNullOrEmpty(settings);
 
-            if (!TemplateDefined || !SettingsDefined)
+            if (!templateDefined || !settingsDefined)
             {
                 pHelp.Visible = true;
             }
@@ -112,11 +112,11 @@ namespace Satrabel.OpenForm
             {
                 ScopeWrapper.Visible = false;
             }
-            if (TemplateDefined)
+            if (templateDefined)
             {
                 IncludeResourses(template);
             }
-            if (SettingsDefined)
+            if (settingsDefined)
             {
                 SettingsDTO set = JsonConvert.DeserializeObject<SettingsDTO>(settings);
                 if (!string.IsNullOrEmpty(set.Settings.SiteKey))
@@ -145,12 +145,12 @@ namespace Satrabel.OpenForm
         {
             if (!(string.IsNullOrEmpty(template)))
             {
-                var cssfilename =  new FileUri(Path.GetDirectoryName(template) + "/template.css");
+                var cssfilename =  new FileUri(Path.GetDirectoryName(template) , "template.css");
                 if (cssfilename.FileExists)
                 {
                     ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename.UrlFilePath), FileOrder.Css.PortalCss);
                 }
-                var jsfilename = new FileUri(Path.GetDirectoryName(template) + "/template.js");
+                var jsfilename = new FileUri(Path.GetDirectoryName(template) , "template.js");
                 if (jsfilename.FileExists)
                 {
                     ClientResourceManager.RegisterScript(Page, jsfilename.UrlFilePath, FileOrder.Js.DefaultPriority);
@@ -163,8 +163,8 @@ namespace Satrabel.OpenForm
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(ModuleContext.GetNextActionID(),
+                var actions = new ModuleActionCollection();
+                actions.Add(ModuleContext.GetNextActionID(),
                           Localization.GetString("EditSettings.Action", LocalResourceFile),
                           ModuleActionType.ContentOptions,
                           "",
@@ -175,7 +175,7 @@ namespace Satrabel.OpenForm
                           true,
                           false);
 
-                Actions.Add(ModuleContext.GetNextActionID(),
+                actions.Add(ModuleContext.GetNextActionID(),
                             Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
                             ModuleActionType.AddContent,
                             "",
@@ -189,7 +189,7 @@ namespace Satrabel.OpenForm
                 var scriptFileSetting = Settings["template"] as string;
                 if (!string.IsNullOrEmpty(scriptFileSetting))
                 {
-                    Actions.Add(ModuleContext.GetNextActionID(),
+                    actions.Add(ModuleContext.GetNextActionID(),
                                Localization.GetString("EditTemplate.Action", LocalResourceFile),
                                ModuleActionType.ContentOptions,
                                "",
@@ -212,7 +212,7 @@ namespace Satrabel.OpenForm
                            true,
                            false);
                 */
-                Actions.Add(ModuleContext.GetNextActionID(),
+                actions.Add(ModuleContext.GetNextActionID(),
                            Localization.GetString("ShareTemplate.Action", LocalResourceFile),
                            ModuleActionType.ContentOptions,
                            "",
@@ -223,10 +223,11 @@ namespace Satrabel.OpenForm
                            true,
                            false);
 
-                return Actions;
+                return actions;
             }
         }
-        public string AlpacaCulture
+
+        protected string AlpacaCulture
         {
             get
             {

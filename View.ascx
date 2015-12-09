@@ -3,7 +3,9 @@
 <%@ Register TagPrefix="dnncl" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <dnncl:DnnJsInclude ID="DnnJsInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/handlebars/handlebars.js" Priority="106" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnJsInclude ID="DnnJsInclude2" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/alpaca/bootstrap/alpaca.js" Priority="107" ForceProvider="DnnPageHeaderProvider" />
-
+<dnncl:DnnJsInclude ID="DnnJsInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/moment/min/moment-with-locales.min.js" Priority="108" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"  />
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
     <ol>
