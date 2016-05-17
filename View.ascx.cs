@@ -47,7 +47,7 @@ namespace Satrabel.OpenForm
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
-
+            
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -133,14 +133,10 @@ namespace Satrabel.OpenForm
         {
             DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Update Successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
         }
-
-
         protected void cmdCancel_Click(object sender, EventArgs e)
         {
         }
-
         #endregion
-
         private void IncludeResourses(string template)
         {
             if (!(string.IsNullOrEmpty(template)))
@@ -157,8 +153,6 @@ namespace Satrabel.OpenForm
                 }
             }
         }
-
-
         public DotNetNuke.Entities.Modules.Actions.ModuleActionCollection ModuleActions
         {
             get
@@ -226,7 +220,6 @@ namespace Satrabel.OpenForm
                 return actions;
             }
         }
-
         protected string AlpacaCulture
         {
             get
@@ -235,20 +228,15 @@ namespace Satrabel.OpenForm
                 return AlpacaEngine.AlpacaCulture(cultureCode);
             }
         }
-
         protected void scriptList_SelectedIndexChanged(object sender, EventArgs e)
         {
             ModuleController mc = new ModuleController();
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
             //InitForm(scriptList.SelectedValue);
-
         }
-
         protected void lbSave_Click(object sender, EventArgs e)
         {
-
         }
-
         protected string PostBackStr()
         {
             //return Page.GetPostBackEventReference(lbSave);

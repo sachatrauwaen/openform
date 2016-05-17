@@ -41,7 +41,7 @@ ALTER TABLE {databaseOwner}{objectQualifier}OpenForm_Items
 	FK_OpenForm_Items_Modules FOREIGN KEY
 	(
 	    ModuleId
-	) REFERENCES dbo.Modules
+	) REFERENCES {databaseOwner}{objectQualifier}dbo.Modules
 	(
 	    ModuleID
 	) ON UPDATE NO ACTION 

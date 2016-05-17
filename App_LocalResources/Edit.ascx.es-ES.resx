@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!--DOTWARE TST S.L.-->
+  <data name="BasicSettings.Text">
+    <value xml:space="preserve">Configuración básica de elementos de OpenForm</value>
+  </data>
+  <data name="btnCancel.Text">
+    <value xml:space="preserve">Cancelar</value>
+  </data>
+  <data name="btnSubmit.Text">
+    <value xml:space="preserve">Guardar</value>
+  </data>
+  <data name="cmdCancel.Text">
+    <value xml:space="preserve">Cancelar</value>
+  </data>
+  <data name="cmdDelete.Text">
+    <value xml:space="preserve">Eliminar</value>
+  </data>
+  <data name="cmdSave.Text">
+    <value xml:space="preserve">Guardar</value>
+  </data>
+  <data name="ControlTitle_edit.Text">
+    <value xml:space="preserve">Editar control para OpenForm</value>
+  </data>
+  <data name="ExpandAll.Text">
+    <value xml:space="preserve">Expandir todos</value>
+  </data>
+  <data name="lblAssignedUser.Help">
+    <value xml:space="preserve">Elegir usuario al que asignar este objeto.</value>
+  </data>
+  <data name="lblAssignedUser.Text">
+    <value xml:space="preserve">Usuario asignado</value>
+  </data>
+  <data name="lblDescription.Help">
+    <value xml:space="preserve">Escriba una descripción para su elemento</value>
+  </data>
+  <data name="lblDescription.Text">
+    <value xml:space="preserve">Descripción</value>
+  </data>
+  <data name="lblName.Help">
+    <value xml:space="preserve">Escriba el nombre para su elemento</value>
+  </data>
+  <data name="lblName.Text">
+    <value xml:space="preserve">Nombre</value>
+  </data>
+</root>

@@ -224,7 +224,14 @@ namespace Satrabel.OpenForm.Components
                     }
                     if (settings != null && settings.Settings != null)
                     {
-                        res.Message = hbs.Execute(settings.Settings.Message, data);
+                        if (!string.IsNullOrEmpty(settings.Settings.Message)) 
+                        { 
+                            res.Message = hbs.Execute(settings.Settings.Message, data);
+                        }
+                        else
+                        {
+                            res.Message = "Message sended.";
+                        }
                         res.Tracking = settings.Settings.Tracking;
                         if (!string.IsNullOrEmpty(settings.Settings.Tracking))
                         {
