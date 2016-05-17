@@ -41,7 +41,6 @@ namespace Satrabel.OpenForm.Components
     [AllowAnonymous]
     public class OpenFormAPIController : DnnApiController
     {
-        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(OpenFormAPIController));
         public string BaseDir
         {
             get
@@ -102,7 +101,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -139,7 +138,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -218,7 +217,7 @@ namespace Satrabel.OpenForm.Components
                             catch (Exception exc)
                             {
                                 res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
-                                Logger.Error(exc);
+                                Log.Logger.Error(exc);
                             }
                         }
                     }
@@ -244,7 +243,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
