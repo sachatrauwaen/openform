@@ -88,7 +88,7 @@ namespace Satrabel.OpenForm
 
         private void LoadFiles()
         {
-            TemplateManifest template = ModuleContext.OpenContentSettings().Template;
+            
             sourceList.Items.Clear();
             sourceList.Items.Add(new ListItem(cData, cData));
             sourceList.Items.Add(new ListItem(cSettings, cSettings));

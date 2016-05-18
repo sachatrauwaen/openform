@@ -32,8 +32,8 @@ using Satrabel.OpenContent.Components.Handlebars;
 using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
-using Satrabel.OpenContent.Components;
 using DotNetNuke.Security;
+using Satrabel.OpenContent.Components;
 
 #endregion
 
