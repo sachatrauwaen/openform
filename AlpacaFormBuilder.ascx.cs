@@ -29,8 +29,7 @@ namespace Satrabel.OpenForm
         {
             base.OnInit(e);
             hlCancel.NavigateUrl = Globals.NavigateURL();
-            cmdSave.NavigateUrl = Globals.NavigateURL();
-            OpenContentSettings settings = this.OpenContentSettings();
+            cmdSave.NavigateUrl = Globals.NavigateURL();            
             AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext, "" /*settings.Template.Uri().FolderPath*/, "builder");
             alpaca.RegisterAll(true);
             ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenForm/js/builder/formbuilder.js", FileOrder.Js.DefaultPriority);
