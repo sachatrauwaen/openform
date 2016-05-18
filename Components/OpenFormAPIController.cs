@@ -33,6 +33,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using Satrabel.OpenContent.Components;
+using DotNetNuke.Security;
 
 #endregion
 
@@ -223,8 +224,8 @@ namespace Satrabel.OpenForm.Components
                     }
                     if (settings != null && settings.Settings != null)
                     {
-                        if (!string.IsNullOrEmpty(settings.Settings.Message)) 
-                        { 
+                        if (!string.IsNullOrEmpty(settings.Settings.Message))
+                        {
                             res.Message = hbs.Execute(settings.Settings.Message, data);
                         }
                         else
@@ -247,6 +248,73 @@ namespace Satrabel.OpenForm.Components
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
+
+        [ValidateAntiForgeryToken]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+        [HttpGet]
+        public HttpResponseMessage LoadBuilder()
+        {
+            string Template = (string)ActiveModule.ModuleSettings["template"];
+            JObject json = new JObject();
+            try
+            {
+                if (!string.IsNullOrEmpty(Template))
+                {
+                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
+                    JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
+                    if (dataJson != null)
+                        json["data"] = dataJson;
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, json);
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
+            }
+        }
+
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.View)]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public HttpResponseMessage UpdateBuilder(JObject json)
+        {
+            string Template = (string)ActiveModule.ModuleSettings["template"];
+            try
+            {
+                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
+                if (json["data"] != null && json["schema"] != null && json["options"] != null)
+                {
+                    var schema = json["schema"].ToString();
+                    var options = json["options"].ToString();
+                    var data = json["data"].ToString();
+                    var datafile = dataDirectory + "builder.json";
+                    var schemafile = dataDirectory + "schema.json";
+                    var optionsfile = dataDirectory + "options.json";
+                    try
+                    {
+                        File.WriteAllText(datafile, data);
+                        File.WriteAllText(schemafile, schema);
+                        File.WriteAllText(optionsfile, options);
+                    }
+                    catch (Exception ex)
+                    {
+                        string mess = string.Format("Error while saving file [{0}]", datafile);
+                        Log.Logger.Error(mess, ex);
+                        throw new Exception(mess, ex);
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, "");
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
+            }
+        }
+
         private static string GetProperty(JObject obj, string PropertyName)
         {
             string PropertyValue = "";

@@ -159,40 +159,71 @@ namespace Satrabel.OpenForm
             {
                 var actions = new ModuleActionCollection();
                 actions.Add(ModuleContext.GetNextActionID(),
+                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
+                            ModuleActionType.AddContent,
+                            "",
+                            "~/DesktopModules/OpenContent/images/editcontent2.png",
+                            ModuleContext.EditUrl(),
+                            false,
+                            SecurityAccessLevel.Edit,
+                            true,
+                            false);
+                actions.Add(ModuleContext.GetNextActionID(),
                           Localization.GetString("EditSettings.Action", LocalResourceFile),
                           ModuleActionType.ContentOptions,
                           "",
-                          "~/DesktopModules/OpenContent/images/settings.gif",
+                          "~/DesktopModules/OpenContent/images/editsettings2.png",
                           ModuleContext.EditUrl("EditSettings"),
                           false,
                           SecurityAccessLevel.Host,
                           true,
                           false);
 
-                actions.Add(ModuleContext.GetNextActionID(),
-                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "",
-                            ModuleContext.EditUrl(),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
+                
 
                 var scriptFileSetting = Settings["template"] as string;
                 if (!string.IsNullOrEmpty(scriptFileSetting))
                 {
+                    string templateFilename = Server.MapPath("~/" + scriptFileSetting);
+                    string builderFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
+
+                    if (File.Exists(builderFilename))
+                        actions.Add(ModuleContext.GetNextActionID(),
+                            Localization.GetString("Builder.Action", LocalResourceFile),
+                            ModuleActionType.ContentOptions,
+                            "",
+                            "~/DesktopModules/OpenForm/images/formbuilder.png",
+                            ModuleContext.EditUrl("FormBuilder"),
+                            false,
+                            SecurityAccessLevel.Host,
+                            true,
+                            false);
+
+
                     actions.Add(ModuleContext.GetNextActionID(),
                                Localization.GetString("EditTemplate.Action", LocalResourceFile),
                                ModuleActionType.ContentOptions,
                                "",
-                               "~/DesktopModules/OpenContent/images/edittemplate.png",
+                               "~/DesktopModules/OpenForm/images/edittemplate.png",
                                ModuleContext.EditUrl("EditTemplate"),
                                false,
                                SecurityAccessLevel.Host,
                                true,
                                false);
+
+                    
+                    
+                        actions.Add(ModuleContext.GetNextActionID(),
+                            Localization.GetString("EditData.Action", LocalResourceFile),
+                            ModuleActionType.EditContent,
+                            "",
+                            "~/DesktopModules/OpenForm/images/edit.png",
+                            //ModuleContext.EditUrl("EditData"),
+                            ModuleContext.EditUrl("EditData"),
+                            false,
+                            SecurityAccessLevel.Host,
+                            true,
+                            false);
                 }
                 /*
                 Actions.Add(ModuleContext.GetNextActionID(),
