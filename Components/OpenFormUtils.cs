@@ -15,13 +15,13 @@ namespace Satrabel.OpenForm.Components
 {
     public class OpenFormUtils
     {
-        public static void UpdateModuleTitle(ModuleInfo Module, string ModuleTitle)
+        public static void UpdateModuleTitle(ModuleInfo module, string moduleTitle)
         {
-            if (Module.ModuleTitle != ModuleTitle)
+            if (module.ModuleTitle != moduleTitle)
             {
                 ModuleController mc = new ModuleController();
-                var mod = mc.GetModule(Module.ModuleID, Module.TabID, true);
-                mod.ModuleTitle = ModuleTitle;
+                var mod = mc.GetModule(module.ModuleID, module.TabID, true);
+                mod.ModuleTitle = moduleTitle;
                 mc.UpdateModule(mod);
             }
         }
@@ -29,7 +29,7 @@ namespace Satrabel.OpenForm.Components
         {
             return portalSettings.HomeDirectory + "/OpenForm/Templates/";
         }
-        public static List<ListItem> GetTemplatesFiles(PortalSettings portalSettings, int ModuleId, string SelectedTemplate)
+        public static List<ListItem> GetTemplatesFiles(PortalSettings portalSettings, int moduleId, string selectedTemplate)
         {
             string basePath = HostingEnvironment.MapPath(GetSiteTemplateFolder(portalSettings));
             if (!Directory.Exists(basePath))
@@ -39,14 +39,14 @@ namespace Satrabel.OpenForm.Components
             List<ListItem> lst = new List<ListItem>();
             foreach (var dir in Directory.GetDirectories(basePath))
             {
-                string TemplateCat = "Site";
-                string DirName = Path.GetFileNameWithoutExtension(dir);
-                int ModId = -1;
-                if (int.TryParse(DirName, out ModId))
+                string templateCat = "Site";
+                string dirName = Path.GetFileNameWithoutExtension(dir);
+                int modId = -1;
+                if (int.TryParse(dirName, out modId))
                 {
-                    if (ModId == ModuleId)
+                    if (modId == moduleId)
                     {
-                        TemplateCat = "Module";
+                        templateCat = "Module";
                     }
                     else
                     {
@@ -57,7 +57,7 @@ namespace Satrabel.OpenForm.Components
                 foreach (string script in files)
                 {
                     string scriptName = script.Remove(script.LastIndexOf(".")).Replace(basePath, "");
-                    if (TemplateCat == "Module")
+                    if (templateCat == "Module")
                     {
                         if (scriptName.ToLower().EndsWith("schema"))
                             scriptName = "for this module only";
@@ -70,8 +70,8 @@ namespace Satrabel.OpenForm.Components
                         scriptName = scriptName.Replace("\\", " - ");
 
                     string scriptPath = ReverseMapPath(script);
-                    var item = new ListItem(TemplateCat + " : " + scriptName, scriptPath);
-                    if (!(string.IsNullOrEmpty(SelectedTemplate)) && scriptPath.ToLowerInvariant() == SelectedTemplate.ToLowerInvariant())
+                    var item = new ListItem(templateCat + " : " + scriptName, scriptPath);
+                    if (!(string.IsNullOrEmpty(selectedTemplate)) && scriptPath.ToLowerInvariant() == selectedTemplate.ToLowerInvariant())
                     {
                         item.Selected = true;
                     }
@@ -80,7 +80,7 @@ namespace Satrabel.OpenForm.Components
             }
             return lst;
         }
-        public static List<ListItem> GetTemplates(PortalSettings portalSettings, int ModuleId, string SelectedTemplate)
+        public static List<ListItem> GetTemplates(PortalSettings portalSettings, int moduleId, string selectedTemplate)
         {
             string basePath = HostingEnvironment.MapPath(GetSiteTemplateFolder(portalSettings));
             if (!Directory.Exists(basePath))
@@ -90,14 +90,14 @@ namespace Satrabel.OpenForm.Components
             List<ListItem> lst = new List<ListItem>();
             foreach (var dir in Directory.GetDirectories(basePath))
             {
-                string TemplateCat = "Site";
-                string DirName = Path.GetFileNameWithoutExtension(dir);
-                int ModId = -1;
-                if (int.TryParse(DirName, out ModId))
+                string templateCat = "Site";
+                string dirName = Path.GetFileNameWithoutExtension(dir);
+                int modId = -1;
+                if (int.TryParse(dirName, out modId))
                 {
-                    if (ModId == ModuleId)
+                    if (modId == moduleId)
                     {
-                        TemplateCat = "Module";
+                        templateCat = "Module";
                     }
                     else
                     {
@@ -105,14 +105,14 @@ namespace Satrabel.OpenForm.Components
                     }
                 }
                 string scriptName = dir;
-                if (TemplateCat == "Module")
-                    scriptName = TemplateCat;
+                if (templateCat == "Module")
+                    scriptName = templateCat;
                 else
-                    scriptName = TemplateCat + ":" + scriptName.Substring(scriptName.LastIndexOf("\\") + 1);
+                    scriptName = templateCat + ":" + scriptName.Substring(scriptName.LastIndexOf("\\") + 1);
 
                 string scriptPath = ReverseMapPath(dir);
                 var item = new ListItem(scriptName, scriptPath);
-                if (!(string.IsNullOrEmpty(SelectedTemplate)) && scriptPath.ToLowerInvariant() == SelectedTemplate.ToLowerInvariant())
+                if (!(string.IsNullOrEmpty(selectedTemplate)) && scriptPath.ToLowerInvariant() == selectedTemplate.ToLowerInvariant())
                 {
                     item.Selected = true;
                 }
@@ -120,22 +120,22 @@ namespace Satrabel.OpenForm.Components
             }
             return lst;
         }
-        public static dynamic GenerateFormData(string form, out string FormData)
+        public static dynamic GenerateFormData(string form, out string formData)
         {
             dynamic data = null;
-            FormData = "";
-            StringBuilder FormDataS = new StringBuilder();
+            formData = "";
+            StringBuilder formDataS = new StringBuilder();
             if (form != null)
             {
-                FormDataS.Append("<table boder=\"1\">");
+                formDataS.Append("<table boder=\"1\">");
                 foreach (var item in JObject.Parse(form).Properties())
                 {
-                    FormDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                    formDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
                 }
-                FormDataS.Append("</table>");
+                formDataS.Append("</table>");
                 data = JsonUtils.JsonToDynamic(form);
-                data.FormData = FormDataS.ToString();
-                FormData = FormDataS.ToString();
+                data.FormData = formDataS.ToString();
+                formData = formDataS.ToString();
             }
             return data;
         }

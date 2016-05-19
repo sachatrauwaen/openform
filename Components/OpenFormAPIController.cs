@@ -33,6 +33,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using Satrabel.OpenContent.Components;
+using Satrabel.OpenContent.Components.Logging;
 
 #endregion
 
@@ -51,14 +52,14 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage Form()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
 
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                     JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
                     json["schema"] = schemaJson;
@@ -146,11 +147,11 @@ namespace Satrabel.OpenForm.Components
         {
             try
             {
-                int ModuleId = ActiveModule.ModuleID;
+                int moduleId = ActiveModule.ModuleID;
                 OpenFormController ctrl = new OpenFormController();
                 var content = new OpenFormInfo()
                 {
-                    ModuleId = ModuleId,
+                    ModuleId = moduleId,
                     Json = form.ToString(),
                     CreatedByUserId = UserInfo.UserID,
                     CreatedOnDate = DateTime.Now,
