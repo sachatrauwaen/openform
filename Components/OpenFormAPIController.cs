@@ -61,7 +61,8 @@ namespace Satrabel.OpenForm.Components
                 {
                     string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
-                    JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+
+                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                     json["schema"] = schemaJson;
 
                     // default options
@@ -102,7 +103,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Log.Logger.Error(exc);
+                LoggingUtils.ProcessApiLoadException(this, exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -118,7 +119,7 @@ namespace Satrabel.OpenForm.Components
                 string Template = "settings-schema.json";
                 string schemaFilename = path + Template;
 
-                JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+                JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                 json["schema"] = schemaJson;
                 string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode() + ".json";
                 if (!File.Exists(optionsFilename))
@@ -127,7 +128,7 @@ namespace Satrabel.OpenForm.Components
                 }
                 if (File.Exists(optionsFilename))
                 {
-                    JObject optionsJson = JObject.Parse(File.ReadAllText(optionsFilename));
+                    JObject optionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
                     json["options"] = optionsJson;
                 }
 
@@ -172,7 +173,7 @@ namespace Satrabel.OpenForm.Components
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
-                    string FormData = "";
+                    string formData = "";
                     if (form != null)
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
@@ -186,7 +187,7 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out FormData);
+                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
                     }
 
 
@@ -203,7 +204,7 @@ namespace Satrabel.OpenForm.Components
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
-                                string body = FormData;
+                                string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
                                     body = hbs.Execute(notification.EmailBody, data);
@@ -224,8 +225,8 @@ namespace Satrabel.OpenForm.Components
                     }
                     if (settings != null && settings.Settings != null)
                     {
-                        if (!string.IsNullOrEmpty(settings.Settings.Message)) 
-                        { 
+                        if (!string.IsNullOrEmpty(settings.Settings.Message))
+                        {
                             res.Message = hbs.Execute(settings.Settings.Message, data);
                         }
                         else
