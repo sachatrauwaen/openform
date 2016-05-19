@@ -34,6 +34,7 @@ using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
+using Satrabel.OpenContent.Components.Logging;
 
 #endregion
 
@@ -52,16 +53,17 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage Form()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
 
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
-                    JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+
+                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                     json["schema"] = schemaJson;
 
                     // default options
@@ -102,7 +104,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Log.Logger.Error(exc);
+                LoggingUtils.ProcessApiLoadException(this, exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -118,7 +120,7 @@ namespace Satrabel.OpenForm.Components
                 string Template = "settings-schema.json";
                 string schemaFilename = path + Template;
 
-                JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+                JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                 json["schema"] = schemaJson;
                 string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode() + ".json";
                 if (!File.Exists(optionsFilename))
@@ -127,7 +129,7 @@ namespace Satrabel.OpenForm.Components
                 }
                 if (File.Exists(optionsFilename))
                 {
-                    JObject optionsJson = JObject.Parse(File.ReadAllText(optionsFilename));
+                    JObject optionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
                     json["options"] = optionsJson;
                 }
 
@@ -147,11 +149,11 @@ namespace Satrabel.OpenForm.Components
         {
             try
             {
-                int ModuleId = ActiveModule.ModuleID;
+                int moduleId = ActiveModule.ModuleID;
                 OpenFormController ctrl = new OpenFormController();
                 var content = new OpenFormInfo()
                 {
-                    ModuleId = ModuleId,
+                    ModuleId = moduleId,
                     Json = form.ToString(),
                     CreatedByUserId = UserInfo.UserID,
                     CreatedOnDate = DateTime.Now,
@@ -172,7 +174,7 @@ namespace Satrabel.OpenForm.Components
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
-                    string FormData = "";
+                    string formData = "";
                     if (form != null)
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
@@ -186,7 +188,7 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out FormData);
+                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
                     }
 
 
@@ -203,7 +205,7 @@ namespace Satrabel.OpenForm.Components
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
-                                string body = FormData;
+                                string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
                                     body = hbs.Execute(notification.EmailBody, data);
