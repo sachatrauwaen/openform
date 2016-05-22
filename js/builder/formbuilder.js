@@ -123,6 +123,13 @@ function getSchema(formdef) {
                 prop.default = prop.enum[0];
             }
         }
+        if (value.dependencies) {
+            var deps = [];
+            for (var i = 0; i < value.dependencies.length; i++) {
+                deps.push(value.dependencies[i].fieldname);
+            }
+            prop.dependencies = deps;
+        }
         if (value.required) {
             prop.required = value.required;
         }
@@ -193,6 +200,7 @@ function getSchema(formdef) {
             }
             schema.properties[value.fieldname] = prop;
         });
+        
     }
     return schema;
 }
@@ -254,6 +262,18 @@ var baseFields = function (index, value, oldOptions) {
     }
     if (value.helper) {
         field.helper = value.helper;
+    }
+    if (value.dependencies) {
+        
+        for (var i = 0; i < value.dependencies.length; i++) {
+            if (value.dependencies[i].values) {
+                if (!field.dependencies) {
+                    field.dependencies = {};
+                }
+                var values = value.dependencies[i].values.split(",");
+                field.dependencies[value.dependencies[i].fieldname] = values;
+            }
+        }
     }
     if (value.fieldtype == "array" || value.fieldtype == "table") {
         //field.toolbarSticky = true;
@@ -472,6 +492,24 @@ var fieldSchema =
                     "title": "Max date (iso)"
                 }
             }
+        },
+        "dependencies": {
+            "type": "array",
+            "title": "Dependencies",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "fieldname": {
+                        "title": "Field",
+                        "type": "string"
+                    },
+                    "values": {
+                        "title": "Values (value1, value2, ...)",
+                        "type": "string"
+                    }
+                }
+            },
+            "dependencies": ["advanced"]
         }
     }
 };
@@ -547,7 +585,19 @@ var fieldOptions =
         "dependencies": {
             "fieldtype": ["date"]
         }
+    },
+    "dependencies": {
+        "type": "table",
+        "items" : {
+            "fields": {
+                "fieldname": {
+                },
+                "values": {
+                }
+            }
+        }
     }
+
 };
 
 fieldOptions.subfields.items.fields = fieldOptions;
@@ -588,6 +638,7 @@ var formbuilderConfig = {
             //$.cookie('alpacadata', JSON.stringify(value), { expires: 7, path: '/' });
             $('#builder').val(JSON.stringify(value, null, "  "));
             showForm(value);
+                        
         });
     }
 
