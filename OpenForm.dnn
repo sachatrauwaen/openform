@@ -14,8 +14,7 @@
       <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
       <dependencies>
         <dependency type="CoreVersion">07.02.00</dependency>
-        <dependency type="package">OpenForm</dependency>
-        <dependency type="type">Satrabel.OpenContent.Components.Handlebars.HandlebarsEngine</dependency>
+        <dependency type="package">OpenContent</dependency>
       </dependencies>
       <components>
         <component type="Script">
