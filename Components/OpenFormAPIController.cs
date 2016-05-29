@@ -32,7 +32,9 @@ using Satrabel.OpenContent.Components.Handlebars;
 using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
+using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
+using Satrabel.OpenContent.Components.Logging;
 
 #endregion
 
@@ -41,7 +43,6 @@ namespace Satrabel.OpenForm.Components
     [AllowAnonymous]
     public class OpenFormAPIController : DnnApiController
     {
-        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(OpenFormAPIController));
         public string BaseDir
         {
             get
@@ -52,16 +53,17 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage Form()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
 
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
-                    JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+
+                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                     json["schema"] = schemaJson;
 
                     // default options
@@ -102,7 +104,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                LoggingUtils.ProcessApiLoadException(this, exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -118,7 +120,7 @@ namespace Satrabel.OpenForm.Components
                 string Template = "settings-schema.json";
                 string schemaFilename = path + Template;
 
-                JObject schemaJson = JObject.Parse(File.ReadAllText(schemaFilename));
+                JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                 json["schema"] = schemaJson;
                 string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode() + ".json";
                 if (!File.Exists(optionsFilename))
@@ -127,7 +129,7 @@ namespace Satrabel.OpenForm.Components
                 }
                 if (File.Exists(optionsFilename))
                 {
-                    JObject optionsJson = JObject.Parse(File.ReadAllText(optionsFilename));
+                    JObject optionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
                     json["options"] = optionsJson;
                 }
 
@@ -139,7 +141,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
@@ -147,11 +149,11 @@ namespace Satrabel.OpenForm.Components
         {
             try
             {
-                int ModuleId = ActiveModule.ModuleID;
+                int moduleId = ActiveModule.ModuleID;
                 OpenFormController ctrl = new OpenFormController();
                 var content = new OpenFormInfo()
                 {
-                    ModuleId = ModuleId,
+                    ModuleId = moduleId,
                     Json = form.ToString(),
                     CreatedByUserId = UserInfo.UserID,
                     CreatedOnDate = DateTime.Now,
@@ -172,7 +174,7 @@ namespace Satrabel.OpenForm.Components
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
-                    string FormData = "";
+                    string formData = "";
                     if (form != null)
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
@@ -186,7 +188,7 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out FormData);
+                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
                     }
 
 
@@ -203,7 +205,7 @@ namespace Satrabel.OpenForm.Components
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
-                                string body = FormData;
+                                string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
                                     body = hbs.Execute(notification.EmailBody, data);
@@ -218,13 +220,20 @@ namespace Satrabel.OpenForm.Components
                             catch (Exception exc)
                             {
                                 res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
-                                Logger.Error(exc);
+                                Log.Logger.Error(exc);
                             }
                         }
                     }
                     if (settings != null && settings.Settings != null)
                     {
-                        res.Message = hbs.Execute(settings.Settings.Message, data);
+                        if (!string.IsNullOrEmpty(settings.Settings.Message))
+                        {
+                            res.Message = hbs.Execute(settings.Settings.Message, data);
+                        }
+                        else
+                        {
+                            res.Message = "Message sended.";
+                        }
                         res.Tracking = settings.Settings.Tracking;
                         if (!string.IsNullOrEmpty(settings.Settings.Tracking))
                         {
@@ -237,10 +246,77 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
-                Logger.Error(exc);
+                Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
+
+        [ValidateAntiForgeryToken]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+        [HttpGet]
+        public HttpResponseMessage LoadBuilder()
+        {
+            string Template = (string)ActiveModule.ModuleSettings["template"];
+            JObject json = new JObject();
+            try
+            {
+                if (!string.IsNullOrEmpty(Template))
+                {
+                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
+                    JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
+                    if (dataJson != null)
+                        json["data"] = dataJson;
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, json);
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
+            }
+        }
+
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.View)]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public HttpResponseMessage UpdateBuilder(JObject json)
+        {
+            string Template = (string)ActiveModule.ModuleSettings["template"];
+            try
+            {
+                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
+                if (json["data"] != null && json["schema"] != null && json["options"] != null)
+                {
+                    var schema = json["schema"].ToString();
+                    var options = json["options"].ToString();
+                    var data = json["data"].ToString();
+                    var datafile = dataDirectory + "builder.json";
+                    var schemafile = dataDirectory + "schema.json";
+                    var optionsfile = dataDirectory + "options.json";
+                    try
+                    {
+                        File.WriteAllText(datafile, data);
+                        File.WriteAllText(schemafile, schema);
+                        File.WriteAllText(optionsfile, options);
+                    }
+                    catch (Exception ex)
+                    {
+                        string mess = string.Format("Error while saving file [{0}]", datafile);
+                        Log.Logger.Error(mess, ex);
+                        throw new Exception(mess, ex);
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, "");
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
+            }
+        }
+
         private static string GetProperty(JObject obj, string PropertyName)
         {
             string PropertyValue = "";

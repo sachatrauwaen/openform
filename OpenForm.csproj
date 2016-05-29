@@ -109,7 +109,15 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlpacaFormBuilder.ascx.cs">
+      <DependentUpon>AlpacaFormBuilder.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AlpacaFormBuilder.ascx.designer.cs">
+      <DependentUpon>AlpacaFormBuilder.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Components\FeatureController.cs" />
+    <Compile Include="Components\Logger.cs" />
     <Compile Include="Components\OpenFormController.cs" />
     <Compile Include="Components\OpenFormInfo.cs" />
     <Compile Include="Components\OpenFormUtils.cs" />
@@ -118,6 +126,13 @@
     <Compile Include="Components\Recaptcha.cs" />
     <Compile Include="Edit.ascx.designer.cs">
       <DependentUpon>Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditData.ascx.cs">
+      <DependentUpon>EditData.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditData.ascx.designer.cs">
+      <DependentUpon>EditData.ascx</DependentUpon>
     </Compile>
     <Compile Include="EditSettings.ascx.cs">
       <DependentUpon>EditSettings.ascx</DependentUpon>
@@ -160,7 +175,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AlpacaFormBuilder.ascx" />
     <Content Include="Edit.ascx" />
+    <Content Include="EditData.ascx" />
+    <Content Include="js\builder\formbuilder.css" />
+    <Content Include="js\builder\formbuilder.html" />
+    <Content Include="js\builder\formbuilder.js" />
     <Content Include="EditSettings.ascx" />
     <Content Include="EditTemplate.ascx" />
     <Content Include="License.txt" />
@@ -210,11 +230,17 @@
   <ItemGroup>
     <Content Include="App_LocalResources\View.ascx.fr-FR.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\AlpacaFormBuilder.ascx.resx" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />

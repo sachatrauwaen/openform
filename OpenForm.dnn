@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="02.01.00">
+    <package name="OpenForm" type="Module" version="03.00.00">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module</description>
       <iconFile>Images/icon_extensions.png</iconFile>
@@ -15,7 +15,6 @@
       <dependencies>
         <dependency type="CoreVersion">07.02.00</dependency>
         <dependency type="package">OpenContent</dependency>
-        <dependency type="type">Satrabel.OpenContent.Components.Handlebars.HandlebarsEngine</dependency>
       </dependencies>
       <components>
         <component type="Script">
@@ -100,6 +99,28 @@
                     <controlSrc>DesktopModules/OpenForm/ShareTemplate.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Template Exchange</controlTitle>
+                    <controlType>Host</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>FormBuilder</controlKey>
+                    <controlSrc>DesktopModules/OpenForm/AlpacaFormBuilder.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Form Builder</controlTitle>
+                    <controlType>Admin</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>EditData</controlKey>
+                    <controlSrc>DesktopModules/OpenForm/EditData.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Edit Raw Data</controlTitle>
                     <controlType>Host</controlType>
                     <iconFile />
                     <helpUrl />

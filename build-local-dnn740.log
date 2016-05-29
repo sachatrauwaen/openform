@@ -1,0 +1,44 @@
+Microsoft (R) Build Engine, version 4.6.1055.0
+[Microsoft .NET Framework, Version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 18/05/2016 11:31:08.
+Projet "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj" sur le noud 1 (Rebuild cible(s)).
+CoreClean:
+  Suppression du fichier "c:\sacha\dnn\satrabel\dnn741\bin\Satrabel.OpenForm.dll".
+  Suppression du fichier "c:\sacha\dnn\satrabel\dnn741\bin\Satrabel.OpenForm.pdb".
+  Suppression du fichier "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\obj\Debug\OpenForm.csprojResolveAssemblyReference.cache".
+  Suppression du fichier "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\obj\Debug\Satrabel.OpenForm.dll".
+  Suppression du fichier "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\obj\Debug\Satrabel.OpenForm.pdb".
+GenerateTargetFrameworkMonikerAttribute:
+La cible est ignor‚e "GenerateTargetFrameworkMonikerAttribute", car tous les fichiers de sortie sont … jour par rapport aux fichiers d'entr‚e.
+CoreCompile:
+  C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:4 /define:DEBUG;TRACE /highentropyva- /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\ClientDependency.Core.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Instrumentation.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Web.Client.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Web.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.WebUtility.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Microsoft.CSharp.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\Newtonsoft.Json.dll /reference:c:\sacha\dnn\satrabel\dnn741\bin\OpenContent.dll /reference:c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\SharpZipLib.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ComponentModel.DataAnnotations.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Configuration.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.DataSetExtensions.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.EnterpriseServices.dll" /reference:c:\sacha\dnn\satrabel\dnn741\bin\System.Net.Http.dll /reference:c:\sacha\dnn\satrabel\dnn741\bin\System.Net.Http.Formatting.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.ApplicationServices.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.DynamicData.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.Entity.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.Extensions.dll" /reference:c:\sacha\dnn\satrabel\dnn741\bin\System.Web.Helpers.dll /reference:c:\sacha\dnn\satrabel\dnn741\bin\System.Web.Http.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.Services.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /debug+ /debug:full /optimize- /out:obj\Debug\Satrabel.OpenForm.dll /target:library /utf8output AlpacaFormBuilder.ascx.cs AlpacaFormBuilder.ascx.designer.cs Components\FeatureController.cs Components\OpenFormController.cs Components\OpenFormInfo.cs Components\OpenFormUtils.cs Components\OpenFormAPIController.cs Components\OpenFormRouteMapper.cs Components\Recaptcha.cs Edit.ascx.designer.cs EditData.ascx.cs EditData.ascx.designer.cs EditSettings.ascx.cs EditSettings.ascx.designer.cs EditTemplate.ascx.cs EditTemplate.ascx.designer.cs OpenFormModuleBase.cs OpenFormModuleSettingsBase.cs Edit.ascx.cs Properties\AssemblyInfo.cs ShareTemplate.ascx.cs ShareTemplate.ascx.designer.cs View.ascx.cs View.ascx.designer.cs "C:\Users\sacha\AppData\Local\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"
+ShareTemplate.ascx.cs(102,45): warning CS0618: 'Satrabel.OpenContent.Components.OpenContentUtils.GetTemplates(DotNetNuke.Entities.Portals.PortalSettings, int, Satrabel.OpenContent.Components.FileUri, string)' est obsolŠteÿ: 'This method is obsolete since dec 2015; use GetTemplatesFiles(PortalSettings portalSettings, int moduleId, TemplateManifest selectedTemplate, string moduleSubDir) instead' [c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj]
+ShareTemplate.ascx.cs(120,48): warning CS0618: 'Satrabel.OpenContent.Components.OpenContentUtils.GetTemplates(DotNetNuke.Entities.Portals.PortalSettings, int, Satrabel.OpenContent.Components.FileUri, string)' est obsolŠteÿ: 'This method is obsolete since dec 2015; use GetTemplatesFiles(PortalSettings portalSettings, int moduleId, TemplateManifest selectedTemplate, string moduleSubDir) instead' [c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj]
+_CopyFilesMarkedCopyLocal:
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\ClientDependency.Core.dll" vers "..\..\bin\ClientDependency.Core.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.dll" vers "..\..\bin\DotNetNuke.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Instrumentation.dll" vers "..\..\bin\DotNetNuke.Instrumentation.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Web.Client.dll" vers "..\..\bin\DotNetNuke.Web.Client.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.Web.dll" vers "..\..\bin\DotNetNuke.Web.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\DotNetNuke.WebUtility.dll" vers "..\..\bin\DotNetNuke.WebUtility.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\Newtonsoft.Json.dll" vers "..\..\bin\Newtonsoft.Json.dll".
+  Copie du fichier de "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\ref\dnn740\SharpZipLib.dll" vers "..\..\bin\SharpZipLib.dll".
+CopyFilesToOutputDirectory:
+  Copie du fichier de "obj\Debug\Satrabel.OpenForm.dll" vers "..\..\bin\Satrabel.OpenForm.dll".
+  OpenForm -> c:\sacha\dnn\satrabel\dnn741\bin\Satrabel.OpenForm.dll
+  Copie du fichier de "obj\Debug\Satrabel.OpenForm.pdb" vers "..\..\bin\Satrabel.OpenForm.pdb".
+G‚n‚ration du projet "c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj" termin‚e (Rebuild cible(s)).
+
+La g‚n‚ration a r‚ussi.
+
+"c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj" (Rebuild cible) (1) ->
+(CoreCompile cible) -> 
+  ShareTemplate.ascx.cs(102,45): warning CS0618: 'Satrabel.OpenContent.Components.OpenContentUtils.GetTemplates(DotNetNuke.Entities.Portals.PortalSettings, int, Satrabel.OpenContent.Components.FileUri, string)' est obsolŠteÿ: 'This method is obsolete since dec 2015; use GetTemplatesFiles(PortalSettings portalSettings, int moduleId, TemplateManifest selectedTemplate, string moduleSubDir) instead' [c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj]
+  ShareTemplate.ascx.cs(120,48): warning CS0618: 'Satrabel.OpenContent.Components.OpenContentUtils.GetTemplates(DotNetNuke.Entities.Portals.PortalSettings, int, Satrabel.OpenContent.Components.FileUri, string)' est obsolŠteÿ: 'This method is obsolete since dec 2015; use GetTemplatesFiles(PortalSettings portalSettings, int moduleId, TemplateManifest selectedTemplate, string moduleSubDir) instead' [c:\sacha\dnn\satrabel\dnn741\DesktopModules\OpenForm\OpenForm.csproj]
+
+    2 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.54

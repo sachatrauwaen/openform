@@ -117,22 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="cmdCustom.Text" xml:space="preserve">
-    <value>Create Module Template</value>
-  </data>
   <data name="cmdSave.Text" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
   </data>
-  <data name="cmdSaveClose.Text" xml:space="preserve">
-    <value>Save &amp; Close</value>
+  <data name="DataType.Text" xml:space="preserve">
+    <value>Typ der Daten</value>
   </data>
-  <data name="OverwriteTemplate.Text" xml:space="preserve">
-    <value>Overwrite module template with selected template</value>
-  </data>
-  <data name="scriptsLabel.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="cmdBuilder.Text" xml:space="preserve">
-    <value>Activate Builder (not full alpaca support)</value>
+  <data name="Versions.Text" xml:space="preserve">
+    <value>Versionen</value>
   </data>
 </root>
