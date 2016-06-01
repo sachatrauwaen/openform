@@ -38,10 +38,10 @@ GO
 
 ALTER TABLE {databaseOwner}{objectQualifier}OpenForm_Items
     ADD CONSTRAINT
-	FK_OpenForm_Items_Modules FOREIGN KEY
+	FK_{objectQualifier}OpenForm_Items_Modules FOREIGN KEY
 	(
 	    ModuleId
-	) REFERENCES {databaseOwner}{objectQualifier}dbo.Modules
+	) REFERENCES {databaseOwner}{objectQualifier}Modules
 	(
 	    ModuleID
 	) ON UPDATE NO ACTION 
