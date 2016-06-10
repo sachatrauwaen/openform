@@ -32,7 +32,7 @@ namespace Satrabel.OpenForm
                 if (!Page.IsPostBack)
                 {
                     OpenFormController ctrl = new OpenFormController();
-                    var data = ctrl.GetContents(ModuleId).OrderByDescending(c=> c.CreatedOnDate);
+                    var data = ctrl.GetContents(ModuleId).OrderByDescending(c => c.CreatedOnDate);
                     var dynData = new List<dynamic>();
                     foreach (var item in data)
                     {
@@ -90,12 +90,19 @@ namespace Satrabel.OpenForm
                 foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
                 {
                     if (dic.ContainsKey(key))
-                        row.Add(dic[key]);
+                    {
+                        var value = dic[key];
+                        row.Add(value);
+                        //todo: this work fine for values, but not for object's. It returns the type name "System.Web.Helpers.DynamicJsonObject"
+                    }
+                    else
+                    {
+                        row.Add(""); //add empty value to preserve table structure.
+                    }
                 }
                 dt.Rows.Add(row.ToArray());
             }
             return dt;
         }
-       
     }
 }
