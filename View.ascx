@@ -27,7 +27,7 @@
 
 <asp:PlaceHolder runat="server" ID="phForm">
     <asp:Panel ID="ScopeWrapper" runat="server" EnableViewState="false">
-        <div id="OpenForm" class="OpenForm<%=ModuleId %>">
+        <div class="OpenForm OpenForm<%=ModuleId %>">
             <div id="field1" class="alpaca"></div>
             <asp:Literal ID="lReCaptcha" runat="server" Mode="PassThrough"></asp:Literal>
             <ul class="dnnActions dnnClear actions-openform">
