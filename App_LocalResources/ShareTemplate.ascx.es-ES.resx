@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!--DOTWARE TST S.L.-->
+  <data name="cmdCopy.Text">
+    <value xml:space="preserve">Copiar</value>
+  </data>
+  <data name="cmdExport.Text">
+    <value xml:space="preserve">Exportar</value>
+  </data>
+  <data name="cmdImport.Text">
+    <value xml:space="preserve">Importar</value>
+  </data>
+  <data name="cmdImport.Text1">
+    <value xml:space="preserve">Importar</value>
+  </data>
+  <data name="lblAction.Text">
+    <value xml:space="preserve">Acción</value>
+  </data>
+  <data name="lblExportName.Text">
+    <value xml:space="preserve">Nuevo nombre de plantilla</value>
+  </data>
+  <data name="lblFile.Text">
+    <value xml:space="preserve">Archivo</value>
+  </data>
+  <data name="lblImportName.Text">
+    <value xml:space="preserve">Nuevo nombre de la plantilla</value>
+  </data>
+  <data name="lblMoreinfo.Text">
+    <value xml:space="preserve">Más información</value>
+  </data>
+  <data name="lblTemplates.Text">
+    <value xml:space="preserve">Plantilla</value>
+  </data>
+  <data name="lblWebTemplates.Text">
+    <value xml:space="preserve">Plantilla</value>
+  </data>
+  <data name="lCopyName.Text">
+    <value xml:space="preserve">Con nuevo nombre</value>
+  </data>
+  <data name="lCopyTemplates.Text">
+    <value xml:space="preserve">Desde plantilla</value>
+  </data>
+</root>

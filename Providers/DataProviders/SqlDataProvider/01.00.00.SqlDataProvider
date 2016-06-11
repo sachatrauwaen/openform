@@ -45,8 +45,7 @@ ALTER TABLE {databaseOwner}{objectQualifier}OpenForm_Items
 	(
 	    ModuleID
 	) ON UPDATE NO ACTION 
-	  ON DELETE CASCADE 
-	  NOT FOR REPLICATION
+	  ON DELETE CASCADE 	  
 GO
 
 

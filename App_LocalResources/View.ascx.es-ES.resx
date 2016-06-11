@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!--DOTWARE TST S.L.-->
+  <data name="AddContent.Action">
+    <value xml:space="preserve">Agregar contenido</value>
+  </data>
+  <data name="BasicSettings.Text">
+    <value xml:space="preserve">Configuración básica de OpenForm</value>
+  </data>
+  <data name="cmdCancel.Text">
+    <value xml:space="preserve">Cancelar</value>
+  </data>
+  <data name="cmdSave.Text">
+    <value xml:space="preserve">Guardar</value>
+  </data>
+  <data name="CollapseAll.Text">
+    <value xml:space="preserve">Contraer todo</value>
+  </data>
+  <data name="ConfirmDelete.Text">
+    <value xml:space="preserve">¿Seguro que quiere borrar este elemento?</value>
+  </data>
+  <data name="DeleteItem.Text">
+    <value xml:space="preserve">Eliminar</value>
+  </data>
+  <data name="EditContent.Action">
+    <value xml:space="preserve">Editar contenido</value>
+  </data>
+  <data name="EditData.Action">
+    <value xml:space="preserve">Editar datos en bruto</value>
+  </data>
+  <data name="EditGlobalSettings.Action">
+    <value xml:space="preserve">Modificar la configuración global</value>
+  </data>
+  <data name="EditItem.Text">
+    <value xml:space="preserve">Editar</value>
+  </data>
+  <data name="EditModule.Text">
+    <value xml:space="preserve">Añadir elemento</value>
+  </data>
+  <data name="EditSettings.Action">
+    <value xml:space="preserve">Configuración de plantilla</value>
+  </data>
+  <data name="EditTemplate.Action">
+    <value xml:space="preserve">Editar archivos de plantilla</value>
+  </data>
+  <data name="Help.Action">
+    <value xml:space="preserve">Ayuda</value>
+  </data>
+  <data name="Intro.Text">
+    <value xml:space="preserve">Empezar</value>
+  </data>
+  <data name="lDataSource.Text">
+    <value xml:space="preserve">Página - módulo</value>
+  </data>
+  <data name="lFrom.Text">
+    <value xml:space="preserve">Basado en plantilla de</value>
+  </data>
+  <data name="lTemplate.Text">
+    <value xml:space="preserve">Plantilla</value>
+  </data>
+  <data name="lTemplateName.Text">
+    <value xml:space="preserve">Nuevo nombre de la plantilla</value>
+  </data>
+  <data name="lUseContent.Text">
+    <value xml:space="preserve">Origen de contenido</value>
+  </data>
+  <data name="lUseTemplate.Text">
+    <value xml:space="preserve">Quiero</value>
+  </data>
+  <data name="ShareTemplate.Action">
+    <value xml:space="preserve">Intercambio de plantillas</value>
+  </data>
+</root>
