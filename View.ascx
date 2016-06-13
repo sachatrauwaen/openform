@@ -28,7 +28,7 @@
 <asp:PlaceHolder runat="server" ID="phForm">
     <asp:Panel ID="ScopeWrapper" runat="server" EnableViewState="false">
         <div class="OpenForm OpenForm<%=ModuleId %>">
-            <div id="field1" class="alpaca"></div>
+            <div id="field-<%=ModuleId %>" class="alpaca"></div>
             <asp:Literal ID="lReCaptcha" runat="server" Mode="PassThrough"></asp:Literal>
             <ul class="dnnActions dnnClear actions-openform">
                 <li>                    
@@ -36,9 +36,9 @@
                 </li>
             </ul>
         </div>
-        <span id="ResultMessage"></span>
-        <div id="ResultTracking"></div>
-        <asp:HiddenField ID="hfOpenForm" runat="server" ClientIDMode="Static" />        
+        <span class="ResultMessage"></span>
+        <div class="ResultTracking"></div>
+        <asp:HiddenField ID="hfOpenForm" runat="server" />        
     </asp:Panel>
 
     <script type="text/javascript">
@@ -69,7 +69,7 @@
                     view = "bootstrap-create";
                 }
 
-                $("#field1", moduleScope).alpaca({
+                $(".alpaca", moduleScope).alpaca({
                     "schema": config.schema,
                     "options": config.options,
                     "data": config.data,
@@ -87,7 +87,7 @@
 
                             if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
                                 var value = selfControl.getValue();
-                                $('#hfOpenForm').val(JSON.stringify(value));
+                                $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
                                 if (recaptcha) {
                                     value.recaptcha = recap;
                                 }
@@ -119,9 +119,10 @@
                     if (data.Tracking) {
                         <%= PostBackStr() %>
                     } else {
-                        $('#OpenForm', moduleScope).hide();
-                        $('#ResultMessage', moduleScope).html(data.Message);
-                        $('#ResultTracking', moduleScope).html(data.Tracking);
+                        $('.OpenForm', moduleScope).hide();
+                        $('.ResultMessage', moduleScope).html(data.Message);
+                        $('.ResultTracking', moduleScope).html(data.Tracking);
+                        $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top-100,0));
                     }
                 }).fail(function (xhr, result, status) {
                     alert("Uh-oh, something broke: " + status);
