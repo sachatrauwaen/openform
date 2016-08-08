@@ -174,7 +174,7 @@ namespace Satrabel.OpenForm
                           "~/DesktopModules/OpenContent/images/editsettings2.png",
                           ModuleContext.EditUrl("EditSettings"),
                           false,
-                          SecurityAccessLevel.Host,
+                          SecurityAccessLevel.Admin,
                           true,
                           false);
 
@@ -194,7 +194,7 @@ namespace Satrabel.OpenForm
                             "~/DesktopModules/OpenForm/images/formbuilder.png",
                             ModuleContext.EditUrl("FormBuilder"),
                             false,
-                            SecurityAccessLevel.Host,
+                            SecurityAccessLevel.Admin,
                             true,
                             false);
 
