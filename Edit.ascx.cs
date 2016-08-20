@@ -92,8 +92,7 @@ namespace Satrabel.OpenForm
                     if (dic.ContainsKey(key))
                     {
                         var value = dic[key];
-                        row.Add(value);
-                        //todo: this work fine for values, but not for object's. It returns the type name "System.Web.Helpers.DynamicJsonObject"
+                        row.Add(value); //todo: this work fine for values, but not for object's. It returns the type name "System.Web.Helpers.DynamicJsonObject"
                     }
                     else
                     {

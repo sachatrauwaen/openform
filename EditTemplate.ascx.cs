@@ -52,21 +52,19 @@ namespace Satrabel.OpenForm
 
             if (scriptList.SelectedValue.EndsWith("schema.json"))
             {
-                string Template = ModuleContext.Settings["template"] as string;
-                string templateFolder = Path.GetDirectoryName(Template);
+                string template = ModuleContext.Settings["template"] as string;
+                string templateFolder = Path.GetDirectoryName(template);
 
-                string scriptFile = templateFolder + "/" + scriptList.SelectedValue.Replace("schema.json", "builder.json");
-                string srcFile = Server.MapPath(scriptFile);
-
+                var scriptFile = new FileUri(templateFolder, scriptList.SelectedValue.Replace("schema.json", "builder.json"));
                 var schema = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue) as JObject;
                 var options = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue.Replace("schema.json", "options.json")) as JObject;
 
                 JObject builder = new JObject();
                 builder["formfields"] = GetBuilder(schema, options);
 
-                if (!File.Exists(srcFile))
+                if (!scriptFile.FileExists)
                 {
-                    File.WriteAllText(srcFile, builder.ToString());
+                    File.WriteAllText(scriptFile.PhysicalFilePath, builder.ToString());
                 }
                 Response.Redirect(Globals.NavigateURL(), true);
             }
