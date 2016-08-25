@@ -46,7 +46,7 @@ namespace Satrabel.OpenForm
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
-            
+
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -140,12 +140,12 @@ namespace Satrabel.OpenForm
         {
             if (!(string.IsNullOrEmpty(template)))
             {
-                var cssfilename =  new FileUri(Path.GetDirectoryName(template) , "template.css");
+                var cssfilename = new FileUri(Path.GetDirectoryName(template), "template.css");
                 if (cssfilename.FileExists)
                 {
                     ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename.UrlFilePath), FileOrder.Css.PortalCss);
                 }
-                var jsfilename = new FileUri(Path.GetDirectoryName(template) , "template.js");
+                var jsfilename = new FileUri(Path.GetDirectoryName(template), "template.js");
                 if (jsfilename.FileExists)
                 {
                     ClientResourceManager.RegisterScript(Page, jsfilename.UrlFilePath, FileOrder.Js.DefaultPriority);
@@ -178,7 +178,7 @@ namespace Satrabel.OpenForm
                           true,
                           false);
 
-                
+
 
                 var scriptFileSetting = Settings["template"] as string;
                 if (!string.IsNullOrEmpty(scriptFileSetting))
@@ -210,19 +210,19 @@ namespace Satrabel.OpenForm
                                true,
                                false);
 
-                    
-                    
-                        actions.Add(ModuleContext.GetNextActionID(),
-                            Localization.GetString("EditData.Action", LocalResourceFile),
-                            ModuleActionType.EditContent,
-                            "",
-                            "~/DesktopModules/OpenForm/images/edit.png",
-                            //ModuleContext.EditUrl("EditData"),
-                            ModuleContext.EditUrl("EditData"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
+
+
+                    actions.Add(ModuleContext.GetNextActionID(),
+                        Localization.GetString("EditData.Action", LocalResourceFile),
+                        ModuleActionType.EditContent,
+                        "",
+                        "~/DesktopModules/OpenForm/images/edit.png",
+                        //ModuleContext.EditUrl("EditData"),
+                        ModuleContext.EditUrl("EditData"),
+                        false,
+                        SecurityAccessLevel.Host,
+                        true,
+                        false);
                 }
                 /*
                 Actions.Add(ModuleContext.GetNextActionID(),
