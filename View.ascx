@@ -5,7 +5,7 @@
 <dnncl:DnnJsInclude ID="DnnJsInclude2" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/alpaca/bootstrap/alpaca.js" Priority="107" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnJsInclude ID="DnnJsInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/moment/min/moment-with-locales.min.js" Priority="108" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
-<dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"  />
+<dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
@@ -27,18 +27,18 @@
 
 <asp:PlaceHolder runat="server" ID="phForm">
     <asp:Panel ID="ScopeWrapper" runat="server" EnableViewState="false">
-        <div class="OpenForm OpenForm<%=ModuleId %>">
+        <div id="OpenForm<%=ModuleId %>" class="OpenForm OpenForm<%=ModuleId %>">
             <div id="field-<%=ModuleId %>" class="alpaca"></div>
             <asp:Literal ID="lReCaptcha" runat="server" Mode="PassThrough"></asp:Literal>
             <ul class="dnnActions dnnClear actions-openform">
-                <li>                    
+                <li>
                     <asp:LinkButton ID="lbSave" runat="server" class="btn btn-primary btn-openform" resourcekey="cmdSave" OnClick="lbSave_Click" />
                 </li>
             </ul>
         </div>
         <span class="ResultMessage"></span>
         <div class="ResultTracking"></div>
-        <asp:HiddenField ID="hfOpenForm" runat="server" />        
+        <asp:HiddenField ID="hfOpenForm" runat="server" />
     </asp:Panel>
 
     <script type="text/javascript">
@@ -64,7 +64,7 @@
 
                 var view = config.view;
                 if (view) {
-                    view.parent = "bootstrap-create";                    
+                    view.parent = "bootstrap-create";
                 } else {
                     view = "bootstrap-create";
                 }
@@ -91,18 +91,18 @@
                                 if (recaptcha) {
                                     value.recaptcha = recap;
                                 }
-                                $(this).prop('disabled', true);                            
+                                $(this).prop('disabled', true);
                                 self.FormSubmit(value);
                                 $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                             }
                             return false;
                         });
                         $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf]);
-                }
+                    }
+                });
+            }).fail(function (xhr, result, status) {
+                //alert("Uh-oh, something broke: " + status);
             });
-        }).fail(function (xhr, result, status) {
-            //alert("Uh-oh, something broke: " + status);
-        });
 
             self.FormSubmit = function (data) {
                 var postData = data;
@@ -122,7 +122,7 @@
                         $('.OpenForm', moduleScope).hide();
                         $('.ResultMessage', moduleScope).html(data.Message);
                         $('.ResultTracking', moduleScope).html(data.Tracking);
-                        $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top-100,0));
+                        $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                     }
                 }).fail(function (xhr, result, status) {
                     alert("Uh-oh, something broke: " + status);

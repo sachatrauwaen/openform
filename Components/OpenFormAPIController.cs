@@ -78,7 +78,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
                     // language options
-                    optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                    optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnLanguageUtils.GetCurrentCultureCode() + ".json";
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
@@ -166,7 +166,7 @@ namespace Satrabel.OpenForm.Components
 
                 JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
                 json["schema"] = schemaJson;
-                string optionsFilename = path + "settings-options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                string optionsFilename = path + "settings-options." + DnnLanguageUtils.GetCurrentCultureCode() + ".json";
                 if (!File.Exists(optionsFilename))
                 {
                     optionsFilename = path + "settings-options.json";

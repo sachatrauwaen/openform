@@ -145,7 +145,7 @@ namespace Satrabel.OpenForm
                     field["relationoptions"]["valuefield"] = opt["dataService"]["data"]["valueField"];
                     field["relationoptions"]["textfield"] = opt["dataService"]["data"]["textField"];
                 }
-                if (fieldtype == "date" && opt["picker"] != null)
+                if ((fieldtype == "date" || fieldtype == "datetime" || fieldtype == "time") && opt["picker"] != null)
                 {
                     field["dateoptions"] = new JObject();
                     field["dateoptions"] = opt["picker"];
