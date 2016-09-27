@@ -20,6 +20,7 @@ using System.Dynamic;
 using System.Web.Helpers;
 using System.Data;
 using System.ComponentModel;
+using Newtonsoft.Json.Linq;
 
 namespace Satrabel.OpenForm
 {
@@ -77,7 +78,7 @@ namespace Satrabel.OpenForm
         public static DataTable ToDataTable(IEnumerable<dynamic> items)
         {
             var data = items.ToArray();
-            if (data.Count() == 0) return null;
+            if (!data.Any()) return null;
             var dt = new DataTable();
             foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
             {
@@ -85,14 +86,25 @@ namespace Satrabel.OpenForm
             }
             foreach (var d in data)
             {
-                List<object> row = new List<object>();
+                var row = new List<object>();
                 var dic = (IDictionary<string, object>)d;
                 foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
                 {
                     if (dic.ContainsKey(key))
                     {
-                        var value = dic[key];
-                        row.Add(value); //todo: this work fine for values, but not for object's. It returns the type name "System.Web.Helpers.DynamicJsonObject"
+                        object value = dic[key];
+                        if (value is DynamicJsonObject)
+                        {
+                            row.Add(value.ToJson()); 
+                        }
+                        else if (value is DynamicJsonArray)
+                        {
+                            row.Add(string.Join(";", (DynamicJsonArray)value) ); 
+                        }
+                        else
+                        {
+                            row.Add(value);
+                        }
                     }
                     else
                     {
