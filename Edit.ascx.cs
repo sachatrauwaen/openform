@@ -42,6 +42,16 @@ namespace Satrabel.OpenForm
             }
         }
 
+        protected void ExcelDownload_Click(object sender, EventArgs e)
+        {
+            var dynData = GetDataAsListOfDynamics();
+            DataTable datatable = ToDataTable(dynData);
+            string filename=GetFileNameFromFormName();
+            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+        }
+
+        #region Private Methods
+
         private List<dynamic> GetDataAsListOfDynamics()
         {
             OpenFormController ctrl = new OpenFormController();
@@ -65,7 +75,7 @@ namespace Satrabel.OpenForm
             return dynData;
         }
 
-        public Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
+        private Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
         {
             var dictionary = new Dictionary<string, object>();
             foreach (var name in dynObj.GetDynamicMemberNames())
@@ -81,12 +91,10 @@ namespace Satrabel.OpenForm
             return site.Target(site, target);
         }
 
-        public void OnClickDownloadDataAsExcel()
+        private string GetFileNameFromFormName()
         {
-            var dynData = GetDataAsListOfDynamics();
-            DataTable datatable = ToDataTable(dynData);
-            string filename="submissions.xls";
-            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+            //todo determine that current form and create a filename based on the name of the form.
+            return "submissions.xlsx";
         }
 
         private static DataTable ToDataTable(IEnumerable<dynamic> items)
@@ -105,8 +113,8 @@ namespace Satrabel.OpenForm
                 }
             }
             string[] columnNames = dt.Columns.Cast<DataColumn>()
-                                 .Select(x => x.ColumnName)
-                                 .ToArray();
+                .Select(x => x.ColumnName)
+                .ToArray();
             foreach (var d in data)
             {
                 var row = new List<object>();
@@ -138,5 +146,7 @@ namespace Satrabel.OpenForm
             }
             return dt;
         }
+
+        #endregion
     }
 }

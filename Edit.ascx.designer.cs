@@ -13,6 +13,15 @@ namespace Satrabel.OpenForm {
     public partial class Edit {
         
         /// <summary>
+        /// excelDownload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton excelDownload;
+        
+        /// <summary>
         /// gvData control.
         /// </summary>
         /// <remarks>
@@ -20,14 +29,5 @@ namespace Satrabel.OpenForm {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvData;
-        
-        /// <summary>
-        /// excelDownload control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor excelDownload;
     }
 }
