@@ -80,26 +80,39 @@ namespace Satrabel.OpenForm
             var data = items.ToArray();
             if (!data.Any()) return null;
             var dt = new DataTable();
-            foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
+            //foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
+            //{
+            //    dt.Columns.Add(key);
+            //}
+            foreach (dynamic d in data)
             {
-                dt.Columns.Add(key);
+                foreach (var key in ((IDictionary<string, object>)d).Keys)
+                {
+                    if (!dt.Columns.Contains(key))
+                    {
+                        dt.Columns.Add(key);
+                    }
+                }
             }
+            string[] columnNames = dt.Columns.Cast<DataColumn>()
+                                 .Select(x => x.ColumnName)
+                                 .ToArray();
             foreach (var d in data)
             {
                 var row = new List<object>();
                 var dic = (IDictionary<string, object>)d;
-                foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
+                foreach (string key in columnNames)
                 {
                     if (dic.ContainsKey(key))
                     {
                         object value = dic[key];
                         if (value is DynamicJsonObject)
                         {
-                            row.Add(value.ToJson()); 
+                            row.Add(value.ToJson());
                         }
                         else if (value is DynamicJsonArray)
                         {
-                            row.Add(string.Join(";", (DynamicJsonArray)value) ); 
+                            row.Add(string.Join(";", (DynamicJsonArray)value));
                         }
                         else
                         {
