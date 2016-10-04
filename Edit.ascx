@@ -16,6 +16,7 @@
             </asp:GridView>
         </div>
     </fieldset>
+    <p><a href="#" runat="server" id="excelDownload" >Download as Excel</a></p>
 </div>
 
 <script type="text/javascript">

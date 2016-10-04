@@ -11,7 +11,6 @@
 */
 using System;
 using System.Linq;
-using DotNetNuke.Entities.Users;
 using Satrabel.OpenForm.Components;
 using DotNetNuke.Services.Exceptions;
 using Satrabel.OpenContent.Components.Json;
@@ -19,8 +18,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Web.Helpers;
 using System.Data;
-using System.ComponentModel;
-using Newtonsoft.Json.Linq;
+using System.Web;
+using Satrabel.OpenContent.Components;
 
 namespace Satrabel.OpenForm
 {
@@ -32,24 +31,7 @@ namespace Satrabel.OpenForm
             {
                 if (!Page.IsPostBack)
                 {
-                    OpenFormController ctrl = new OpenFormController();
-                    var data = ctrl.GetContents(ModuleId).OrderByDescending(c => c.CreatedOnDate);
-                    var dynData = new List<dynamic>();
-                    foreach (var item in data)
-                    {
-                        dynamic o = new ExpandoObject();
-                        var dict = (IDictionary<string, object>)o;
-                        o.CreatedOnDate = item.CreatedOnDate;
-                        //o.Json = item.Json;
-                        dynamic d = JsonUtils.JsonToDynamic(item.Json);
-                        //o.Data = d;
-                        Dictionary<String, Object> jdic = Dyn2Dict(d);
-                        foreach (var p in jdic)
-                        {
-                            dict[p.Key] = p.Value;
-                        }
-                        dynData.Add(o);
-                    }
+                    var dynData = GetDataAsListOfDynamics();
                     gvData.DataSource = ToDataTable(dynData);
                     gvData.DataBind();
                 }
@@ -59,6 +41,30 @@ namespace Satrabel.OpenForm
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        private List<dynamic> GetDataAsListOfDynamics()
+        {
+            OpenFormController ctrl = new OpenFormController();
+            var data = ctrl.GetContents(ModuleId).OrderByDescending(c => c.CreatedOnDate);
+            var dynData = new List<dynamic>();
+            foreach (var item in data)
+            {
+                dynamic o = new ExpandoObject();
+                var dict = (IDictionary<string, object>)o;
+                o.CreatedOnDate = item.CreatedOnDate;
+                //o.Json = item.Json;
+                dynamic d = JsonUtils.JsonToDynamic(item.Json);
+                //o.Data = d;
+                Dictionary<String, Object> jdic = Dyn2Dict(d);
+                foreach (var p in jdic)
+                {
+                    dict[p.Key] = p.Value;
+                }
+                dynData.Add(o);
+            }
+            return dynData;
+        }
+
         public Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
         {
             var dictionary = new Dictionary<string, object>();
@@ -75,15 +81,19 @@ namespace Satrabel.OpenForm
             return site.Target(site, target);
         }
 
-        public static DataTable ToDataTable(IEnumerable<dynamic> items)
+        public void OnClickDownloadDataAsExcel()
+        {
+            var dynData = GetDataAsListOfDynamics();
+            DataTable datatable = ToDataTable(dynData);
+            string filename="submissions.xls";
+            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+        }
+
+        private static DataTable ToDataTable(IEnumerable<dynamic> items)
         {
             var data = items.ToArray();
             if (!data.Any()) return null;
             var dt = new DataTable();
-            //foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
-            //{
-            //    dt.Columns.Add(key);
-            //}
             foreach (dynamic d in data)
             {
                 foreach (var key in ((IDictionary<string, object>)d).Keys)
