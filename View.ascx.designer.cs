@@ -58,6 +58,15 @@ namespace Satrabel.OpenForm {
         protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnCssInclude DnnCssInclude4;
         
         /// <summary>
+        /// DnnJsInclude5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude5;
+        
+        /// <summary>
         /// pHelp control.
         /// </summary>
         /// <remarks>
