@@ -79,23 +79,22 @@
                     "postRender": function (control) {
                         var selfControl = control;
                         $("#<%=lbSave.ClientID%>", moduleScope).click(function () {
-                            selfControl.refreshValidationState(true);
-
-                            var recaptcha = typeof (grecaptcha) != "undefined";
-                            if (recaptcha) {
-                                var recap = grecaptcha.getResponse();
-                            }
-
-                            if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
-                                var value = selfControl.getValue();
-                                $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
+                            selfControl.refreshValidationState(true, function () {
+                                var recaptcha = typeof (grecaptcha) != "undefined";
                                 if (recaptcha) {
-                                    value.recaptcha = recap;
+                                    var recap = grecaptcha.getResponse();
                                 }
-                                $(this).prop('disabled', true);
-                                self.FormSubmit(value);
-                                $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
-                            }
+                                if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
+                                    var value = selfControl.getValue();
+                                    $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
+                                    if (recaptcha) {
+                                        value.recaptcha = recap;
+                                    }
+                                    $(this).prop('disabled', true);
+                                    self.FormSubmit(value);
+                                    $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                }
+                            });
                             return false;
                         });
                         $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf]);
