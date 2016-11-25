@@ -86,7 +86,7 @@ function getSchema(formdef) {
         "image": "string",
         "icon": "string",
         "guid": "string",
-        "wysihtml": "string",
+        "summernote": "string",
         "ckeditor": "string",
         "address": "object",
         "relation": "string",
@@ -244,6 +244,20 @@ var baseFields = function (index, value, oldOptions) {
             "maxDate": "2099-12-31",
             //"locale": "nl"
         };
+    } else if (value.fieldtype == "summernote") {
+        field.summernote = {
+            height: null,
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']]
+            ]
+        };
     }
     if (value.fieldoptions) {
         field.optionLabels = $.map(value.fieldoptions, function (v, i) {
@@ -392,8 +406,8 @@ var fieldSchema =
             "title": "Type",
             "enum": ["text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
                         /*"image", "file", "url", "icon", "guid", "address",
-                        "array", "table", "relation",
-                        "wysihtml", "ckeditor", "gallery", "documents", "object" ,
+                        "array", "table", "relation",*/
+                        "summernote", /* "ckeditor", "gallery", "documents", "object" ,
                         "publishstatus", "publishstartdate", "publishenddate"*/]
         },
         "title": {
@@ -523,7 +537,7 @@ var fieldOptions =
         "label": "Multi language",
         "dependencies": {
             "advanced": [true],
-            "fieldtype": ["text", "ckeditor", "file", "image", "url", "wysihtml"]
+            "fieldtype": ["text", "ckeditor", "file", "image", "url", "summernote"]
         }
     },
     */
@@ -540,8 +554,8 @@ var fieldOptions =
     "fieldtype": {
         "optionLabels": ["Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
                             /*"Image (upload & autocomplete)", "File (upload & autocomplete)", "Url (autocomplete for pages)", "Font Awesome Icons", "Guid (auto id)", "Address (autocomplete & geocode)",
-                            "List (array)", "Table (array)", "Relation (Additional Data)",
-                            "Wysihtml", "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
+                            "List (array)", "Table (array)", "Relation (Additional Data)", */
+                            "Summernote", /* "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
                             "Publish status", "Publish start date", "Publish end date"*/]
     },
     "title": {
