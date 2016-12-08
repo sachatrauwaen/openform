@@ -331,19 +331,22 @@ namespace Satrabel.OpenForm.Components
             {
                 string templateFilename = HostingEnvironment.MapPath("~/" + Template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
-                if (json["data"] != null && json["schema"] != null && json["options"] != null)
+                if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
                     var schema = json["schema"].ToString();
                     var options = json["options"].ToString();
+                    var view = json["view"].ToString();
                     var data = json["data"].ToString();
                     var datafile = dataDirectory + "builder.json";
                     var schemafile = dataDirectory + "schema.json";
                     var optionsfile = dataDirectory + "options.json";
+                    var viewfile = dataDirectory + "view.json";
                     try
                     {
                         File.WriteAllText(datafile, data);
                         File.WriteAllText(schemafile, schema);
                         File.WriteAllText(optionsfile, options);
+                        File.WriteAllText(viewfile, view);
                     }
                     catch (Exception ex)
                     {

@@ -293,7 +293,6 @@ namespace Satrabel.OpenForm
             {
                 string templateFilename = Server.MapPath("~/" + Template);
                 string builderFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
-
                 if (!File.Exists(builderFilename))
                 {
                     scriptList.Items.Add(new ListItem("Data Definition", "schema.json"));
@@ -302,11 +301,10 @@ namespace Satrabel.OpenForm
                     {
                         scriptList.Items.Add(new ListItem("UI Options " + item.Code, "options." + item.Code + ".json"));
                     }
+                    scriptList.Items.Add(new ListItem("View Layout", "view.json"));
                 }
-                scriptList.Items.Add(new ListItem("View Layout", "view.json"));
                 scriptList.Items.Add(new ListItem("Stylesheet", "template.css"));
                 scriptList.Items.Add(new ListItem("Javascript", "template.js"));
-
             }
         }
         protected void cmdSave_Click(object sender, EventArgs e)
