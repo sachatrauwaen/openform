@@ -72,6 +72,7 @@ function getSchema(formdef) {
         "properties": {}
     };
     var schematypes = {
+        "label": "string",
         "text": "string",
         "select": "string",
         "radio": "string",
@@ -133,7 +134,7 @@ function getSchema(formdef) {
         if (value.required) {
             prop.required = value.required;
         }
-        if (value.readonly) {
+        if (value.fieldtype == "label") {
             prop.default = value.defaultHtml;
         }
         else if (value.default) {
@@ -213,6 +214,7 @@ var baseFields = function (index, value, oldOptions) {
     var field = {
         "type": value.fieldtype
     };
+       
 
     if (value.multilanguage) {
         field.type = "ml" + field.type;
@@ -274,6 +276,10 @@ var baseFields = function (index, value, oldOptions) {
     if (value.fieldtype == "radio") {
         field.vertical = value.vertical;
     }
+    if (value.fieldtype == "label") {
+        field.type = "text";
+        field.view = "bootstrap-display";
+    }
 
     if (value.placeholder) {
         field.placeholder = value.placeholder;
@@ -282,10 +288,11 @@ var baseFields = function (index, value, oldOptions) {
         field.helper = value.helper;
     }
     if (value.horizontal) {
-        field.view = "bootstrap-create-horizontal";
-    }
-    if (value.readonly) {
-        field.view = "bootstrap-display";
+        if (value.fieldtype == "label") {
+            field.view = "bootstrap-display-horizontal";
+        } else {
+            field.view = "bootstrap-create-horizontal";
+        }
     }
     if (value.dependencies) {
         
@@ -382,7 +389,7 @@ function getView(formdef) {
     };
     if (formdef.formfields) {
         $.each(formdef.formfields, function (index, value) {
-            view.layout.bindings[value.fieldname] = value.position ? value.position : "#row1";
+            view.layout.bindings[value.fieldname] = value.position ? "#"+value.position : "#row1";
         });
     }
     return view;
@@ -432,7 +439,7 @@ var fieldSchema =
             "default": "text",
             "required": true,
             "title": "Type",
-            "enum": ["text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
+            "enum": ["label","text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
                         /*"image", "file", "url", "icon", "guid", "address",
                         "array", "table", "relation",*/
                         "summernote", /* "ckeditor", "gallery", "documents", "object" ,
@@ -446,22 +453,17 @@ var fieldSchema =
             "type": "boolean",
             "dependencies": "fieldtype"
         },
-        "readonly": {
-            "type": "boolean",
-            "dependencies": "fieldtype"
-        },
         "defaultHtml": {
             //"title": "Default",
             "type": "string",
-            "dependencies": "readonly"
+            "dependencies": "fieldtype"
+        },
+        "required": {
+            "type": "boolean"          
         },
         "advanced": {
             "type": "boolean"
-        },
-        "required": {
-            "type": "boolean",
-            "dependencies": "advanced"
-        },
+        },        
         "default": {
             "title": "Default",
             "type": "string",
@@ -478,17 +480,17 @@ var fieldSchema =
             "title": "Placeholder",
             "dependencies": ["fieldtype", "advanced"]
         },
-        "horizontal": {
-            "type": "boolean",
-            "title": "Horizontal",
-            "dependencies": ["advanced"]
-        },
         "position": {
             "type": "string",
             "title": "Position",
             "dependencies": ["advanced"],
-            "enum": ["row1","col1","col2","row2"]
+            "enum": ["row1", "col1", "col2", "row2"]
         },
+        "horizontal": {
+            "type": "boolean",
+            "dependencies": ["advanced"]
+        },
+        
         /*
         "multilanguage": {
             "type": "boolean",
@@ -601,7 +603,7 @@ var fieldOptions =
         "fieldClass": "fieldname"
     },
     "fieldtype": {
-        "optionLabels": ["Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
+        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
                             /*"Image (upload & autocomplete)", "File (upload & autocomplete)", "Url (autocomplete for pages)", "Font Awesome Icons", "Guid (auto id)", "Address (autocomplete & geocode)",
                             "List (array)", "Table (array)", "Relation (Additional Data)", */
                             "Rich Text", /* "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
@@ -622,15 +624,12 @@ var fieldOptions =
     "required": {
         "rightLabel": "Required"
     },
-    "readonly": {
-        "rightLabel": "Readonly",
-        "dependencies": {
-            "fieldtype": ["text"]
-        }
-    },
     "defaultHtml": {
         "title": "Default",
         "type": "summernote",
+        "dependencies": {
+            "fieldtype": ["label"]
+        },
         "summernote" : {
             height: null,
             minHeight: null,
@@ -649,8 +648,10 @@ var fieldOptions =
         "rightLabel": "Horizontal"
     },
     "position": {
-        "type": "select",
-        "optionLabels": ["row 1 (100%)", "row 2 / col 1 (50%)", "row 2 / col 2 (50%)", "row 3 (100%)"]
+        "type": "radio",
+        "optionLabels": ["1. Top", "2. Left", "3. Right", "4. Bottom"],
+        "vertical": false,
+        "removeDefaultNone": true
     },
     "vertical": {
         "rightLabel": "Vertical",
