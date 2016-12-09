@@ -378,19 +378,42 @@ function getOptions(formdef) {
     return options;
 }
 
+function getViewTemplate(row, cols) {
+    var t = '<div class="row">';
+    for (var i = 1; i <= cols; i++) {
+        t += '<div class="col-md-' + (12 / cols) + '" id="pos_' + row + '_' + i + '"></div>';
+    }
+    t += '</div>';
+    return t;
+}   
+
 function getView(formdef) {
+    
     var view = {
         "parent": "bootstrap-create",
         "layout": {
-            "template": "<div><div class='row'><div class='col-md-12' id='row1'></div></div><div class='row'><div class='col-md-6' id='col1'></div><div class='col-md-6' id='col2'></div></div><div class='row'><div class='col-md-12' id='row2'></div></div></div>",
+            "template": "<div><div class='row'><div class='col-md-12' id='pos_1_1'></div></div>",
             "bindings": {
             }
         }
     };
     if (formdef.formfields) {
+        var row = 0;
+        var lastCols = 0;
+        var template = "<div>";
         $.each(formdef.formfields, function (index, value) {
-            view.layout.bindings[value.fieldname] = value.position ? "#"+value.position : "#row1";
+            var cols = value.position ? parseInt(value.position[0]) : 1;
+            if (cols != lastCols) {
+                row++;
+                template += getViewTemplate(row, cols);
+                lastCols = cols;
+                
+            }
+            var col = value.position ? value.position[4] : 1;
+            view.layout.bindings[value.fieldname] = "#pos_" + row + "_" + col;
         });
+        template += "</div>";
+        view.layout.template = template;
     }
     return view;
 }
@@ -484,7 +507,7 @@ var fieldSchema =
             "type": "string",
             "title": "Position",
             "dependencies": ["advanced"],
-            "enum": ["row1", "col1", "col2", "row2"]
+            "enum": ["1col1", "2col1", "2col2", "3col1", "3col2", "3col3"]
         },
         "horizontal": {
             "type": "boolean",
@@ -649,7 +672,7 @@ var fieldOptions =
     },
     "position": {
         "type": "radio",
-        "optionLabels": ["1. Top", "2. Left", "3. Right", "4. Bottom"],
+        "optionLabels": ["1 col", "2 col left", "2 col right", "3 col left", "3 col middle", "3 col right"],
         "vertical": false,
         "removeDefaultNone": true
     },
