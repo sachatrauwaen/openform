@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="03.01.02">
+    <package name="OpenForm" type="Module" version="03.01.03">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module. Requires OpenContent v3.1.2</description>
       <iconFile>~/Images/icon_extensions.png</iconFile>
@@ -110,7 +110,7 @@
                     <controlSrc>DesktopModules/OpenForm/AlpacaFormBuilder.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Form Builder</controlTitle>
-                    <controlType>Admin</controlType>
+                    <controlType>Edit</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
