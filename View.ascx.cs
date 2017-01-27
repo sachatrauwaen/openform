@@ -73,7 +73,7 @@ namespace Satrabel.OpenForm
 
                     string jsonSettings = Settings["data"] as string;
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
-                    if (settings != null && settings.Settings != null)
+                    if (settings?.Settings != null)
                     {
                         HandlebarsEngine hbs = new HandlebarsEngine();
                         lMessage.Text = hbs.Execute(settings.Settings.Message, data);

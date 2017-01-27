@@ -50,58 +50,42 @@ namespace Satrabel.OpenForm.Components
                 return PortalSettings.HomeDirectory + "/OpenForm/Templates/";
             }
         }
+
         [HttpGet]
         public HttpResponseMessage Form()
         {
             string template = (string)ActiveModule.ModuleSettings["template"];
+            var templateUri = new FileUri(template);
 
             JObject json = new JObject();
             try
             {
                 if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
-                    string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
+                    var prefix = ""; //just kept it here to stay close to OpenContent FormBuilder.cs code
 
-                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
+                    // schema
+                    var schemaJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + prefix + "schema.json");
                     json["schema"] = schemaJson;
 
                     // default options
-                    string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
-                    if (File.Exists(optionsFilename))
-                    {
-                        string fileContent = File.ReadAllText(optionsFilename);
-                        if (!string.IsNullOrWhiteSpace(fileContent))
-                        {
-                            JObject optionsJson = JObject.Parse(fileContent);
-                            json["options"] = optionsJson;
-                        }
-                    }
+                    var optionsJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + prefix + "options.json");
+                    if (optionsJson != null)
+                        json["options"] = optionsJson;
+
                     // language options
-                    optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
-                    if (File.Exists(optionsFilename))
-                    {
-                        string fileContent = File.ReadAllText(optionsFilename);
-                        if (!string.IsNullOrWhiteSpace(fileContent))
-                        {
-                            JObject optionsJson = JObject.Parse(fileContent);
-                            json["options"] = json["options"].JsonMerge(optionsJson);
-                        }
-                    }
+                    optionsJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + prefix + "options." + DnnUtils.GetCurrentCultureCode() + ".json");
+                    if (optionsJson != null)
+                        json["options"] = json["options"].JsonMerge(optionsJson);
+
                     // view
-                    string viewFilename = Path.GetDirectoryName(templateFilename) + "\\" + "view.json";
-                    if (File.Exists(viewFilename))
-                    {
-                        string fileContent = File.ReadAllText(viewFilename);
-                        if (!string.IsNullOrWhiteSpace(fileContent))
-                        {
-                            JObject viewJson = JObject.Parse(fileContent);
-                            json["view"] = viewJson;
-                        }
-                    }
+                    var viewJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + prefix + "view.json");
+                    if (viewJson != null)
+                        json["view"] = viewJson;
+
                     if (UserInfo.UserID > 0 && schemaJson != null)
                     {
-                        InitFields(schemaJson);
+                        InitFields(schemaJson as JObject);
                     }
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
@@ -204,7 +188,7 @@ namespace Satrabel.OpenForm.Components
                     LastModifiedByUserId = UserInfo.UserID,
                     LastModifiedOnDate = DateTime.Now,
                     Html = "",
-                    Title = "Form submitted - " + DateTime.Now.ToString()
+                    Title = "Form submitted - " + DateTime.Now
                 };
                 ctrl.AddContent(content);
                 var res = new ResultDTO()
@@ -218,7 +202,7 @@ namespace Satrabel.OpenForm.Components
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
-                    string formData = "";
+                    string defaultReplyTemplate = "";
                     if (form != null)
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
@@ -232,11 +216,28 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
+                        data = OpenFormUtils.GenerateFormData(form.ToString(), out defaultReplyTemplate);
+
+                        //Enhance data with schema and options
+                        string template = (string)ActiveModule.ModuleSettings["template"];
+                        var templateUri = new FileUri(template);
+                        // schema
+                        var schemaJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + "schema.json");
+                        data.Schema = schemaJson;
+
+                        // default options
+                        var optionsJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + "options.json");
+                        if (optionsJson != null)
+                            data.Options = optionsJson;
+
+                        // language options
+                        var optionsCulturesJson = JsonUtils.LoadJsonFromFile(templateUri.UrlFolder + "options." + DnnUtils.GetCurrentCultureCode() + ".json");
+                        if (optionsCulturesJson != null)
+                            data.Options = optionsJson == null ? optionsCulturesJson : optionsJson.JsonMerge(optionsJson);
                     }
 
 
-                    if (settings != null && settings.Notifications != null)
+                    if (settings?.Notifications != null)
                     {
                         foreach (var notification in settings.Notifications)
                         {
@@ -249,13 +250,9 @@ namespace Satrabel.OpenForm.Components
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
-                                string body = formData;
-                                if (!string.IsNullOrEmpty(notification.EmailBody))
-                                {
-                                    body = hbs.Execute(notification.EmailBody, data);
-                                }
+                                string body = !string.IsNullOrEmpty(notification.EmailBody) ? hbs.Execute(notification.EmailBody, data) : defaultReplyTemplate;
 
-                                string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
+                                string send = SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
                                 if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
@@ -300,13 +297,13 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage LoadBuilder()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
                     JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
                     if (dataJson != null)
@@ -326,10 +323,10 @@ namespace Satrabel.OpenForm.Components
         [HttpPost]
         public HttpResponseMessage UpdateBuilder(JObject json)
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             try
             {
-                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string templateFilename = HostingEnvironment.MapPath("~/" + template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
                 if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
