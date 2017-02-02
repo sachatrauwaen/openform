@@ -413,12 +413,14 @@ namespace Satrabel.OpenForm.Components
 
             if (TypeOfAddress == "host")
             {
-                adr = new MailAddress(Host.HostEmail, Host.HostTitle);
+                if (Validate.IsValidEmail(Host.HostEmail))
+                    adr = new MailAddress(Host.HostEmail, Host.HostTitle);
             }
             else if (TypeOfAddress == "admin")
             {
                 var user = UserController.GetUserById(PortalSettings.PortalId, PortalSettings.AdministratorId);
-                adr = new MailAddress(user.Email, user.DisplayName);
+                if (Validate.IsValidEmail(user.Email))
+                    adr = new MailAddress(user.Email, user.DisplayName);
             }
             else if (TypeOfAddress == "form")
             {
@@ -427,19 +429,21 @@ namespace Satrabel.OpenForm.Components
                 if (string.IsNullOrEmpty(FormEmailField))
                     FormEmailField = "email";
 
-                string FormEmail = GetProperty(form, FormEmailField);
-                string FormName = GetProperty(form, FormNameField);
-                adr = new MailAddress(FormEmail, FormName);
+                string formEmail = GetProperty(form, FormEmailField);
+                string formName = GetProperty(form, FormNameField);
+                if (Validate.IsValidEmail(formEmail))
+                    adr = new MailAddress(formEmail, formName);
             }
             else if (TypeOfAddress == "custom")
             {
-                adr = new MailAddress(Email, Name);
+                if (Validate.IsValidEmail(Email))
+                    adr = new MailAddress(Email, Name);
             }
             else if (TypeOfAddress == "current")
             {
                 if (UserInfo == null)
                     throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
-                if (string.IsNullOrEmpty(UserInfo.Email))
+                if (Validate.IsValidEmail(UserInfo.Email))
                     throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
 
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
