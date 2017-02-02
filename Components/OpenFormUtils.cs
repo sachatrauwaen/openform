@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using Satrabel.OpenContent.Components.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -146,6 +147,86 @@ namespace Satrabel.OpenForm.Components
             if (!res.StartsWith("/")) res = "/" + res;
             return res;
         }
+
+        public static void ResolveLabels(JObject o, JObject schema, JObject options)
+        {
+            foreach (var child in o.Children<JProperty>().ToList())
+            {
+                JObject sch = null;
+                if (schema?["properties"] != null)
+                {
+                    sch = schema["properties"][child.Name] as JObject;
+                }
+                JObject opt = null;
+                if (options?["fields"] != null)
+                {
+                    opt = options["fields"][child.Name] as JObject;
+                }
+                if (opt == null) continue;
+                
+                JArray optionLabels = opt["optionLabels"] as JArray;
+                
+                var childProperty = child;
+                if (childProperty.Value is JArray)
+                {
+                    var array = childProperty.Value as JArray;
+                    JArray newArray = new JArray();
+                    foreach (var value in array)
+                    {
+                        var obj = value as JObject;
+                        if (obj != null)
+                        {
+                            ResolveLabels(obj, sch["items"] as JObject, opt["items"] as JObject);
+                        }
+                        else if (optionLabels != null)
+                        {
+                            var val = value as JValue;
+                            if (val != null)
+                            {
+                                try
+                                {
+                                    var aEnum = sch["enum"] as JArray;
+                                    var idx = Array.IndexOf(aEnum.Select(e => e.ToString()).ToArray(), val.ToString());
+                                    newArray.Add(optionLabels[idx]);
+                                }
+                                catch (System.Exception)
+                                {
+                                }
+                            }
+                        }
+                    }
+
+                    if (optionLabels != null)
+                    {
+                        childProperty.Value = newArray;
+                    }
+                }
+                else if (childProperty.Value is JObject)
+                {
+                    var obj = childProperty.Value as JObject;
+                    ResolveLabels(obj, sch, opt);
+                }
+                else if (childProperty.Value is JValue)
+                {
+                    if (optionLabels != null)
+                    {
+                        string val = childProperty.Value.ToString();
+                        try
+                        {
+                            var aEnum = sch["enum"] as JArray;
+                            var idx = Array.IndexOf(aEnum.Select(e => e.ToString()).ToArray(), val.ToString());
+                            o[childProperty.Name] = optionLabels[idx];
+
+                        }
+                        catch (System.Exception)
+                        {
+                            Debugger.Break();
+                        }
+                    }                   
+                }
+            }
+        }
+
     }
 
 }

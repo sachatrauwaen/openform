@@ -232,6 +232,37 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
+                        
+                        string template = (string)ActiveModule.ModuleSettings["template"];
+                        string templateFilename = HostingEnvironment.MapPath("~/" + template);
+                        string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
+                        JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
+                        //form["schema"] = schemaJson;
+                        // default options
+                        string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
+                        JObject optionsJson = null;
+                        if (File.Exists(optionsFilename))
+                        {
+                            string fileContent = File.ReadAllText(optionsFilename);
+                            if (!string.IsNullOrWhiteSpace(fileContent))
+                            {
+                                optionsJson = JObject.Parse(fileContent);
+                                //form["options"] = optionsJson;
+                            }
+                        }
+                        // language options
+                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                        if (File.Exists(optionsFilename))
+                        {
+                            string fileContent = File.ReadAllText(optionsFilename);
+                            if (!string.IsNullOrWhiteSpace(fileContent))
+                            {
+                                optionsJson = JObject.Parse(fileContent);
+                                //form["options"] = optionsJson;
+                            }
+                        }
+
+                        OpenFormUtils.ResolveLabels(form, schemaJson, optionsJson);
                         data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
                     }
 
@@ -252,6 +283,7 @@ namespace Satrabel.OpenForm.Components
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
+                                    
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
 
