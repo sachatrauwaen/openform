@@ -34,6 +34,7 @@ using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
+using Satrabel.OpenContent.Components.Form;
 using Satrabel.OpenContent.Components.Logging;
 
 #endregion
@@ -64,7 +65,10 @@ namespace Satrabel.OpenForm.Components
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
 
                     JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
-                    json["schema"] = schemaJson;
+                    if (UserInfo.UserID > 0 && schemaJson is JObject)
+                    {
+                        json["schema"] = FormUtils.InitFields(schemaJson as JObject, UserInfo);
+                    }
 
                     // default options
                     string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
@@ -99,10 +103,7 @@ namespace Satrabel.OpenForm.Components
                             json["view"] = viewJson;
                         }
                     }
-                    if (UserInfo.UserID > 0 && schemaJson != null)
-                    {
-                        InitFields(schemaJson);
-                    }
+                    
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
             }
@@ -110,46 +111,6 @@ namespace Satrabel.OpenForm.Components
             {
                 LoggingUtils.ProcessApiLoadException(this, exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
-            }
-        }
-
-        private void InitFields(JObject schemaJson)
-        {
-            if (schemaJson["properties"] != null && schemaJson["properties"]["Username"] != null)
-            {
-                schemaJson["properties"]["Username"]["default"] = UserInfo.Username;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["FirstName"] != null)
-            {
-                schemaJson["properties"]["FirstName"]["default"] = UserInfo.FirstName;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["LastName"] != null)
-            {
-                schemaJson["properties"]["LastName"]["default"] = UserInfo.LastName;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["Email"] != null)
-            {
-                schemaJson["properties"]["Email"]["default"] = UserInfo.Email;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["DisplayName"] != null)
-            {
-                schemaJson["properties"]["DisplayName"]["default"] = UserInfo.DisplayName;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["Telephone"] != null)
-            {
-                schemaJson["properties"]["Telephone"]["default"] = UserInfo.Profile.Telephone;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["Street"] != null)
-            {
-                schemaJson["properties"]["Street"]["default"] = UserInfo.Profile.Street;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["City"] != null)
-            {
-                schemaJson["properties"]["City"]["default"] = UserInfo.Profile.City;
-            }
-            if (schemaJson["properties"] != null && schemaJson["properties"]["Country"] != null)
-            {
-                schemaJson["properties"]["Country"]["default"] = UserInfo.Profile.Country;
             }
         }
 
