@@ -64,8 +64,11 @@ namespace Satrabel.OpenForm.Components
                     string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
 
-                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
-
+                    json["schema"] = JsonUtils.GetJsonFromFile(schemaFilename);
+                    if (UserInfo.UserID > 0 && json["schema"] is JObject)
+                    {
+                        json["schema"] = FormUtils.InitFields(json["schema"] as JObject, UserInfo);
+                    }
 
                     // default options
                     string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
@@ -101,10 +104,7 @@ namespace Satrabel.OpenForm.Components
                         }
                     }
 
-                    if (UserInfo.UserID > 0 && schemaJson is JObject)
-                    {
-                        json["schema"] = FormUtils.InitFields(schemaJson as JObject, UserInfo);
-                    }
+
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
             }
