@@ -272,7 +272,14 @@ namespace Satrabel.OpenForm
             //return Page.GetPostBackEventReference(lbSave);
             PostBackOptions pb = new PostBackOptions(lbSave, null, Globals.NavigateURL("", "result=submit"), false, false, false, true, false, null);
             return Page.ClientScript.GetPostBackEventReference(pb);
+            
         }
+
+        protected string GetString(string resourceKey)
+        {
+            return Localization.GetString(resourceKey, LocalResourceFile);
+        }
+        
     }
 }
 

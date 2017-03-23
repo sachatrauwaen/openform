@@ -84,6 +84,10 @@
                     "postRender": function (control) {
                         var selfControl = control;
                         $("#<%=lbSave.ClientID%>", moduleScope).click(function () {
+                            var saveButton = this;
+                            if ($(saveButton).hasClass('disabled')) {
+                                return false;
+                            }
                             selfControl.refreshValidationState(true, function () {
                                 var recaptcha = typeof (grecaptcha) != "undefined";
                                 if (recaptcha) {
@@ -95,7 +99,9 @@
                                     if (recaptcha) {
                                         value.recaptcha = recap;
                                     }
-                                    $(this).prop('disabled', true);
+                                    $(saveButton).addClass('disabled');
+                                    $(saveButton).text("<%= GetString("Sending") %>");
+                                    $(saveButton).off();
                                     self.FormSubmit(value);
                                     $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                                 }
