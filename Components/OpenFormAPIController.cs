@@ -223,11 +223,10 @@ namespace Satrabel.OpenForm.Components
                                 //form["options"] = optionsJson;
                             }
                         }
-
-                        OpenFormUtils.ResolveLabels(form, schemaJson, optionsJson);
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
+                        var enhancedForm = form.DeepClone() as JObject;
+                        OpenFormUtils.ResolveLabels(enhancedForm, schemaJson, optionsJson);
+                        data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
                     }
-
 
                     if (settings != null && settings.Notifications != null)
                     {
