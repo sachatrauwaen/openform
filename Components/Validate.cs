@@ -7,6 +7,12 @@ namespace Satrabel.OpenForm.Components
     public static class Validate
     {
 
+        /// <summary>
+        /// Determines whether email is valid.
+        /// </summary>
+        /// <remarks>
+        /// https://technet.microsoft.com/nl-be/library/01escwtf(v=vs.110).aspx
+        /// </remarks>
         public static bool IsValidEmail(string strIn)
         {
             bool invalid = false;
