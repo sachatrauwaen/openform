@@ -490,9 +490,8 @@ var fieldSchema =
         "default": {
             "title": "Default",
             "type": "string",
-            "dependencies": "advanced"
-        },
-        
+            "dependencies": ["fieldtype", "advanced"]
+        },        
         "helper": {
             "type": "string",
             "title": "Helper",
@@ -615,6 +614,12 @@ var fieldOptions =
         }
     },
     */
+    "default": {
+        "dependencies": {
+            "advanced": [true],
+            "fieldtype": ["text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number"]
+        }
+    },
     "placeholder": {
         "dependencies": {
             "advanced": [true],
@@ -670,9 +675,8 @@ var fieldOptions =
     "horizontal": {
         "rightLabel": "Horizontal"
     },
-    "position": {
-        "type": "radio",
-        "optionLabels": ["1 col", "2 col left", "2 col right", "3 col left", "3 col middle", "3 col right"],
+    "position": {        
+        "optionLabels": ["1 column", "2 columns - left", "2 columns - right", "3 columns - left", "3 columns - middle", "3 columns - right"],
         "vertical": false,
         "removeDefaultNone": true
     },
