@@ -162,4 +162,7 @@
   <data name="EditData.Action" xml:space="preserve">
     <value>Edit Raw Data</value>
   </data>
+  <data name="Sending.Text" xml:space="preserve">
+    <value>Sending...</value>
+  </data>
 </root>

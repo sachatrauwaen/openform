@@ -1,11 +1,17 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="Satrabel.OpenForm.View" CodeBehind="View.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnncl" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<dnncl:DnnJsInclude ID="DnnJsInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/handlebars/handlebars.js" Priority="106" ForceProvider="DnnPageHeaderProvider" />
-<dnncl:DnnJsInclude ID="DnnJsInclude2" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/alpaca/bootstrap/alpaca.js" Priority="107" ForceProvider="DnnPageHeaderProvider" />
-<dnncl:DnnJsInclude ID="DnnJsInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/moment/min/moment-with-locales.min.js" Priority="108" ForceProvider="DnnPageHeaderProvider" />
-<dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
-<dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca-1.5.8/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"  />
+<dnncl:DnnJsInclude ID="DnnJsInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/handlebars/handlebars.js" Priority="106" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude2" runat="server" FilePath="~/DesktopModules/OpenContent/js/alpaca/bootstrap/alpaca.js" Priority="107" ForceProvider="DnnPageHeaderProvider" />
+
+<dnncl:DnnJsInclude ID="DnnJsInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/moment/min/moment-with-locales.min.js" Priority="108" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+<dnncl:DnnJsInclude ID="DnnJsInclude5" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/DateField.js" Priority="110" ForceProvider="DnnPageHeaderProvider" />
+           
+<dnncl:DnnCssInclude ID="DnnCssInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.css" />
+<dnncl:DnnJsInclude ID="DnnJsInclude10" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude9" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/SummernoteField.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
@@ -27,18 +33,18 @@
 
 <asp:PlaceHolder runat="server" ID="phForm">
     <asp:Panel ID="ScopeWrapper" runat="server" EnableViewState="false">
-        <div class="OpenForm OpenForm<%=ModuleId %>">
-            <div id="field1" class="alpaca"></div>
+        <div id="OpenForm<%=ModuleId %>" class="OpenForm OpenForm<%=ModuleId %>">
+            <div id="field-<%=ModuleId %>" class="alpaca"></div>
             <asp:Literal ID="lReCaptcha" runat="server" Mode="PassThrough"></asp:Literal>
             <ul class="dnnActions dnnClear actions-openform">
-                <li>                    
+                <li>
                     <asp:LinkButton ID="lbSave" runat="server" class="btn btn-primary btn-openform" resourcekey="cmdSave" OnClick="lbSave_Click" />
                 </li>
             </ul>
         </div>
-        <span id="ResultMessage"></span>
-        <div id="ResultTracking"></div>
-        <asp:HiddenField ID="hfOpenForm" runat="server" ClientIDMode="Static" />        
+        <span class="ResultMessage"></span>
+        <div class="ResultTracking"></div>
+        <asp:HiddenField ID="hfOpenForm" runat="server" />
     </asp:Panel>
 
     <script type="text/javascript">
@@ -64,12 +70,12 @@
 
                 var view = config.view;
                 if (view) {
-                    view.parent = "bootstrap-create";                    
+                    view.parent = "bootstrap-create";
                 } else {
                     view = "bootstrap-create";
                 }
 
-                $("#field1", moduleScope).alpaca({
+                $(".alpaca", moduleScope).alpaca({
                     "schema": config.schema,
                     "options": config.options,
                     "data": config.data,
@@ -78,31 +84,36 @@
                     "postRender": function (control) {
                         var selfControl = control;
                         $("#<%=lbSave.ClientID%>", moduleScope).click(function () {
-                            selfControl.refreshValidationState(true);
-
-                            var recaptcha = typeof (grecaptcha) != "undefined";
-                            if (recaptcha) {
-                                var recap = grecaptcha.getResponse();
+                            var saveButton = this;
+                            if ($(saveButton).hasClass('disabled')) {
+                                return false;
                             }
-
-                            if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
-                                var value = selfControl.getValue();
-                                $('#hfOpenForm').val(JSON.stringify(value));
+                            selfControl.refreshValidationState(true, function () {
+                                var recaptcha = typeof (grecaptcha) != "undefined";
                                 if (recaptcha) {
-                                    value.recaptcha = recap;
+                                    var recap = grecaptcha.getResponse();
                                 }
-                                $(this).prop('disabled', true);                            
-                                self.FormSubmit(value);
-                                $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
-                            }
+                                if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
+                                    var value = selfControl.getValue();
+                                    $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
+                                    if (recaptcha) {
+                                        value.recaptcha = recap;
+                                    }
+                                    $(saveButton).addClass('disabled');
+                                    $(saveButton).text("<%= GetString("Sending") %>");
+                                    $(saveButton).off();
+                                    self.FormSubmit(value);
+                                    $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                }
+                            });
                             return false;
                         });
                         $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf]);
-                }
+                    }
+                });
+            }).fail(function (xhr, result, status) {
+                //alert("Uh-oh, something broke: " + status);
             });
-        }).fail(function (xhr, result, status) {
-            //alert("Uh-oh, something broke: " + status);
-        });
 
             self.FormSubmit = function (data) {
                 var postData = data;
@@ -119,9 +130,10 @@
                     if (data.Tracking) {
                         <%= PostBackStr() %>
                     } else {
-                        $('#OpenForm', moduleScope).hide();
-                        $('#ResultMessage', moduleScope).html(data.Message);
-                        $('#ResultTracking', moduleScope).html(data.Tracking);
+                        $('.OpenForm', moduleScope).hide();
+                        $('.ResultMessage', moduleScope).html(data.Message);
+                        $('.ResultTracking', moduleScope).html(data.Tracking);
+                        $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                     }
                 }).fail(function (xhr, result, status) {
                     alert("Uh-oh, something broke: " + status);

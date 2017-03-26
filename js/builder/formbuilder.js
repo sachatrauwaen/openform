@@ -72,6 +72,7 @@ function getSchema(formdef) {
         "properties": {}
     };
     var schematypes = {
+        "label": "string",
         "text": "string",
         "select": "string",
         "radio": "string",
@@ -86,7 +87,7 @@ function getSchema(formdef) {
         "image": "string",
         "icon": "string",
         "guid": "string",
-        "wysihtml": "string",
+        "summernote": "string",
         "ckeditor": "string",
         "address": "object",
         "relation": "string",
@@ -133,9 +134,13 @@ function getSchema(formdef) {
         if (value.required) {
             prop.required = value.required;
         }
-        if (value.default) {
+        if (value.fieldtype == "label") {
+            prop.default = value.defaultHtml;
+        }
+        else if (value.default) {
             prop.default = value.default;
         }
+        
         if (value.fieldtype == "array" || value.fieldtype == "table") {
 
             if (!value.subfields) {
@@ -209,6 +214,7 @@ var baseFields = function (index, value, oldOptions) {
     var field = {
         "type": value.fieldtype
     };
+       
 
     if (value.multilanguage) {
         field.type = "ml" + field.type;
@@ -244,6 +250,20 @@ var baseFields = function (index, value, oldOptions) {
             "maxDate": "2099-12-31",
             //"locale": "nl"
         };
+    } else if (value.fieldtype == "summernote") {
+        field.summernote = {
+            height: null,
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']]
+            ]
+        };
     }
     if (value.fieldoptions) {
         field.optionLabels = $.map(value.fieldoptions, function (v, i) {
@@ -256,12 +276,23 @@ var baseFields = function (index, value, oldOptions) {
     if (value.fieldtype == "radio") {
         field.vertical = value.vertical;
     }
+    if (value.fieldtype == "label") {
+        field.type = "text";
+        field.view = "bootstrap-display";
+    }
 
     if (value.placeholder) {
         field.placeholder = value.placeholder;
     }
     if (value.helper) {
         field.helper = value.helper;
+    }
+    if (value.horizontal) {
+        if (value.fieldtype == "label") {
+            field.view = "bootstrap-display-horizontal";
+        } else {
+            field.view = "bootstrap-create-horizontal";
+        }
     }
     if (value.dependencies) {
         
@@ -347,6 +378,46 @@ function getOptions(formdef) {
     return options;
 }
 
+function getViewTemplate(row, cols) {
+    var t = '<div class="row">';
+    for (var i = 1; i <= cols; i++) {
+        t += '<div class="col-md-' + (12 / cols) + '" id="pos_' + row + '_' + i + '"></div>';
+    }
+    t += '</div>';
+    return t;
+}   
+
+function getView(formdef) {
+    
+    var view = {
+        "parent": "bootstrap-create",
+        "layout": {
+            "template": "<div><div class='row'><div class='col-md-12' id='pos_1_1'></div></div>",
+            "bindings": {
+            }
+        }
+    };
+    if (formdef.formfields) {
+        var row = 0;
+        var lastCols = 0;
+        var template = "<div>";
+        $.each(formdef.formfields, function (index, value) {
+            var cols = value.position ? parseInt(value.position[0]) : 1;
+            if (cols != lastCols) {
+                row++;
+                template += getViewTemplate(row, cols);
+                lastCols = cols;
+                
+            }
+            var col = value.position ? value.position[4] : 1;
+            view.layout.bindings[value.fieldname] = "#pos_" + row + "_" + col;
+        });
+        template += "</div>";
+        view.layout.template = template;
+    }
+    return view;
+}
+
 function showForm(value) {
 
     var ConnectorClass = Alpaca.getConnectorClass("default");
@@ -358,10 +429,11 @@ function showForm(value) {
 
     var schema = getSchema(value);
     var options = getOptions(value);
+    var view = getView(value);
     var config = {
         "schema": schema,
         "options": options,
-        //"view": "dnn-edit",
+        "view": view,
         "connector": connector
     };
     //alert(JSON.stringify(value, null, "  "));
@@ -390,10 +462,10 @@ var fieldSchema =
             "default": "text",
             "required": true,
             "title": "Type",
-            "enum": ["text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
+            "enum": ["label","text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
                         /*"image", "file", "url", "icon", "guid", "address",
-                        "array", "table", "relation",
-                        "wysihtml", "ckeditor", "gallery", "documents", "object" ,
+                        "array", "table", "relation",*/
+                        "summernote", /* "ckeditor", "gallery", "documents", "object" ,
                         "publishstatus", "publishstartdate", "publishenddate"*/]
         },
         "title": {
@@ -404,18 +476,22 @@ var fieldSchema =
             "type": "boolean",
             "dependencies": "fieldtype"
         },
-        "advanced": {
-            "type": "boolean"
+        "defaultHtml": {
+            //"title": "Default",
+            "type": "string",
+            "dependencies": "fieldtype"
         },
         "required": {
-            "type": "boolean",
-            "dependencies": "advanced"
+            "type": "boolean"          
         },
+        "advanced": {
+            "type": "boolean"
+        },        
         "default": {
             "title": "Default",
             "type": "string",
-            "dependencies": "advanced"
-        },
+            "dependencies": ["fieldtype", "advanced"]
+        },        
         "helper": {
             "type": "string",
             "title": "Helper",
@@ -426,6 +502,17 @@ var fieldSchema =
             "title": "Placeholder",
             "dependencies": ["fieldtype", "advanced"]
         },
+        "position": {
+            "type": "string",
+            "title": "Position",
+            "dependencies": ["advanced"],
+            "enum": ["1col1", "2col1", "2col2", "3col1", "3col2", "3col3"]
+        },
+        "horizontal": {
+            "type": "boolean",
+            "dependencies": ["advanced"]
+        },
+        
         /*
         "multilanguage": {
             "type": "boolean",
@@ -523,10 +610,16 @@ var fieldOptions =
         "label": "Multi language",
         "dependencies": {
             "advanced": [true],
-            "fieldtype": ["text", "ckeditor", "file", "image", "url", "wysihtml"]
+            "fieldtype": ["text", "ckeditor", "file", "image", "url", "summernote"]
         }
     },
     */
+    "default": {
+        "dependencies": {
+            "advanced": [true],
+            "fieldtype": ["text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number"]
+        }
+    },
     "placeholder": {
         "dependencies": {
             "advanced": [true],
@@ -538,10 +631,10 @@ var fieldOptions =
         "fieldClass": "fieldname"
     },
     "fieldtype": {
-        "optionLabels": ["Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
+        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
                             /*"Image (upload & autocomplete)", "File (upload & autocomplete)", "Url (autocomplete for pages)", "Font Awesome Icons", "Guid (auto id)", "Address (autocomplete & geocode)",
-                            "List (array)", "Table (array)", "Relation (Additional Data)",
-                            "Wysihtml", "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
+                            "List (array)", "Table (array)", "Relation (Additional Data)", */
+                            "Rich Text", /* "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
                             "Publish status", "Publish start date", "Publish end date"*/]
     },
     "title": {
@@ -558,6 +651,34 @@ var fieldOptions =
     },
     "required": {
         "rightLabel": "Required"
+    },
+    "defaultHtml": {
+        "title": "Default",
+        "type": "summernote",
+        "dependencies": {
+            "fieldtype": ["label"]
+        },
+        "summernote" : {
+            height: null,
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']]
+            ]
+        }
+    },
+    "horizontal": {
+        "rightLabel": "Horizontal"
+    },
+    "position": {        
+        "optionLabels": ["1 column", "2 columns - left", "2 columns - right", "3 columns - left", "3 columns - middle", "3 columns - right"],
+        "vertical": false,
+        "removeDefaultNone": true
     },
     "vertical": {
         "rightLabel": "Vertical",
@@ -601,8 +722,6 @@ var fieldOptions =
 };
 
 fieldOptions.subfields.items.fields = fieldOptions;
-
-
 
 var formbuilderConfig = {
     

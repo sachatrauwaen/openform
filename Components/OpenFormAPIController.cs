@@ -34,6 +34,7 @@ using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
+using Satrabel.OpenContent.Components.Form;
 using Satrabel.OpenContent.Components.Logging;
 
 #endregion
@@ -63,8 +64,11 @@ namespace Satrabel.OpenForm.Components
                     string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
 
-                    JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
-                    json["schema"] = schemaJson;
+                    json["schema"] = JsonUtils.GetJsonFromFile(schemaFilename);
+                    if (UserInfo.UserID > 0 && json["schema"] is JObject)
+                    {
+                        json["schema"] = FormUtils.InitFields(json["schema"] as JObject, UserInfo);
+                    }
 
                     // default options
                     string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
@@ -99,6 +103,8 @@ namespace Satrabel.OpenForm.Components
                             json["view"] = viewJson;
                         }
                     }
+
+
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
             }
@@ -188,9 +194,39 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        data = OpenFormUtils.GenerateFormData(form.ToString(), out formData);
+                        
+                        string template = (string)ActiveModule.ModuleSettings["template"];
+                        string templateFilename = HostingEnvironment.MapPath("~/" + template);
+                        string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
+                        JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
+                        //form["schema"] = schemaJson;
+                        // default options
+                        string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
+                        JObject optionsJson = null;
+                        if (File.Exists(optionsFilename))
+                        {
+                            string fileContent = File.ReadAllText(optionsFilename);
+                            if (!string.IsNullOrWhiteSpace(fileContent))
+                            {
+                                optionsJson = JObject.Parse(fileContent);
+                                //form["options"] = optionsJson;
+                            }
+                        }
+                        // language options
+                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                        if (File.Exists(optionsFilename))
+                        {
+                            string fileContent = File.ReadAllText(optionsFilename);
+                            if (!string.IsNullOrWhiteSpace(fileContent))
+                            {
+                                optionsJson = JObject.Parse(fileContent);
+                                //form["options"] = optionsJson;
+                            }
+                        }
+                        var enhancedForm = form.DeepClone() as JObject;
+                        OpenFormUtils.ResolveLabels(enhancedForm, schemaJson, optionsJson);
+                        data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
                     }
-
 
                     if (settings != null && settings.Notifications != null)
                     {
@@ -208,6 +244,7 @@ namespace Satrabel.OpenForm.Components
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
+                                    
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
 
@@ -287,19 +324,22 @@ namespace Satrabel.OpenForm.Components
             {
                 string templateFilename = HostingEnvironment.MapPath("~/" + Template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
-                if (json["data"] != null && json["schema"] != null && json["options"] != null)
+                if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
                     var schema = json["schema"].ToString();
                     var options = json["options"].ToString();
+                    var view = json["view"].ToString();
                     var data = json["data"].ToString();
                     var datafile = dataDirectory + "builder.json";
                     var schemafile = dataDirectory + "schema.json";
                     var optionsfile = dataDirectory + "options.json";
+                    var viewfile = dataDirectory + "view.json";
                     try
                     {
                         File.WriteAllText(datafile, data);
                         File.WriteAllText(schemafile, schema);
                         File.WriteAllText(optionsfile, options);
+                        File.WriteAllText(viewfile, view);
                     }
                     catch (Exception ex)
                     {
@@ -334,12 +374,14 @@ namespace Satrabel.OpenForm.Components
 
             if (TypeOfAddress == "host")
             {
-                adr = new MailAddress(Host.HostEmail, Host.HostTitle);
+                if (Validate.IsValidEmail(Host.HostEmail))
+                    adr = new MailAddress(Host.HostEmail, Host.HostTitle);
             }
             else if (TypeOfAddress == "admin")
             {
                 var user = UserController.GetUserById(PortalSettings.PortalId, PortalSettings.AdministratorId);
-                adr = new MailAddress(user.Email, user.DisplayName);
+                if (Validate.IsValidEmail(user.Email))
+                    adr = new MailAddress(user.Email, user.DisplayName);
             }
             else if (TypeOfAddress == "form")
             {
@@ -348,19 +390,21 @@ namespace Satrabel.OpenForm.Components
                 if (string.IsNullOrEmpty(FormEmailField))
                     FormEmailField = "email";
 
-                string FormEmail = GetProperty(form, FormEmailField);
-                string FormName = GetProperty(form, FormNameField);
-                adr = new MailAddress(FormEmail, FormName);
+                string formEmail = GetProperty(form, FormEmailField);
+                string formName = GetProperty(form, FormNameField);
+                if (Validate.IsValidEmail(formEmail))
+                    adr = new MailAddress(formEmail, formName);
             }
             else if (TypeOfAddress == "custom")
             {
-                adr = new MailAddress(Email, Name);
+                if (Validate.IsValidEmail(Email))
+                    adr = new MailAddress(Email, Name);
             }
             else if (TypeOfAddress == "current")
             {
                 if (UserInfo == null)
                     throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
-                if (string.IsNullOrEmpty(UserInfo.Email))
+                if (Validate.IsValidEmail(UserInfo.Email))
                     throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
 
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);

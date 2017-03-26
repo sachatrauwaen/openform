@@ -46,7 +46,7 @@ namespace Satrabel.OpenForm
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
-            
+
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -140,12 +140,12 @@ namespace Satrabel.OpenForm
         {
             if (!(string.IsNullOrEmpty(template)))
             {
-                var cssfilename =  new FileUri(Path.GetDirectoryName(template) , "template.css");
+                var cssfilename = new FileUri(Path.GetDirectoryName(template), "template.css");
                 if (cssfilename.FileExists)
                 {
                     ClientResourceManager.RegisterStyleSheet(Page, Page.ResolveUrl(cssfilename.UrlFilePath), FileOrder.Css.PortalCss);
                 }
-                var jsfilename = new FileUri(Path.GetDirectoryName(template) , "template.js");
+                var jsfilename = new FileUri(Path.GetDirectoryName(template), "template.js");
                 if (jsfilename.FileExists)
                 {
                     ClientResourceManager.RegisterScript(Page, jsfilename.UrlFilePath, FileOrder.Js.DefaultPriority);
@@ -174,11 +174,11 @@ namespace Satrabel.OpenForm
                           "~/DesktopModules/OpenContent/images/editsettings2.png",
                           ModuleContext.EditUrl("EditSettings"),
                           false,
-                          SecurityAccessLevel.Host,
+                          SecurityAccessLevel.Admin,
                           true,
                           false);
 
-                
+
 
                 var scriptFileSetting = Settings["template"] as string;
                 if (!string.IsNullOrEmpty(scriptFileSetting))
@@ -194,7 +194,7 @@ namespace Satrabel.OpenForm
                             "~/DesktopModules/OpenForm/images/formbuilder.png",
                             ModuleContext.EditUrl("FormBuilder"),
                             false,
-                            SecurityAccessLevel.Host,
+                            SecurityAccessLevel.Admin,
                             true,
                             false);
 
@@ -210,19 +210,19 @@ namespace Satrabel.OpenForm
                                true,
                                false);
 
-                    
-                    
-                        actions.Add(ModuleContext.GetNextActionID(),
-                            Localization.GetString("EditData.Action", LocalResourceFile),
-                            ModuleActionType.EditContent,
-                            "",
-                            "~/DesktopModules/OpenForm/images/edit.png",
-                            //ModuleContext.EditUrl("EditData"),
-                            ModuleContext.EditUrl("EditData"),
-                            false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false);
+
+
+                    actions.Add(ModuleContext.GetNextActionID(),
+                        Localization.GetString("EditData.Action", LocalResourceFile),
+                        ModuleActionType.EditContent,
+                        "",
+                        "~/DesktopModules/OpenForm/images/edit.png",
+                        //ModuleContext.EditUrl("EditData"),
+                        ModuleContext.EditUrl("EditData"),
+                        false,
+                        SecurityAccessLevel.Host,
+                        true,
+                        false);
                 }
                 /*
                 Actions.Add(ModuleContext.GetNextActionID(),
@@ -272,7 +272,14 @@ namespace Satrabel.OpenForm
             //return Page.GetPostBackEventReference(lbSave);
             PostBackOptions pb = new PostBackOptions(lbSave, null, Globals.NavigateURL("", "result=submit"), false, false, false, true, false, null);
             return Page.ClientScript.GetPostBackEventReference(pb);
+            
         }
+
+        protected string GetString(string resourceKey)
+        {
+            return Localization.GetString(resourceKey, LocalResourceFile);
+        }
+        
     }
 }
 

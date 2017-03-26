@@ -11,7 +11,6 @@
 */
 using System;
 using System.Linq;
-using DotNetNuke.Entities.Users;
 using Satrabel.OpenForm.Components;
 using DotNetNuke.Services.Exceptions;
 using Satrabel.OpenContent.Components.Json;
@@ -19,7 +18,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Web.Helpers;
 using System.Data;
-using System.ComponentModel;
+using System.Web;
+using Satrabel.OpenContent.Components;
 
 namespace Satrabel.OpenForm
 {
@@ -31,24 +31,7 @@ namespace Satrabel.OpenForm
             {
                 if (!Page.IsPostBack)
                 {
-                    OpenFormController ctrl = new OpenFormController();
-                    var data = ctrl.GetContents(ModuleId).OrderByDescending(c=> c.CreatedOnDate);
-                    var dynData = new List<dynamic>();
-                    foreach (var item in data)
-                    {
-                        dynamic o = new ExpandoObject();
-                        var dict = (IDictionary<string, object>)o;
-                        o.CreatedOnDate = item.CreatedOnDate;
-                        //o.Json = item.Json;
-                        dynamic d = JsonUtils.JsonToDynamic(item.Json);
-                        //o.Data = d;
-                        Dictionary<String, Object> jdic = Dyn2Dict(d);
-                        foreach (var p in jdic)
-                        {
-                            dict[p.Key] = p.Value;
-                        }
-                        dynData.Add(o);
-                    }
+                    var dynData = GetDataAsListOfDynamics();
                     gvData.DataSource = ToDataTable(dynData);
                     gvData.DataBind();
                 }
@@ -58,7 +41,41 @@ namespace Satrabel.OpenForm
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-        public Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
+
+        protected void ExcelDownload_Click(object sender, EventArgs e)
+        {
+            var dynData = GetDataAsListOfDynamics();
+            DataTable datatable = ToDataTable(dynData);
+            string filename=GetFileNameFromFormName();
+            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+        }
+
+        #region Private Methods
+
+        private List<dynamic> GetDataAsListOfDynamics()
+        {
+            OpenFormController ctrl = new OpenFormController();
+            var data = ctrl.GetContents(ModuleId).OrderByDescending(c => c.CreatedOnDate);
+            var dynData = new List<dynamic>();
+            foreach (var item in data)
+            {
+                dynamic o = new ExpandoObject();
+                var dict = (IDictionary<string, object>)o;
+                o.CreatedOnDate = item.CreatedOnDate;
+                //o.Json = item.Json;
+                dynamic d = JsonUtils.JsonToDynamic(item.Json);
+                //o.Data = d;
+                Dictionary<String, Object> jdic = Dyn2Dict(d);
+                foreach (var p in jdic)
+                {
+                    dict[p.Key] = p.Value;
+                }
+                dynData.Add(o);
+            }
+            return dynData;
+        }
+
+        private Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
         {
             var dictionary = new Dictionary<string, object>();
             foreach (var name in dynObj.GetDynamicMemberNames())
@@ -74,28 +91,62 @@ namespace Satrabel.OpenForm
             return site.Target(site, target);
         }
 
-        public static DataTable ToDataTable(IEnumerable<dynamic> items)
+        private string GetFileNameFromFormName()
+        {
+            //todo determine that current form and create a filename based on the name of the form.
+            return "submissions.xlsx";
+        }
+
+        private static DataTable ToDataTable(IEnumerable<dynamic> items)
         {
             var data = items.ToArray();
-            if (data.Count() == 0) return null;
+            if (!data.Any()) return null;
             var dt = new DataTable();
-            foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
+            foreach (dynamic d in data)
             {
-                dt.Columns.Add(key);
+                foreach (var key in ((IDictionary<string, object>)d).Keys)
+                {
+                    if (!dt.Columns.Contains(key))
+                    {
+                        dt.Columns.Add(key);
+                    }
+                }
             }
+            string[] columnNames = dt.Columns.Cast<DataColumn>()
+                .Select(x => x.ColumnName)
+                .ToArray();
             foreach (var d in data)
             {
-                List<object> row = new List<object>();
+                var row = new List<object>();
                 var dic = (IDictionary<string, object>)d;
-                foreach (var key in ((IDictionary<string, object>)data[0]).Keys)
+                foreach (string key in columnNames)
                 {
                     if (dic.ContainsKey(key))
-                        row.Add(dic[key]);
+                    {
+                        object value = dic[key];
+                        if (value is DynamicJsonObject)
+                        {
+                            row.Add(value.ToJson());
+                        }
+                        else if (value is DynamicJsonArray)
+                        {
+                            row.Add(string.Join(";", (DynamicJsonArray)value));
+                        }
+                        else
+                        {
+                            row.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        row.Add(""); //add empty value to preserve table structure.
+                    }
                 }
                 dt.Rows.Add(row.ToArray());
             }
             return dt;
         }
-       
+
+        #endregion
     }
 }

@@ -119,7 +119,8 @@
             var data = form.getValue();
             var schema = getSchema(data);
             var options = getOptions(data);
-            var postData = JSON.stringify({ 'data': data, 'schema': schema, 'options': options });
+            var view = getView(data);
+            var postData = JSON.stringify({ 'data': data, 'schema': schema, 'options': options, 'view': view });
             var action = "UpdateBuilder";
             $.ajax({
                 type: "POST",

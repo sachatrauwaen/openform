@@ -153,4 +153,7 @@
   <data name="ShareTemplate.Action" xml:space="preserve">
     <value>Template Exchange</value>
   </data>
+  <data name="Sending.Text" xml:space="preserve">
+    <value>Envoi en cours ...</value>
+  </data>
 </root>

@@ -52,21 +52,19 @@ namespace Satrabel.OpenForm
 
             if (scriptList.SelectedValue.EndsWith("schema.json"))
             {
-                string Template = ModuleContext.Settings["template"] as string;
-                string templateFolder = Path.GetDirectoryName(Template);
+                string template = ModuleContext.Settings["template"] as string;
+                string templateFolder = Path.GetDirectoryName(template);
 
-                string scriptFile = templateFolder + "/" + scriptList.SelectedValue.Replace("schema.json", "builder.json");
-                string srcFile = Server.MapPath(scriptFile);
-
+                var scriptFile = new FileUri(templateFolder, scriptList.SelectedValue.Replace("schema.json", "builder.json"));
                 var schema = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue) as JObject;
                 var options = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue.Replace("schema.json", "options.json")) as JObject;
 
                 JObject builder = new JObject();
                 builder["formfields"] = GetBuilder(schema, options);
 
-                if (!File.Exists(srcFile))
+                if (!scriptFile.FileExists)
                 {
-                    File.WriteAllText(srcFile, builder.ToString());
+                    File.WriteAllText(scriptFile.PhysicalFilePath, builder.ToString());
                 }
                 Response.Redirect(Globals.NavigateURL(), true);
             }
@@ -147,7 +145,7 @@ namespace Satrabel.OpenForm
                     field["relationoptions"]["valuefield"] = opt["dataService"]["data"]["valueField"];
                     field["relationoptions"]["textfield"] = opt["dataService"]["data"]["textField"];
                 }
-                if (fieldtype == "date" && opt["picker"] != null)
+                if ((fieldtype == "date" || fieldtype == "datetime" || fieldtype == "time") && opt["picker"] != null)
                 {
                     field["dateoptions"] = new JObject();
                     field["dateoptions"] = opt["picker"];
@@ -295,7 +293,6 @@ namespace Satrabel.OpenForm
             {
                 string templateFilename = Server.MapPath("~/" + Template);
                 string builderFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
-
                 if (!File.Exists(builderFilename))
                 {
                     scriptList.Items.Add(new ListItem("Data Definition", "schema.json"));
@@ -304,11 +301,10 @@ namespace Satrabel.OpenForm
                     {
                         scriptList.Items.Add(new ListItem("UI Options " + item.Code, "options." + item.Code + ".json"));
                     }
+                    scriptList.Items.Add(new ListItem("View Layout", "view.json"));
                 }
-                scriptList.Items.Add(new ListItem("View Layout", "view.json"));
                 scriptList.Items.Add(new ListItem("Stylesheet", "template.css"));
                 scriptList.Items.Add(new ListItem("Javascript", "template.js"));
-
             }
         }
         protected void cmdSave_Click(object sender, EventArgs e)

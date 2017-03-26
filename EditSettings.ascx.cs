@@ -33,7 +33,7 @@ namespace Satrabel.OpenForm
             hlCancel.NavigateUrl = Globals.NavigateURL();
             //ServicesFramework.Instance.RequestAjaxScriptSupport();
             //ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
-            AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext, "DesktopModules/OpenForm/", "settings");
+            AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext.PortalId, "DesktopModules/OpenForm/", "settings");
             alpaca.RegisterAll();
         }
 

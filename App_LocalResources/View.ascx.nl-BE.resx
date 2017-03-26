@@ -123,4 +123,7 @@
   <data name="cmdSave.Text" xml:space="preserve">
     <value>Verzenden</value>
   </data>
+  <data name="Sending.Text" xml:space="preserve">
+    <value>Verzending...</value>
+  </data>
 </root>

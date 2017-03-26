@@ -2,6 +2,7 @@
 <%@ Import Namespace="DotNetNuke.Services.Localization" %>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
 <div class="dnnForm dnnEditBasicSettings" id="dnnEditBasicSettings">
+    <p><asp:LinkButton ID="excelDownload" runat="server" Text="Download as Excel" OnClick="ExcelDownload_Click"/></p>
     <fieldset>
         <div class="dnnFormItem">
             <asp:GridView ID="gvData" runat="server" CssClass="dnnGrid" GridLines="None" 
