@@ -119,10 +119,11 @@ function getSchema(formdef) {
             prop.enum = $.map(value.fieldoptions, function (v, i) {
                 return v.value;
             });
-
+            /*
             if (value.required && prop.enum && prop.enum.length > 0) {
                 prop.default = prop.enum[0];
             }
+            */
         }
         if (value.dependencies) {
             var deps = [];
