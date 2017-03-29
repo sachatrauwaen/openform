@@ -12,9 +12,7 @@
 
 using System;
 using System.Web.Caching;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
-using DotNetNuke.Entities.Content;
 
 namespace Satrabel.OpenForm.Components
 {

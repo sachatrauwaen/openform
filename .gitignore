@@ -2,3 +2,4 @@ install/
 obj/
 Package/
 Resources.zip.manifest
+*.suo
