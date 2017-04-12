@@ -11,7 +11,6 @@
 using System;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework;
-using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Modules.Actions;
@@ -262,7 +261,6 @@ namespace Satrabel.OpenForm
         {
             ModuleController mc = new ModuleController();
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
-            //InitForm(scriptList.SelectedValue);
         }
         protected void lbSave_Click(object sender, EventArgs e)
         {
@@ -272,14 +270,14 @@ namespace Satrabel.OpenForm
             //return Page.GetPostBackEventReference(lbSave);
             PostBackOptions pb = new PostBackOptions(lbSave, null, Globals.NavigateURL("", "result=submit"), false, false, false, true, false, null);
             return Page.ClientScript.GetPostBackEventReference(pb);
-            
+
         }
 
         protected string GetString(string resourceKey)
         {
             return Localization.GetString(resourceKey, LocalResourceFile);
         }
-        
+
     }
 }
 
