@@ -12,7 +12,6 @@ using System;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Common;
 using System.Web.UI.WebControls;
-using DotNetNuke.Services.Localization;
 using System.IO;
 using Satrabel.OpenContent.Components;
 using DotNetNuke.Services.FileSystem;
@@ -22,6 +21,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Web;
 using Satrabel.OpenContent.Components.Rss;
 using System.Net;
+using Localization = DotNetNuke.Services.Localization.Localization;
 
 #endregion
 

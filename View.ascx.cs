@@ -24,7 +24,7 @@ using Satrabel.OpenContent.Components.Handlebars;
 using System.Web.UI;
 using Satrabel.OpenContent.Components;
 using Satrabel.OpenContent.Components.Alpaca;
-
+using Localization = DotNetNuke.Services.Localization.Localization;
 
 #endregion
 
