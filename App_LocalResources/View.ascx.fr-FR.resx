@@ -142,7 +142,7 @@
     <value>Ajouter</value>
   </data>
   <data name="EditSettings.Action" xml:space="preserve">
-    <value>Template Settings</value>
+    <value>Paramètres du formulaire</value>
   </data>
   <data name="EditTemplate.Action" xml:space="preserve">
     <value>Edit Template Files</value>
@@ -155,5 +155,8 @@
   </data>
   <data name="Sending.Text" xml:space="preserve">
     <value>Envoi en cours ...</value>
+  </data>
+  <data name="Builder.Action" xml:space="preserve">
+    <value>Form Builder</value>
   </data>
 </root>
