@@ -17,6 +17,7 @@ using DotNetNuke.Services.Localization;
 using System.IO;
 using Satrabel.OpenContent.Components;
 using Newtonsoft.Json.Linq;
+using Satrabel.OpenContent.Components.Files;
 using Satrabel.OpenContent.Components.Json;
 
 #endregion
@@ -54,8 +55,8 @@ namespace Satrabel.OpenForm
                 string templateFolder = Path.GetDirectoryName(template);
 
                 var scriptFile = new FileUri(templateFolder, scriptList.SelectedValue.Replace("schema.json", "builder.json"));
-                var schema = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue) as JObject;
-                var options = JsonUtils.LoadJsonFromFile(templateFolder + "/" + scriptList.SelectedValue.Replace("schema.json", "options.json")) as JObject;
+                var schema = App.Services.FileRepository.LoadJsonFromFile(new FileUri(templateFolder, scriptList.SelectedValue)) as JObject;
+                var options = App.Services.FileRepository.LoadJsonFromFile(new FileUri(templateFolder, scriptList.SelectedValue.Replace("schema.json", "options.json"))) as JObject;
 
                 JObject builder = new JObject();
                 builder["formfields"] = GetBuilder(schema, options);
@@ -68,7 +69,7 @@ namespace Satrabel.OpenForm
             }
         }
 
-        private JToken GetBuilder(JObject schema, JObject options)
+        private static JToken GetBuilder(JObject schema, JObject options)
         {
             var formfields = new JArray();
 
