@@ -17,8 +17,6 @@ using DotNetNuke.Services.Localization;
 using System.IO;
 using Satrabel.OpenContent.Components;
 using Newtonsoft.Json.Linq;
-using Satrabel.OpenContent.Components.Files;
-using Satrabel.OpenContent.Components.Json;
 
 #endregion
 
