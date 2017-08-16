@@ -56,7 +56,7 @@ namespace Satrabel.OpenForm.Components
             JObject json = new JObject();
             try
             {
-                if (!String.IsNullOrEmpty(template))
+                if (!string.IsNullOrEmpty(template))
                 {
                     string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
@@ -72,7 +72,7 @@ namespace Satrabel.OpenForm.Components
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
-                        if (!String.IsNullOrWhiteSpace(fileContent))
+                        if (!string.IsNullOrWhiteSpace(fileContent))
                         {
                             JObject optionsJson = JObject.Parse(fileContent);
                             json["options"] = optionsJson;
@@ -83,7 +83,7 @@ namespace Satrabel.OpenForm.Components
                     if (File.Exists(optionsFilename))
                     {
                         string fileContent = File.ReadAllText(optionsFilename);
-                        if (!String.IsNullOrWhiteSpace(fileContent))
+                        if (!string.IsNullOrWhiteSpace(fileContent))
                         {
                             JObject optionsJson = JObject.Parse(fileContent);
                             json["options"] = json["options"].JsonMerge(optionsJson);
@@ -94,7 +94,7 @@ namespace Satrabel.OpenForm.Components
                     if (File.Exists(viewFilename))
                     {
                         string fileContent = File.ReadAllText(viewFilename);
-                        if (!String.IsNullOrWhiteSpace(fileContent))
+                        if (!string.IsNullOrWhiteSpace(fileContent))
                         {
                             JObject viewJson = JObject.Parse(fileContent);
                             json["view"] = viewJson;
@@ -146,7 +146,7 @@ namespace Satrabel.OpenForm.Components
                     json["options"] = optionsJson;
                 }
 
-                if (!String.IsNullOrEmpty(Data))
+                if (!string.IsNullOrEmpty(Data))
                 {
                     json["data"] = JObject.Parse(Data);
                 }
@@ -182,7 +182,7 @@ namespace Satrabel.OpenForm.Components
                 };
 
                 string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
-                if (!String.IsNullOrEmpty(jsonSettings))
+                if (!string.IsNullOrEmpty(jsonSettings))
                 {
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     HandlebarsEngine hbs = new HandlebarsEngine();
@@ -190,7 +190,7 @@ namespace Satrabel.OpenForm.Components
                     string formData = "";
                     if (form != null)
                     {
-                        if (!String.IsNullOrEmpty(settings.Settings.SiteKey))
+                        if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
                         {
                             Recaptcha recaptcha = new Recaptcha(settings.Settings.SiteKey, settings.Settings.SecretKey);
                             RecaptchaValidationResult validationResult = recaptcha.Validate(form["recaptcha"].ToString());
@@ -213,7 +213,7 @@ namespace Satrabel.OpenForm.Components
                         if (File.Exists(optionsFilename))
                         {
                             string fileContent = File.ReadAllText(optionsFilename);
-                            if (!String.IsNullOrWhiteSpace(fileContent))
+                            if (!string.IsNullOrWhiteSpace(fileContent))
                             {
                                 optionsJson = JObject.Parse(fileContent);
                                 //form["options"] = optionsJson;
@@ -224,7 +224,7 @@ namespace Satrabel.OpenForm.Components
                         if (File.Exists(optionsFilename))
                         {
                             string fileContent = File.ReadAllText(optionsFilename);
-                            if (!String.IsNullOrWhiteSpace(fileContent))
+                            if (!string.IsNullOrWhiteSpace(fileContent))
                             {
                                 optionsJson = JObject.Parse(fileContent);
                                 //form["options"] = optionsJson;
@@ -244,19 +244,19 @@ namespace Satrabel.OpenForm.Components
                                 MailAddress from = GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
                                 MailAddress to = GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
                                 MailAddress reply = null;
-                                if (!String.IsNullOrEmpty(notification.ReplyTo))
+                                if (!string.IsNullOrEmpty(notification.ReplyTo))
                                 {
                                     reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
                                 string body = formData;
-                                if (!String.IsNullOrEmpty(notification.EmailBody))
+                                if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
 
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
 
                                 string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
-                                if (!String.IsNullOrEmpty(send))
+                                if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
                                 }
@@ -268,9 +268,9 @@ namespace Satrabel.OpenForm.Components
                             }
                         }
                     }
-                    if (settings != null && settings.Settings != null)
+                    if (settings?.Settings != null)
                     {
-                        if (!String.IsNullOrEmpty(settings.Settings.Message))
+                        if (!string.IsNullOrEmpty(settings.Settings.Message))
                         {
                             res.Message = hbs.Execute(settings.Settings.Message, data);
                         }
@@ -279,7 +279,7 @@ namespace Satrabel.OpenForm.Components
                             res.Message = "Message sent.";
                         }
                         res.Tracking = settings.Settings.Tracking;
-                        if (!String.IsNullOrEmpty(settings.Settings.Tracking))
+                        if (!string.IsNullOrEmpty(settings.Settings.Tracking))
                         {
                             //res.RedirectUrl = Globals.NavigateURL(ActiveModule.TabID, "", "result=" + content.ContentId);
                         }
@@ -304,7 +304,7 @@ namespace Satrabel.OpenForm.Components
             JObject json = new JObject();
             try
             {
-                if (!String.IsNullOrEmpty(template))
+                if (!string.IsNullOrEmpty(template))
                 {
                     string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
@@ -392,9 +392,9 @@ namespace Satrabel.OpenForm.Components
             }
             else if (typeOfAddress == "form")
             {
-                if (String.IsNullOrEmpty(formNameField))
+                if (string.IsNullOrEmpty(formNameField))
                     formNameField = "name";
-                if (String.IsNullOrEmpty(formEmailField))
+                if (string.IsNullOrEmpty(formEmailField))
                     formEmailField = "email";
 
                 string formEmail = GetProperty(form, formEmailField);
