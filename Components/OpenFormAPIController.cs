@@ -99,7 +99,17 @@ namespace Satrabel.OpenForm.Components
                             json["view"] = viewJson;
                         }
                     }
-
+                    // language view
+                    viewFilename = Path.GetDirectoryName(templateFilename) + "\\" + "view." + DnnUtils.GetCurrentCultureCode() + ".json";
+                    if (File.Exists(viewFilename))
+                    {
+                        string fileContent = File.ReadAllText(viewFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject viewJson = JObject.Parse(fileContent);
+                            json["view"] = json["view"].JsonMerge(viewJson); ;
+                        }
+                    }
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
