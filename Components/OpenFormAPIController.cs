@@ -266,7 +266,7 @@ namespace Satrabel.OpenForm.Components
                         }
                         else
                         {
-                            res.Message = "Message sended.";
+                            res.Message = "Message sent.";
                         }
                         res.Tracking = settings.Settings.Tracking;
                         if (!String.IsNullOrEmpty(settings.Settings.Tracking))
