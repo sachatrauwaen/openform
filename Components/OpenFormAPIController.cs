@@ -234,7 +234,7 @@ namespace Satrabel.OpenForm.Components
                         data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
                     }
 
-                    if (settings != null && settings.Notifications != null)
+                    if (settings.Notifications != null)
                     {
                         foreach (var notification in settings.Notifications)
                         {
@@ -267,7 +267,7 @@ namespace Satrabel.OpenForm.Components
                             }
                         }
                     }
-                    if (settings != null && settings.Settings != null)
+                    if (settings?.Settings != null)
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.Message))
                         {
@@ -299,13 +299,13 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage LoadBuilder()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
                     JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
                     if (dataJson != null)
@@ -325,10 +325,10 @@ namespace Satrabel.OpenForm.Components
         [HttpPost]
         public HttpResponseMessage UpdateBuilder(JObject json)
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             try
             {
-                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string templateFilename = HostingEnvironment.MapPath("~/" + template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
                 if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
@@ -349,7 +349,7 @@ namespace Satrabel.OpenForm.Components
                     }
                     catch (Exception ex)
                     {
-                        string mess = string.Format("Error while saving file [{0}]", datafile);
+                        string mess = $"Error while saving file [{datafile}]";
                         Log.Logger.Error(mess, ex);
                         throw new Exception(mess, ex);
                     }
@@ -409,16 +409,16 @@ namespace Satrabel.OpenForm.Components
             else if (TypeOfAddress == "current")
             {
                 if (UserInfo == null)
-                    throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                    throw new Exception($"Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
                 if (Validate.IsValidEmail(UserInfo.Email))
-                    throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                    throw new Exception($"Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
 
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
             }
 
             if (adr == null)
             {
-                throw new Exception(string.Format("Can't determine email address. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                throw new Exception($"Can't determine email address. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
             }
 
             return adr;
