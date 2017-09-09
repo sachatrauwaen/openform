@@ -27,16 +27,12 @@
         <div class="dnnFormItem">
             <asp:Label ID="Label1" ControlName="txtSource" runat="server" CssClass="dnnLabel" Text="" />
             <asp:Label ID="plSource" ControlName="txtSource" runat="server" />
-
         </div>
         <div class="dnnFormItem">
-
-
             <asp:Label ID="Label2" runat="server" />
         </div>
         <div>
             <asp:TextBox ID="txtSource" runat="server" TextMode="MultiLine" Rows="30" Columns="140" />
-
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">
@@ -48,7 +44,7 @@
             <asp:LinkButton ID="cmdCancel" resourcekey="cmdCancel" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" />
         </li>
         <li>
-            <asp:LinkButton ID="cmdCustom" resourcekey="cmdCustom" runat="server" CssClass="dnnSecondaryAction" />
+            <asp:LinkButton ID="cmdCustom" resourcekey="cmdCustom" runat="server" CssClass="dnnSecondaryAction" Visible="false" />
         </li>
         <li>
             <asp:LinkButton ID="cmdBuilder" resourcekey="cmdBuilder" runat="server" CssClass="dnnSecondaryAction" />
@@ -70,18 +66,13 @@
               });
         });
 
-
-
         var setupModule = function () {
-
-
             $('#<%= cmdCustom.ClientID %>').dnnConfirm({
                 text: '<%= Localization.GetSafeJSString("OverwriteTemplate.Text") %>',
                 yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
                 noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
                 title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
             });
-
 
             var cm = CodeMirror.fromTextArea($("textarea[id$='txtSource']")[0], {
                 lineNumbers: true,
@@ -93,21 +84,15 @@
             var resizeModule = function resizeDnnEditHtml() {
                 //$('#dnnEditScript fieldset').height($(window).height() - $('#dnnEditScript ul dnnActions').height() - 18 - 52);
                 $('window.frameElement, body, html').css('overflow', 'hidden');
-
-
                 var containerHeight = $(window).height() - 18 - 52 - 52 - 18 - 30;
-
                 //$('.editorContainer').height(containerHeight - $('.editorContainer').offset().top - 110);
                 //$('.editorContainer').height(containerHeight - 250);
                 $('#dnnEditScript .CodeMirror').height(containerHeight);
-
                 cm.refresh();
             };
 
             if (window.frameElement && window.frameElement.id == "iPopUp") {
-
                 resizeModule();
-
                 $(window).resize(function () {
                     var timeout;
                     if (timeout) clearTimeout(timeout);
@@ -117,17 +102,12 @@
                     }, 50);
                 });
             }
-
         };
-
         setupModule();
-
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-
             // note that this will fire when _any_ UpdatePanel is triggered,
             // which may or may not cause an issue
             setupModule();
-
         });
     });
 

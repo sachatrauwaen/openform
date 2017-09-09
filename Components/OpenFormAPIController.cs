@@ -151,6 +151,7 @@ namespace Satrabel.OpenForm.Components
         {
             try
             {
+                form["IPAddress"] = Request.GetIPAddress();
                 int moduleId = ActiveModule.ModuleID;
                 OpenFormController ctrl = new OpenFormController();
                 var content = new OpenFormInfo()
@@ -169,6 +170,9 @@ namespace Satrabel.OpenForm.Components
                 {
                     Message = "Form submitted."
                 };
+                string template = (string)ActiveModule.ModuleSettings["template"];
+                var razorscript = new FileUri(Path.GetDirectoryName(template), "aftersubmit.cshtml");
+                res.AfterSubmit = razorscript.FileExists;
 
                 string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
                 if (!string.IsNullOrEmpty(jsonSettings))
@@ -191,7 +195,7 @@ namespace Satrabel.OpenForm.Components
                         }
 
                         
-                        string template = (string)ActiveModule.ModuleSettings["template"];
+                        
                         string templateFilename = HostingEnvironment.MapPath("~/" + template);
                         string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                         JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
@@ -222,6 +226,8 @@ namespace Satrabel.OpenForm.Components
                         var enhancedForm = form.DeepClone() as JObject;
                         OpenFormUtils.ResolveLabels(enhancedForm, schemaJson, optionsJson);
                         data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
+
+                        
                     }
 
                     if (settings != null && settings.Notifications != null)
@@ -266,7 +272,7 @@ namespace Satrabel.OpenForm.Components
                         else
                         {
                             res.Message = "Message sended.";
-                        }
+                        }                        
                         res.Tracking = settings.Settings.Tracking;
                         if (!string.IsNullOrEmpty(settings.Settings.Tracking))
                         {
@@ -499,6 +505,7 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public List<string> Errors { get; set; }
         public string RedirectUrl { get; set; }
+        public bool AfterSubmit { get; set; }
     }
 }
 

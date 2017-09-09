@@ -127,7 +127,7 @@
                     if (data.Errors && data.Errors.length > 0) {
                         console.log(data.Errors);
                     }
-                    if (data.Tracking) {
+                    if (data.Tracking || data.AfterSubmit) {
                         <%= PostBackStr() %>
                     } else {
                         $('.OpenForm', moduleScope).hide();
