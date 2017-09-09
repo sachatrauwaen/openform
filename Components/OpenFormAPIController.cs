@@ -99,7 +99,17 @@ namespace Satrabel.OpenForm.Components
                             json["view"] = viewJson;
                         }
                     }
-
+                    // language view
+                    viewFilename = Path.GetDirectoryName(templateFilename) + "\\" + "view." + DnnUtils.GetCurrentCultureCode() + ".json";
+                    if (File.Exists(viewFilename))
+                    {
+                        string fileContent = File.ReadAllText(viewFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject viewJson = JObject.Parse(fileContent);
+                            json["view"] = json["view"].JsonMerge(viewJson); ;
+                        }
+                    }
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
@@ -271,8 +281,8 @@ namespace Satrabel.OpenForm.Components
                         }
                         else
                         {
-                            res.Message = "Message sended.";
-                        }                        
+                            res.Message = "Message sent.";
+                        }
                         res.Tracking = settings.Settings.Tracking;
                         if (!string.IsNullOrEmpty(settings.Settings.Tracking))
                         {
@@ -295,13 +305,13 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage LoadBuilder()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
                     JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
                     if (dataJson != null)
@@ -321,10 +331,10 @@ namespace Satrabel.OpenForm.Components
         [HttpPost]
         public HttpResponseMessage UpdateBuilder(JObject json)
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             try
             {
-                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string templateFilename = HostingEnvironment.MapPath("~/" + template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
                 if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
@@ -345,7 +355,7 @@ namespace Satrabel.OpenForm.Components
                     }
                     catch (Exception ex)
                     {
-                        string mess = string.Format("Error while saving file [{0}]", datafile);
+                        string mess = $"Error while saving file [{datafile}]";
                         Log.Logger.Error(mess, ex);
                         throw new Exception(mess, ex);
                     }
@@ -405,16 +415,16 @@ namespace Satrabel.OpenForm.Components
             else if (TypeOfAddress == "current")
             {
                 if (UserInfo == null)
-                    throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                    throw new Exception($"Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
                 if (Validate.IsValidEmail(UserInfo.Email))
-                    throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                    throw new Exception($"Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
 
                 adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
             }
 
             if (adr == null)
             {
-                throw new Exception(string.Format("Can't determine email address. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
+                throw new Exception($"Can't determine email address. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
             }
 
             return adr;
