@@ -1,7 +1,7 @@
 /*
 function Load() {
-    var sch = JSON.parse($("#schema").val());
-    var opts = JSON.parse($("#options").val());
+    //var sch = JSON.parse($("#schema").val());
+    //var opts = JSON.parse($("#options").val());
     var data = getBuilder(sch, opts);
     return data;
 }
@@ -65,7 +65,7 @@ function getBuilder(schema, options) {
 }
 */
 function getSchema(formdef) {
-    var sch = null; //JSON.parse($("#schema").val());
+    var sch = null; 
     var schema = {
         //"title": "Form preview",
         "type": "object",
@@ -362,8 +362,7 @@ var baseFields = function (index, value, oldOptions) {
 };
 
 function getOptions(formdef) {
-    var opts = null; //JSON.parse($("#options").val());
-
+    var opts = null; 
     var options = {
         "fields": {}
     };
@@ -437,8 +436,6 @@ function showForm(value) {
         "connector": connector
     };
     //alert(JSON.stringify(value, null, "  "));
-    $("#schema").val(JSON.stringify(schema, null, "  "));
-    $("#options").val(JSON.stringify(options, null, "  "));
     var exists = $("#form2").alpaca("exists");
     if (exists) {
         $("#form2").alpaca("destroy");
@@ -653,7 +650,7 @@ var fieldOptions =
         "rightLabel": "Required"
     },
     "defaultHtml": {
-        "title": "Default",
+        "label": "Text",
         "type": "summernote",
         "dependencies": {
             "fieldtype": ["label"]
@@ -664,8 +661,7 @@ var fieldOptions =
             maxHeight: null,
             focus: true,
             toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],                
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']]
@@ -687,9 +683,11 @@ var fieldOptions =
         }
     },
     "subfields": {
+        "type": "accordion",        
         "collapsible": true,
         "items": {
             "fieldClass": "listfielddiv"
+            
         },
         "dependencies": {
             "fieldtype": ["array", "table", "object"]
@@ -709,6 +707,8 @@ var fieldOptions =
     },
     "dependencies": {
         "type": "table",
+        "collapsible": true,
+        "lazyLoading":true,
         "items" : {
             "fields": {
                 "fieldname": {
@@ -738,6 +738,7 @@ var formbuilderConfig = {
     "options": {
         "fields": {
             "formfields": {
+                "type": "accordion",
                 "toolbarSticky": true,
                 "items": {
                     //"collapsible": true,
@@ -748,14 +749,13 @@ var formbuilderConfig = {
         }
     },
     //"view": "dnn-edit",
-    //"view": "bootstrap-edit-horizontal",
+    "view": "dnnbootstrap-edit-horizontal",
     "postRender": function (control) {
         var self = control;
         control.childrenByPropertyId["formfields"].on("change", function () {
             //alert("The value of title was changed to: " + this.getValue());
             var value = self.getValue();
             //$.cookie('alpacadata', JSON.stringify(value), { expires: 7, path: '/' });
-            $('#builder').val(JSON.stringify(value, null, "  "));
             showForm(value);
                         
         });
