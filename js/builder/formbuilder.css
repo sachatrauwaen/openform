@@ -32,18 +32,14 @@
     width: 22.075%;
 }
 
-
 .fb-container {
-    display: table;
     width: 100%;
-    margin-right: -15px;
-    margin-left: -15px;
+    min-height: 300px;
 }
 
 .fb-left, .fb-right {
-    display: table-cell;
-    padding-right: 15px;
-    padding-left: 15px;
+    float: left;
+    min-height: 300px;
 }
 
 .fb-left {
