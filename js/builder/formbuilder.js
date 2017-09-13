@@ -461,7 +461,8 @@ var fieldSchema =
             "default": "text",
             "required": true,
             "title": "Type",
-            "enum": ["label","text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
+            "enum": ["label", "text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number", "file",
+
                         /*"image", "file", "url", "icon", "guid", "address",
                         "array", "table", "relation",*/
                         "summernote", /* "ckeditor", "gallery", "documents", "object" ,
@@ -630,7 +631,7 @@ var fieldOptions =
         "fieldClass": "fieldname"
     },
     "fieldtype": {
-        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
+        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number", "File",
                             /*"Image (upload & autocomplete)", "File (upload & autocomplete)", "Url (autocomplete for pages)", "Font Awesome Icons", "Guid (auto id)", "Address (autocomplete & geocode)",
                             "List (array)", "Table (array)", "Relation (Additional Data)", */
                             "Rich Text", /* "CK Editor", "Image Gallery", "Documents", "Group (object)" ,

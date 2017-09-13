@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Hosting;
 using System.Web.UI.WebControls;
 
@@ -130,7 +131,7 @@ namespace Satrabel.OpenForm.Components
                 formDataS.Append("<table boder=\"1\">");
                 foreach (var item in JObject.Parse(form).Properties())
                 {
-                    formDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(item.Value).Append("</td>").Append("</tr>");
+                    formDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(HttpUtility.HtmlEncode(item.Value)).Append("</td>").Append("</tr>");
                 }
                 formDataS.Append("</table>");
                 data = JsonUtils.JsonToDynamic(form);
@@ -224,6 +225,26 @@ namespace Satrabel.OpenForm.Components
                     }                   
                 }
             }
+        }
+
+        public static string ToAbsoluteUrl(string relativeUrl)
+        {
+            if (string.IsNullOrEmpty(relativeUrl))
+                return relativeUrl;
+
+            if (HttpContext.Current == null)
+                return relativeUrl;
+
+            if (relativeUrl.StartsWith("/"))
+                relativeUrl = relativeUrl.Insert(0, "~");
+            if (!relativeUrl.StartsWith("~/"))
+                relativeUrl = relativeUrl.Insert(0, "~/");
+
+            var url = HttpContext.Current.Request.Url;
+            var port = url.Port != 80 ? (":" + url.Port) : String.Empty;
+
+            return String.Format("{0}://{1}{2}{3}",
+                url.Scheme, url.Host, port, VirtualPathUtility.ToAbsolute(relativeUrl));
         }
 
     }
