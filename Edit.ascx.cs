@@ -20,6 +20,7 @@ using System.Web.Helpers;
 using System.Data;
 using System.Web;
 using Satrabel.OpenContent.Components;
+using System.Web.UI.WebControls;
 
 namespace Satrabel.OpenForm
 {
@@ -34,6 +35,14 @@ namespace Satrabel.OpenForm
                     var dynData = GetDataAsListOfDynamics();
                     gvData.DataSource = ToDataTable(dynData);
                     gvData.DataBind();
+                    for (int i = 0; i < gvData.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < gvData.Rows[i].Cells.Count; j++)
+                        {
+                            string encoded = gvData.Rows[i].Cells[j].Text;
+                            gvData.Rows[i].Cells[j].Text = Context.Server.HtmlDecode(encoded);
+                        }
+                    }
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -106,6 +115,7 @@ namespace Satrabel.OpenForm
             {
                 foreach (var key in ((IDictionary<string, object>)d).Keys)
                 {
+                    if (key == "recaptcha") continue;
                     if (!dt.Columns.Contains(key))
                     {
                         dt.Columns.Add(key);
@@ -124,13 +134,27 @@ namespace Satrabel.OpenForm
                     if (dic.ContainsKey(key))
                     {
                         object value = dic[key];
+                        if (key == "recaptcha") continue;
                         if (value is DynamicJsonObject)
                         {
                             row.Add(value.ToJson());
                         }
                         else if (value is DynamicJsonArray)
                         {
-                            row.Add(string.Join(";", (DynamicJsonArray)value));
+                            if (key == "Files")
+                            {
+                                string files = "";
+                                foreach (dynamic file in (DynamicJsonArray)value)
+                                {
+                                    //files = files + "<a href=\""+ file.url+"\">"+file.name+"</a> ";
+                                    files = files + "<a href=\"" + file.url + "\" target=\"_blank\">" + file.name + "</a> ";
+                                }
+                                row.Add(files);
+                            }
+                            else
+                            {
+                                row.Add(string.Join(";", (DynamicJsonArray)value));
+                            }
                         }
                         else
                         {

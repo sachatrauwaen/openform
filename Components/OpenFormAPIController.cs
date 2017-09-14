@@ -171,14 +171,16 @@ namespace Satrabel.OpenForm.Components
             {
                 //todo can we eliminate the HttpContext here
                 UploadWholeFile(HttpContextSource.Current, statuses);
-                //var files = new JArray();
-                //form["Files"] = files;
+                var files = new JArray();
+                form["Files"] = files;
                 int i = 1;
                 foreach (var item in statuses)
                 {
-                    //files.Add(new { name = item.name, url = item.url });
-                    form["File"+i] = OpenFormUtils.ToAbsoluteUrl(item.url);
-                    
+                    var file = new JObject();
+                    file["name"] = item.name;
+                    file["url"] = OpenFormUtils.ToAbsoluteUrl(item.url);
+                    files.Add(file);
+                    //form["File"+i] = OpenFormUtils.ToAbsoluteUrl(item.url);                    
                     i++;
                 }
             }

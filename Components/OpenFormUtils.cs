@@ -131,7 +131,18 @@ namespace Satrabel.OpenForm.Components
                 formDataS.Append("<table boder=\"1\">");
                 foreach (var item in JObject.Parse(form).Properties())
                 {
-                    formDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(HttpUtility.HtmlEncode(item.Value)).Append("</td>").Append("</tr>");
+                    if (item.Name == "Files")
+                    {
+                        var files = item.Value as JArray;
+                        foreach (var file in files)
+                        {
+                            formDataS.Append("<tr>").Append("<td>").Append("File").Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td><a href=\"").Append(HttpUtility.HtmlEncode(file["url"])).Append("\">").Append(file["name"]).Append("</a></td>").Append("</tr>");
+                        }
+                    }
+                    else
+                    {
+                        formDataS.Append("<tr>").Append("<td>").Append(item.Name).Append("</td>").Append("<td>").Append(" : ").Append("</td>").Append("<td>").Append(HttpUtility.HtmlEncode(item.Value)).Append("</td>").Append("</tr>");
+                    }
                 }
                 formDataS.Append("</table>");
                 data = JsonUtils.JsonToDynamic(form);
@@ -163,9 +174,9 @@ namespace Satrabel.OpenForm.Components
                     opt = options["fields"][child.Name] as JObject;
                 }
                 if (opt == null) continue;
-                
+
                 JArray optionLabels = opt["optionLabels"] as JArray;
-                
+
                 var childProperty = child;
                 if (childProperty.Value is JArray)
                 {
@@ -222,7 +233,7 @@ namespace Satrabel.OpenForm.Components
                         {
                             Debugger.Break();
                         }
-                    }                   
+                    }
                 }
             }
         }
