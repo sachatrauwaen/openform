@@ -64,6 +64,8 @@ namespace Satrabel.OpenForm.Components
 
         private static MailAddress GenerateMailAddress(string email, string title)
         {
+            email = email.Trim(); //normalize email
+
             return Validate.IsValidEmail(email) ? new MailAddress(email, title) : null;
         }
 
