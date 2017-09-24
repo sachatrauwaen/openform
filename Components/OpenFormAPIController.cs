@@ -260,7 +260,7 @@ namespace Satrabel.OpenForm.Components
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
 
-                                string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
+                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
                                 if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
@@ -367,49 +367,6 @@ namespace Satrabel.OpenForm.Components
                 Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
-        }
-
-
-
-        private static string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
-        {
-
-            //string mailFrom
-            //string mailTo, 
-            string cc = "";
-            string bcc = "";
-            //string replyTo, 
-            DotNetNuke.Services.Mail.MailPriority priority = DotNetNuke.Services.Mail.MailPriority.Normal;
-            //string subject, 
-            MailFormat bodyFormat = MailFormat.Html;
-            Encoding bodyEncoding = Encoding.UTF8;
-            //string body, 
-            List<Attachment> attachments = new List<Attachment>();
-            string smtpServer = Host.SMTPServer;
-            string smtpAuthentication = Host.SMTPAuthentication;
-            string smtpUsername = Host.SMTPUsername;
-            string smtpPassword = Host.SMTPPassword;
-            bool smtpEnableSSL = Host.EnableSMTPSSL;
-
-            string res = Mail.SendMail(mailFrom,
-                            mailTo,
-                            cc,
-                            bcc,
-                            replyTo,
-                            priority,
-                            subject,
-                            bodyFormat,
-                            bodyEncoding,
-                            body,
-                            attachments,
-                            smtpServer,
-                            smtpAuthentication,
-                            smtpUsername,
-                            smtpPassword,
-                            smtpEnableSSL);
-
-            //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
-            return res;
         }
     }
 

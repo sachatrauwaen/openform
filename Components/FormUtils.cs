@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Mail;
 using Newtonsoft.Json.Linq;
 
 namespace Satrabel.OpenForm.Components
@@ -66,7 +68,7 @@ namespace Satrabel.OpenForm.Components
         {
             email = email.Trim(); //normalize email
 
-            return Validate.IsValidEmail(email) ? new MailAddress(email, title) : null;
+            return IsValidEmail(email) ? new MailAddress(email, title) : null;
         }
 
         private static string GetProperty(JObject obj, string propertyName)
@@ -86,7 +88,7 @@ namespace Satrabel.OpenForm.Components
         /// <remarks>
         /// https://technet.microsoft.com/nl-be/library/01escwtf(v=vs.110).aspx
         /// </remarks>
-        public static bool IsValidEmail(string strIn)
+        private static bool IsValidEmail(string strIn)
         {
             if (string.IsNullOrEmpty(strIn)) return false;
 
@@ -120,5 +122,47 @@ namespace Satrabel.OpenForm.Components
             domainName = idn.GetAscii(domainName);
             return match.Groups[1].Value + domainName;
         }
+
+        internal static string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
+        {
+
+            //string mailFrom
+            //string mailTo, 
+            string cc = "";
+            string bcc = "";
+            //string replyTo, 
+            DotNetNuke.Services.Mail.MailPriority priority = DotNetNuke.Services.Mail.MailPriority.Normal;
+            //string subject, 
+            MailFormat bodyFormat = MailFormat.Html;
+            Encoding bodyEncoding = Encoding.UTF8;
+            //string body, 
+            List<Attachment> attachments = new List<Attachment>();
+            string smtpServer = Host.SMTPServer;
+            string smtpAuthentication = Host.SMTPAuthentication;
+            string smtpUsername = Host.SMTPUsername;
+            string smtpPassword = Host.SMTPPassword;
+            bool smtpEnableSsl = Host.EnableSMTPSSL;
+
+            string res = Mail.SendMail(mailFrom,
+                mailTo,
+                cc,
+                bcc,
+                replyTo,
+                priority,
+                subject,
+                bodyFormat,
+                bodyEncoding,
+                body,
+                attachments,
+                smtpServer,
+                smtpAuthentication,
+                smtpUsername,
+                smtpPassword,
+                smtpEnableSsl);
+
+            //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
+            return res;
+        }
+
     }
 }
