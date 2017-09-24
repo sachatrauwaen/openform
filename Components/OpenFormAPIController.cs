@@ -63,7 +63,7 @@ namespace Satrabel.OpenForm.Components
                     json["schema"] = JsonUtils.GetJsonFromFile(schemaFilename);
                     if (UserInfo.UserID > 0 && json["schema"] is JObject)
                     {
-                        json["schema"] = FormUtils.InitFields(json["schema"] as JObject, UserInfo);
+                        json["schema"] = OpenContent.Components.Form.FormUtils.InitFields(json["schema"] as JObject, UserInfo);
                     }
 
                     // default options
@@ -204,8 +204,8 @@ namespace Satrabel.OpenForm.Components
                             form.Remove("recaptcha");
                         }
 
-                        
-                        
+
+
                         string templateFilename = HostingEnvironment.MapPath("~/" + template);
                         string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                         JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
@@ -237,7 +237,7 @@ namespace Satrabel.OpenForm.Components
                         OpenFormUtils.ResolveLabels(enhancedForm, schemaJson, optionsJson);
                         data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
 
-                        
+
                     }
 
                     if (settings != null && settings.Notifications != null)
@@ -246,17 +246,17 @@ namespace Satrabel.OpenForm.Components
                         {
                             try
                             {
-                                MailAddress from = GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
-                                MailAddress to = GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
+                                MailAddress from = FormUtils.GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
+                                MailAddress to = FormUtils.GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
                                 MailAddress reply = null;
                                 if (!string.IsNullOrEmpty(notification.ReplyTo))
                                 {
-                                    reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
+                                    reply = FormUtils.GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-                                    
+
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
 
@@ -369,67 +369,9 @@ namespace Satrabel.OpenForm.Components
             }
         }
 
-        private static string GetProperty(JObject obj, string PropertyName)
-        {
-            string PropertyValue = "";
-            var Property = obj.Children<JProperty>().SingleOrDefault(p => p.Name.ToLower() == PropertyName.ToLower());
-            if (Property != null)
-            {
-                PropertyValue = Property.Value.ToString();
-            }
-            return PropertyValue;
-        }
 
-        private MailAddress GenerateMailAddress(string TypeOfAddress, string Email, string Name, string FormEmailField, string FormNameField, JObject form)
-        {
-            MailAddress adr = null;
 
-            if (TypeOfAddress == "host")
-            {
-                if (Validate.IsValidEmail(Host.HostEmail))
-                    adr = new MailAddress(Host.HostEmail, Host.HostTitle);
-            }
-            else if (TypeOfAddress == "admin")
-            {
-                var user = UserController.GetUserById(PortalSettings.PortalId, PortalSettings.AdministratorId);
-                if (Validate.IsValidEmail(user.Email))
-                    adr = new MailAddress(user.Email, user.DisplayName);
-            }
-            else if (TypeOfAddress == "form")
-            {
-                if (string.IsNullOrEmpty(FormNameField))
-                    FormNameField = "name";
-                if (string.IsNullOrEmpty(FormEmailField))
-                    FormEmailField = "email";
-
-                string formEmail = GetProperty(form, FormEmailField);
-                string formName = GetProperty(form, FormNameField);
-                if (Validate.IsValidEmail(formEmail))
-                    adr = new MailAddress(formEmail, formName);
-            }
-            else if (TypeOfAddress == "custom")
-            {
-                if (Validate.IsValidEmail(Email))
-                    adr = new MailAddress(Email, Name);
-            }
-            else if (TypeOfAddress == "current")
-            {
-                if (UserInfo == null)
-                    throw new Exception($"Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
-                if (Validate.IsValidEmail(UserInfo.Email))
-                    throw new Exception($"Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
-
-                adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
-            }
-
-            if (adr == null)
-            {
-                throw new Exception($"Can't determine email address. Parameters were TypeOfAddress: [{TypeOfAddress}], Email: [{Email}], Name: [{Name}], FormEmailField: [{FormEmailField}], FormNameField: [{FormNameField}], FormNameField: [{form}]");
-            }
-
-            return adr;
-        }
-        private string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
+        private static string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
         {
 
             //string mailFrom

@@ -21,6 +21,7 @@
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,6 +127,7 @@
     <Compile Include="AlpacaFormBuilder.ascx.designer.cs">
       <DependentUpon>AlpacaFormBuilder.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Components\FormUtils.cs" />
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Components\Logger.cs" />
     <Compile Include="Components\OpenFormController.cs" />
@@ -134,7 +136,6 @@
     <Compile Include="Components\OpenFormAPIController.cs" />
     <Compile Include="Components\OpenFormRouteMapper.cs" />
     <Compile Include="Components\Recaptcha.cs" />
-    <Compile Include="Components\Validate.cs" />
     <Compile Include="Edit.ascx.designer.cs">
       <DependentUpon>Edit.ascx</DependentUpon>
     </Compile>
