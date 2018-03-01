@@ -32,6 +32,12 @@ using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
 using Satrabel.OpenContent.Components.Form;
 using Satrabel.OpenContent.Components.Logging;
+using System.Net.Http.Formatting;
+using DotNetNuke.Common;
+using System.Web;
+using System.Text.RegularExpressions;
+using DotNetNuke.Entities.Icons;
+using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -157,8 +163,32 @@ namespace Satrabel.OpenForm.Components
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
-        public HttpResponseMessage Submit(JObject form)
+        public HttpResponseMessage Submit()
         {
+            var form = JObject.Parse(HttpContextSource.Current.Request.Form["data"].ToString());
+            var statuses = new List<FilesStatus>();
+            try
+            {
+                //todo can we eliminate the HttpContext here
+                UploadWholeFile(HttpContextSource.Current, statuses);
+                var files = new JArray();
+                form["Files"] = files;
+                int i = 1;
+                foreach (var item in statuses)
+                {
+                    var file = new JObject();
+                    file["name"] = item.name;
+                    file["url"] = OpenFormUtils.ToAbsoluteUrl(item.url);
+                    files.Add(file);
+                    //form["File"+i] = OpenFormUtils.ToAbsoluteUrl(item.url);                    
+                    i++;
+                }
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+            }
+            
             try
             {
                 form["IPAddress"] = Request.GetIPAddress();
@@ -203,9 +233,6 @@ namespace Satrabel.OpenForm.Components
                             }
                             form.Remove("recaptcha");
                         }
-
-
-
                         string templateFilename = HostingEnvironment.MapPath("~/" + template);
                         string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                         JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
@@ -236,8 +263,6 @@ namespace Satrabel.OpenForm.Components
                         var enhancedForm = form.DeepClone() as JObject;
                         OpenFormUtils.ResolveLabels(enhancedForm, schemaJson, optionsJson);
                         data = OpenFormUtils.GenerateFormData(enhancedForm.ToString(), out formData);
-
-
                     }
 
                     if (settings != null && settings.Notifications != null)
@@ -259,8 +284,15 @@ namespace Satrabel.OpenForm.Components
 
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
+                                var attachements = new List<Attachment>();
+                                foreach (var item in statuses)
+                                {
+                                    var file = FileManager.Instance.GetFile(item.id);
+                                    attachements.Add(new Attachment(FileManager.Instance.GetFileContent(file), item.name));
+                                }
 
-                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
+                                //string send = FormUtils.SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
+                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body, attachements);
                                 if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
@@ -368,7 +400,95 @@ namespace Satrabel.OpenForm.Components
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
+
+        
+        private void UploadWholeFile(HttpContextBase context, ICollection<FilesStatus> statuses)
+        {
+            IFileManager _fileManager = FileManager.Instance;
+            IFolderManager _folderManager = FolderManager.Instance;
+            for (var i = 0; i < context.Request.Files.Count; i++)
+            {
+                var file = context.Request.Files[i];
+                if (file == null) continue;
+
+                var fileName = FileUploadController.CleanUpFileName(Path.GetFileName(file.FileName));
+
+
+                if (IsAllowedExtension(fileName))
+                {
+                    string uploadfolder = "OpenForm/Files/" + ActiveModule.ModuleID;
+
+                    if (!string.IsNullOrEmpty(context.Request.Form["uploadfolder"]))
+                    {
+                        uploadfolder = context.Request.Form["uploadfolder"];
+                    }
+                    var userFolder = _folderManager.GetFolder(PortalSettings.PortalId, uploadfolder);
+                    if (userFolder == null)
+                    {
+                        // Get folder mapping
+                        var folderMapping = FolderMappingController.Instance.GetFolderMapping(PortalSettings.PortalId, "Secure");
+                        userFolder = _folderManager.AddFolder(folderMapping, uploadfolder);
+                        //userFolder = _folderManager.AddFolder(PortalSettings.PortalId, uploadfolder);
+                    }
+                    int suffix = 0;
+                    string baseFileName = Path.GetFileNameWithoutExtension(fileName);
+                    string extension = Path.GetExtension(fileName);
+                    var fileInfo = _fileManager.GetFile(userFolder, fileName);
+                    while (fileInfo != null)
+                    {
+                        suffix++;
+                        fileName = baseFileName + "-" + suffix + extension;
+                        fileInfo = _fileManager.GetFile(userFolder, fileName);
+                    }
+                    fileInfo = _fileManager.AddFile(userFolder, fileName, file.InputStream, true);
+                    var fileIcon = IconController.IconURL("Ext" + fileInfo.Extension, "32x32");
+                    if (!File.Exists(context.Server.MapPath(fileIcon)))
+                    {
+                        fileIcon = IconController.IconURL("File", "32x32");
+                    }
+                    
+                    statuses.Add(new FilesStatus
+                    {
+                        success = true,
+                        name = fileName,
+                        extension = fileInfo.Extension,
+                        type = fileInfo.ContentType,
+                        size = file.ContentLength,
+                        progress = "1.0",
+                        url = _fileManager.GetUrl(fileInfo),
+                        thumbnail_url = fileIcon,
+                        message = "success",
+                        id = fileInfo.FileId,
+                    });
+                }
+                else
+                {
+                    statuses.Add(new FilesStatus
+                    {
+                        success = false,
+                        name = fileName,
+                        message = "File type not allowed."
+                    });
+                }
+            }
+
+        }
+
+        private static bool IsAllowedExtension(string fileName)
+        {
+            var extension = Path.GetExtension(fileName);
+
+            //regex matches a dot followed by 1 or more chars followed by a semi-colon
+            //regex is meant to block files like "foo.asp;.png" which can take advantage
+            //of a vulnerability in IIS6 which treasts such files as .asp, not .png
+            return !string.IsNullOrEmpty(extension)
+                   && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension)
+                   && !Regex.IsMatch(fileName, @"\..+;");
+        }
+
     }
+
+
 
     public class NotificationDTO
     {

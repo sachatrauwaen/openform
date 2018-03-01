@@ -23,7 +23,7 @@ namespace Satrabel.OpenForm.Components
 
             if (typeOfAddress == "host")
             {
-                adr = GenerateMailAddress(Host.HostEmail, Host.HostTitle) ;
+                adr = GenerateMailAddress(Host.HostEmail, Host.HostTitle);
             }
             else if (typeOfAddress == "admin")
             {
@@ -88,7 +88,7 @@ namespace Satrabel.OpenForm.Components
         /// <remarks>
         /// https://technet.microsoft.com/nl-be/library/01escwtf(v=vs.110).aspx
         /// </remarks>
-        private static bool IsValidEmail(string strIn)
+        public static bool IsValidEmail(string strIn)
         {
             if (string.IsNullOrEmpty(strIn)) return false;
 
@@ -122,10 +122,8 @@ namespace Satrabel.OpenForm.Components
             domainName = idn.GetAscii(domainName);
             return match.Groups[1].Value + domainName;
         }
-
-        internal static string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
+        public static string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body, List<Attachment> attachments = null)
         {
-
             //string mailFrom
             //string mailTo, 
             string cc = "";
@@ -136,33 +134,34 @@ namespace Satrabel.OpenForm.Components
             MailFormat bodyFormat = MailFormat.Html;
             Encoding bodyEncoding = Encoding.UTF8;
             //string body, 
-            List<Attachment> attachments = new List<Attachment>();
+            //List<Attachment> attachments = new List<Attachment>();
+            if (attachments == null) attachments = new List<Attachment>();
             string smtpServer = Host.SMTPServer;
             string smtpAuthentication = Host.SMTPAuthentication;
             string smtpUsername = Host.SMTPUsername;
             string smtpPassword = Host.SMTPPassword;
-            bool smtpEnableSsl = Host.EnableSMTPSSL;
+            bool smtpEnableSSL = Host.EnableSMTPSSL;
 
             string res = Mail.SendMail(mailFrom,
-                mailTo,
-                cc,
-                bcc,
-                replyTo,
-                priority,
-                subject,
-                bodyFormat,
-                bodyEncoding,
-                body,
-                attachments,
-                smtpServer,
-                smtpAuthentication,
-                smtpUsername,
-                smtpPassword,
-                smtpEnableSsl);
+                            mailTo,
+                            cc,
+                            bcc,
+                            replyTo,
+                            priority,
+                            subject,
+                            bodyFormat,
+                            bodyEncoding,
+                            body,
+                            attachments,
+                            smtpServer,
+                            smtpAuthentication,
+                            smtpUsername,
+                            smtpPassword,
+                            smtpEnableSSL);
 
             //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
             return res;
         }
-
     }
+        
 }
