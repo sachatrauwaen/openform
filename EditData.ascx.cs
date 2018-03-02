@@ -13,16 +13,8 @@ using System;
 using System.Linq;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Common;
-using DotNetNuke.Framework.JavaScriptLibraries;
-using DotNetNuke.Framework;
 using System.Web.UI.WebControls;
-using DotNetNuke.Services.Localization;
-using System.IO;
-using Satrabel.OpenContent.Components;
 using Newtonsoft.Json.Linq;
-using System.Globalization;
-using DotNetNuke.Common.Utilities;
-using Satrabel.OpenContent.Components.Json;
 using Satrabel.OpenForm.Components;
 
 #endregion

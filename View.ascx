@@ -102,7 +102,15 @@
                                     $(saveButton).addClass('disabled');
                                     $(saveButton).text("<%= GetString("Sending") %>");
                                     $(saveButton).off();
-                                    self.FormSubmit(value);
+                                    var fd = new FormData();
+                                    $(".alpaca .alpaca-field-file input[type='file']").each(function () {
+                                        var file_data = $(this).prop("files")[0];
+                                        var name = $(this).attr("name");
+                                        fd.append(name, file_data);
+
+                                    });
+                                    fd.append("data", JSON.stringify(value));
+                                    self.FormSubmit(fd);
                                     $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                                 }
                             });
@@ -115,19 +123,19 @@
                 //alert("Uh-oh, something broke: " + status);
             });
 
-            self.FormSubmit = function (data) {
-                var postData = data;
-                var action = "Submit";
+            self.FormSubmit = function (formdata) {
                 $.ajax({
                     type: "POST",
-                    url: sf.getServiceRoot('OpenForm') + "OpenFormAPI/" + action,
-                    data: postData,
+                    url: sf.getServiceRoot('OpenForm') + "OpenFormAPI/Submit",
+                    contentType: false,
+                    processData: false,
+                    data: formdata,
                     beforeSend: sf.setModuleHeaders
                 }).done(function (data) {
                     if (data.Errors && data.Errors.length > 0) {
                         console.log(data.Errors);
                     }
-                    if (data.Tracking) {
+                    if (data.Tracking || data.AfterSubmit) {
                         <%= PostBackStr() %>
                     } else {
                         $('.OpenForm', moduleScope).hide();

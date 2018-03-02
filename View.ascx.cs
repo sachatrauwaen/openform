@@ -11,7 +11,6 @@
 using System;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework;
-using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Common;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Modules.Actions;
@@ -25,7 +24,10 @@ using Satrabel.OpenContent.Components.Handlebars;
 using System.Web.UI;
 using Satrabel.OpenContent.Components;
 using Satrabel.OpenContent.Components.Alpaca;
-
+using Localization = DotNetNuke.Services.Localization.Localization;
+using System.Web.Hosting;
+using System.Linq;
+using Satrabel.OpenContent.Components.Razor;
 
 #endregion
 
@@ -79,8 +81,39 @@ namespace Satrabel.OpenForm
                         lMessage.Text = hbs.Execute(settings.Settings.Message, data);
                         lTracking.Text = settings.Settings.Tracking;
                     }
+                    var razorscript = new FileUri(Path.GetDirectoryName(Template), "aftersubmit.cshtml");
+                    if (razorscript.FileExists)
+                    {
+                        data.FeedBackMessage = lMessage.Text;
+                        data.IPAddress = Request.UserHostAddress;
+                        lMessage.Text = ExecuteRazor(razorscript, data);
+                    }
                 }
             }
+        }
+        private string ExecuteRazor(FileUri template, dynamic model)
+        {
+            string webConfig = template.PhysicalFullDirectory;
+            webConfig = webConfig.Remove(webConfig.LastIndexOf("\\")) + "\\web.config";
+            if (!File.Exists(webConfig))
+            {
+                string filename = HostingEnvironment.MapPath("~/DesktopModules/OpenContent/Templates/web.config");
+                File.Copy(filename, webConfig);
+            }
+            var writer = new StringWriter();
+            try
+            {
+                var razorEngine = new RazorEngine("~/" + template.FilePath, ModuleContext, LocalResourceFile);
+                razorEngine.Render(writer, model);
+            }
+            catch (Exception ex)
+            {
+                //LoggingUtils.RenderEngineException(this, ex);
+                string stack = string.Join("\n", ex.StackTrace.Split('\n').Where(s => s.Contains("\\Portals\\") && s.Contains("in")).Select(s => s.Substring(s.IndexOf("in"))).ToArray());
+                //throw new TemplateException("Failed to render Razor template " + template.FilePath + "\n" + stack, ex, model, template.FilePath);
+                return "Failed to render Razor template " + template.FilePath + "\n" + stack;
+            }
+            return writer.ToString();
         }
 
         private void InitForm(string template)
@@ -174,7 +207,7 @@ namespace Satrabel.OpenForm
                           "~/DesktopModules/OpenContent/images/editsettings2.png",
                           ModuleContext.EditUrl("EditSettings"),
                           false,
-                          SecurityAccessLevel.Admin,
+                          SecurityAccessLevel.Edit,
                           true,
                           false);
 
@@ -194,7 +227,7 @@ namespace Satrabel.OpenForm
                             "~/DesktopModules/OpenForm/images/formbuilder.png",
                             ModuleContext.EditUrl("FormBuilder"),
                             false,
-                            SecurityAccessLevel.Admin,
+                            SecurityAccessLevel.Edit,
                             true,
                             false);
 
@@ -262,7 +295,6 @@ namespace Satrabel.OpenForm
         {
             ModuleController mc = new ModuleController();
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
-            //InitForm(scriptList.SelectedValue);
         }
         protected void lbSave_Click(object sender, EventArgs e)
         {
@@ -272,14 +304,14 @@ namespace Satrabel.OpenForm
             //return Page.GetPostBackEventReference(lbSave);
             PostBackOptions pb = new PostBackOptions(lbSave, null, Globals.NavigateURL("", "result=submit"), false, false, false, true, false, null);
             return Page.ClientScript.GetPostBackEventReference(pb);
-            
+
         }
 
         protected string GetString(string resourceKey)
         {
             return Localization.GetString(resourceKey, LocalResourceFile);
         }
-        
+
     }
 }
 

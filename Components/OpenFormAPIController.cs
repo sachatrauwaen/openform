@@ -18,7 +18,6 @@ using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System.Web.Hosting;
 using System.IO;
-using DotNetNuke.Instrumentation;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using DotNetNuke.Services.Mail;
@@ -26,16 +25,19 @@ using System.Net.Mail;
 using System.Text;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Users;
-using Satrabel.OpenForm.Components;
 using Satrabel.OpenContent.Components.Json;
 using Satrabel.OpenContent.Components.Handlebars;
-using DotNetNuke.Common;
-using DotNetNuke.Services.Localization;
 using RecaptchaV2.NET;
 using DotNetNuke.Security;
 using Satrabel.OpenContent.Components;
 using Satrabel.OpenContent.Components.Form;
 using Satrabel.OpenContent.Components.Logging;
+using System.Net.Http.Formatting;
+using DotNetNuke.Common;
+using System.Web;
+using System.Text.RegularExpressions;
+using DotNetNuke.Entities.Icons;
+using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -67,7 +69,7 @@ namespace Satrabel.OpenForm.Components
                     json["schema"] = JsonUtils.GetJsonFromFile(schemaFilename);
                     if (UserInfo.UserID > 0 && json["schema"] is JObject)
                     {
-                        json["schema"] = FormUtils.InitFields(json["schema"] as JObject, UserInfo);
+                        json["schema"] = OpenContent.Components.Form.FormUtils.InitFields(json["schema"] as JObject, UserInfo);
                     }
 
                     // default options
@@ -103,7 +105,17 @@ namespace Satrabel.OpenForm.Components
                             json["view"] = viewJson;
                         }
                     }
-
+                    // language view
+                    viewFilename = Path.GetDirectoryName(templateFilename) + "\\" + "view." + DnnUtils.GetCurrentCultureCode() + ".json";
+                    if (File.Exists(viewFilename))
+                    {
+                        string fileContent = File.ReadAllText(viewFilename);
+                        if (!string.IsNullOrWhiteSpace(fileContent))
+                        {
+                            JObject viewJson = JObject.Parse(fileContent);
+                            json["view"] = json["view"].JsonMerge(viewJson); ;
+                        }
+                    }
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, json);
@@ -151,10 +163,35 @@ namespace Satrabel.OpenForm.Components
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
         }
-        public HttpResponseMessage Submit(JObject form)
+        public HttpResponseMessage Submit()
         {
+            var form = JObject.Parse(HttpContextSource.Current.Request.Form["data"].ToString());
+            var statuses = new List<FilesStatus>();
             try
             {
+                //todo can we eliminate the HttpContext here
+                UploadWholeFile(HttpContextSource.Current, statuses);
+                var files = new JArray();
+                form["Files"] = files;
+                int i = 1;
+                foreach (var item in statuses)
+                {
+                    var file = new JObject();
+                    file["name"] = item.name;
+                    file["url"] = OpenFormUtils.ToAbsoluteUrl(item.url);
+                    files.Add(file);
+                    //form["File"+i] = OpenFormUtils.ToAbsoluteUrl(item.url);                    
+                    i++;
+                }
+            }
+            catch (Exception exc)
+            {
+                Log.Logger.Error(exc);
+            }
+            
+            try
+            {
+                form["IPAddress"] = Request.GetIPAddress();
                 int moduleId = ActiveModule.ModuleID;
                 OpenFormController ctrl = new OpenFormController();
                 var content = new OpenFormInfo()
@@ -173,6 +210,9 @@ namespace Satrabel.OpenForm.Components
                 {
                     Message = "Form submitted."
                 };
+                string template = (string)ActiveModule.ModuleSettings["template"];
+                var razorscript = new FileUri(Path.GetDirectoryName(template), "aftersubmit.cshtml");
+                res.AfterSubmit = razorscript.FileExists;
 
                 string jsonSettings = ActiveModule.ModuleSettings["data"] as string;
                 if (!string.IsNullOrEmpty(jsonSettings))
@@ -193,9 +233,6 @@ namespace Satrabel.OpenForm.Components
                             }
                             form.Remove("recaptcha");
                         }
-
-                        
-                        string template = (string)ActiveModule.ModuleSettings["template"];
                         string templateFilename = HostingEnvironment.MapPath("~/" + template);
                         string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                         JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
@@ -234,21 +271,28 @@ namespace Satrabel.OpenForm.Components
                         {
                             try
                             {
-                                MailAddress from = GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
-                                MailAddress to = GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
+                                MailAddress from = FormUtils.GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
+                                MailAddress to = FormUtils.GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
                                 MailAddress reply = null;
                                 if (!string.IsNullOrEmpty(notification.ReplyTo))
                                 {
-                                    reply = GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
+                                    reply = FormUtils.GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-                                    
+
                                     body = hbs.Execute(notification.EmailBody, data);
                                 }
+                                var attachements = new List<Attachment>();
+                                foreach (var item in statuses)
+                                {
+                                    var file = FileManager.Instance.GetFile(item.id);
+                                    attachements.Add(new Attachment(FileManager.Instance.GetFileContent(file), item.name));
+                                }
 
-                                string send = SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body);
+                                //string send = FormUtils.SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
+                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body, attachements);
                                 if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
@@ -269,7 +313,7 @@ namespace Satrabel.OpenForm.Components
                         }
                         else
                         {
-                            res.Message = "Message sended.";
+                            res.Message = "Message sent.";
                         }
                         res.Tracking = settings.Settings.Tracking;
                         if (!string.IsNullOrEmpty(settings.Settings.Tracking))
@@ -293,13 +337,13 @@ namespace Satrabel.OpenForm.Components
         [HttpGet]
         public HttpResponseMessage LoadBuilder()
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             JObject json = new JObject();
             try
             {
-                if (!string.IsNullOrEmpty(Template))
+                if (!string.IsNullOrEmpty(template))
                 {
-                    string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                    string templateFilename = HostingEnvironment.MapPath("~/" + template);
                     string dataFilename = Path.GetDirectoryName(templateFilename) + "\\" + "builder.json";
                     JObject dataJson = JObject.Parse(File.ReadAllText(dataFilename));
                     if (dataJson != null)
@@ -319,10 +363,10 @@ namespace Satrabel.OpenForm.Components
         [HttpPost]
         public HttpResponseMessage UpdateBuilder(JObject json)
         {
-            string Template = (string)ActiveModule.ModuleSettings["template"];
+            string template = (string)ActiveModule.ModuleSettings["template"];
             try
             {
-                string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+                string templateFilename = HostingEnvironment.MapPath("~/" + template);
                 string dataDirectory = Path.GetDirectoryName(templateFilename) + "\\";
                 if (json["data"] != null && json["schema"] != null && json["options"] != null && json["view"] != null)
                 {
@@ -343,7 +387,7 @@ namespace Satrabel.OpenForm.Components
                     }
                     catch (Exception ex)
                     {
-                        string mess = string.Format("Error while saving file [{0}]", datafile);
+                        string mess = $"Error while saving file [{datafile}]";
                         Log.Logger.Error(mess, ex);
                         throw new Exception(mess, ex);
                     }
@@ -357,107 +401,94 @@ namespace Satrabel.OpenForm.Components
             }
         }
 
-        private static string GetProperty(JObject obj, string PropertyName)
+        
+        private void UploadWholeFile(HttpContextBase context, ICollection<FilesStatus> statuses)
         {
-            string PropertyValue = "";
-            var Property = obj.Children<JProperty>().SingleOrDefault(p => p.Name.ToLower() == PropertyName.ToLower());
-            if (Property != null)
+            IFileManager _fileManager = FileManager.Instance;
+            IFolderManager _folderManager = FolderManager.Instance;
+            for (var i = 0; i < context.Request.Files.Count; i++)
             {
-                PropertyValue = Property.Value.ToString();
+                var file = context.Request.Files[i];
+                if (file == null) continue;
+
+                var fileName = FileUploadController.CleanUpFileName(Path.GetFileName(file.FileName));
+
+
+                if (IsAllowedExtension(fileName))
+                {
+                    string uploadfolder = "OpenForm/Files/" + ActiveModule.ModuleID;
+
+                    if (!string.IsNullOrEmpty(context.Request.Form["uploadfolder"]))
+                    {
+                        uploadfolder = context.Request.Form["uploadfolder"];
+                    }
+                    var userFolder = _folderManager.GetFolder(PortalSettings.PortalId, uploadfolder);
+                    if (userFolder == null)
+                    {
+                        // Get folder mapping
+                        var folderMapping = FolderMappingController.Instance.GetFolderMapping(PortalSettings.PortalId, "Secure");
+                        userFolder = _folderManager.AddFolder(folderMapping, uploadfolder);
+                        //userFolder = _folderManager.AddFolder(PortalSettings.PortalId, uploadfolder);
+                    }
+                    int suffix = 0;
+                    string baseFileName = Path.GetFileNameWithoutExtension(fileName);
+                    string extension = Path.GetExtension(fileName);
+                    var fileInfo = _fileManager.GetFile(userFolder, fileName);
+                    while (fileInfo != null)
+                    {
+                        suffix++;
+                        fileName = baseFileName + "-" + suffix + extension;
+                        fileInfo = _fileManager.GetFile(userFolder, fileName);
+                    }
+                    fileInfo = _fileManager.AddFile(userFolder, fileName, file.InputStream, true);
+                    var fileIcon = IconController.IconURL("Ext" + fileInfo.Extension, "32x32");
+                    if (!File.Exists(context.Server.MapPath(fileIcon)))
+                    {
+                        fileIcon = IconController.IconURL("File", "32x32");
+                    }
+                    
+                    statuses.Add(new FilesStatus
+                    {
+                        success = true,
+                        name = fileName,
+                        extension = fileInfo.Extension,
+                        type = fileInfo.ContentType,
+                        size = file.ContentLength,
+                        progress = "1.0",
+                        url = _fileManager.GetUrl(fileInfo),
+                        thumbnail_url = fileIcon,
+                        message = "success",
+                        id = fileInfo.FileId,
+                    });
+                }
+                else
+                {
+                    statuses.Add(new FilesStatus
+                    {
+                        success = false,
+                        name = fileName,
+                        message = "File type not allowed."
+                    });
+                }
             }
-            return PropertyValue;
+
         }
 
-        private MailAddress GenerateMailAddress(string TypeOfAddress, string Email, string Name, string FormEmailField, string FormNameField, JObject form)
+        private static bool IsAllowedExtension(string fileName)
         {
-            MailAddress adr = null;
+            var extension = Path.GetExtension(fileName);
 
-            if (TypeOfAddress == "host")
-            {
-                if (Validate.IsValidEmail(Host.HostEmail))
-                    adr = new MailAddress(Host.HostEmail, Host.HostTitle);
-            }
-            else if (TypeOfAddress == "admin")
-            {
-                var user = UserController.GetUserById(PortalSettings.PortalId, PortalSettings.AdministratorId);
-                if (Validate.IsValidEmail(user.Email))
-                    adr = new MailAddress(user.Email, user.DisplayName);
-            }
-            else if (TypeOfAddress == "form")
-            {
-                if (string.IsNullOrEmpty(FormNameField))
-                    FormNameField = "name";
-                if (string.IsNullOrEmpty(FormEmailField))
-                    FormEmailField = "email";
-
-                string formEmail = GetProperty(form, FormEmailField);
-                string formName = GetProperty(form, FormNameField);
-                if (Validate.IsValidEmail(formEmail))
-                    adr = new MailAddress(formEmail, formName);
-            }
-            else if (TypeOfAddress == "custom")
-            {
-                if (Validate.IsValidEmail(Email))
-                    adr = new MailAddress(Email, Name);
-            }
-            else if (TypeOfAddress == "current")
-            {
-                if (UserInfo == null)
-                    throw new Exception(string.Format("Can't send email to current user, as there is no current user. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
-                if (Validate.IsValidEmail(UserInfo.Email))
-                    throw new Exception(string.Format("Can't send email to current user, as email address of current user is unknown. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
-
-                adr = new MailAddress(UserInfo.Email, UserInfo.DisplayName);
-            }
-
-            if (adr == null)
-            {
-                throw new Exception(string.Format("Can't determine email address. Parameters were TypeOfAddress: [{0}], Email: [{1}], Name: [{2}], FormEmailField: [{3}], FormNameField: [{4}], FormNameField: [{5}]", TypeOfAddress, Email, Name, FormEmailField, FormNameField, form));
-            }
-
-            return adr;
+            //regex matches a dot followed by 1 or more chars followed by a semi-colon
+            //regex is meant to block files like "foo.asp;.png" which can take advantage
+            //of a vulnerability in IIS6 which treasts such files as .asp, not .png
+            return !string.IsNullOrEmpty(extension)
+                   && Host.AllowedExtensionWhitelist.IsAllowedExtension(extension)
+                   && !Regex.IsMatch(fileName, @"\..+;");
         }
-        private string SendMail(string mailFrom, string mailTo, string replyTo, string subject, string body)
-        {
 
-            //string mailFrom
-            //string mailTo, 
-            string cc = "";
-            string bcc = "";
-            //string replyTo, 
-            DotNetNuke.Services.Mail.MailPriority priority = DotNetNuke.Services.Mail.MailPriority.Normal;
-            //string subject, 
-            MailFormat bodyFormat = MailFormat.Html;
-            Encoding bodyEncoding = Encoding.UTF8;
-            //string body, 
-            List<Attachment> attachments = new List<Attachment>();
-            string smtpServer = Host.SMTPServer;
-            string smtpAuthentication = Host.SMTPAuthentication;
-            string smtpUsername = Host.SMTPUsername;
-            string smtpPassword = Host.SMTPPassword;
-            bool smtpEnableSSL = Host.EnableSMTPSSL;
-
-            string res = Mail.SendMail(mailFrom,
-                            mailTo,
-                            cc,
-                            bcc,
-                            replyTo,
-                            priority,
-                            subject,
-                            bodyFormat,
-                            bodyEncoding,
-                            body,
-                            attachments,
-                            smtpServer,
-                            smtpAuthentication,
-                            smtpUsername,
-                            smtpPassword,
-                            smtpEnableSSL);
-
-            //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
-            return res;
-        }
     }
+
+
 
     public class NotificationDTO
     {
@@ -503,6 +534,7 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public List<string> Errors { get; set; }
         public string RedirectUrl { get; set; }
+        public bool AfterSubmit { get; set; }
     }
 }
 

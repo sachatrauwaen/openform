@@ -10,10 +10,7 @@
 ' 
 */
 
-using System.Collections.Generic;
 //using System.Xml;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Services.Search;
 
 namespace Satrabel.OpenForm.Components
 {

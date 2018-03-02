@@ -12,8 +12,6 @@
 using System;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Common;
-using DotNetNuke.Framework.JavaScriptLibraries;
-using DotNetNuke.Framework;
 using System.Web.UI.WebControls;
 using DotNetNuke.Services.Localization;
 using System.IO;
@@ -305,6 +303,7 @@ namespace Satrabel.OpenForm
                 }
                 scriptList.Items.Add(new ListItem("Stylesheet", "template.css"));
                 scriptList.Items.Add(new ListItem("Javascript", "template.js"));
+                scriptList.Items.Add(new ListItem("After Submit", "aftersubmit.cshtml"));
             }
         }
         protected void cmdSave_Click(object sender, EventArgs e)

@@ -1,7 +1,7 @@
 /*
 function Load() {
-    var sch = JSON.parse($("#schema").val());
-    var opts = JSON.parse($("#options").val());
+    //var sch = JSON.parse($("#schema").val());
+    //var opts = JSON.parse($("#options").val());
     var data = getBuilder(sch, opts);
     return data;
 }
@@ -65,7 +65,7 @@ function getBuilder(schema, options) {
 }
 */
 function getSchema(formdef) {
-    var sch = null; //JSON.parse($("#schema").val());
+    var sch = null; 
     var schema = {
         //"title": "Form preview",
         "type": "object",
@@ -115,14 +115,15 @@ function getSchema(formdef) {
             prop.title = value.title;
         }
         if (value.fieldoptions) {
-
+            
             prop.enum = $.map(value.fieldoptions, function (v, i) {
                 return v.value;
             });
-
+            /*
             if (value.required && prop.enum && prop.enum.length > 0) {
                 prop.default = prop.enum[0];
             }
+            */
         }
         if (value.dependencies) {
             var deps = [];
@@ -266,6 +267,7 @@ var baseFields = function (index, value, oldOptions) {
         };
     }
     if (value.fieldoptions) {
+        field.sort = false;
         field.optionLabels = $.map(value.fieldoptions, function (v, i) {
             return v.text;
         });
@@ -362,8 +364,7 @@ var baseFields = function (index, value, oldOptions) {
 };
 
 function getOptions(formdef) {
-    var opts = null; //JSON.parse($("#options").val());
-
+    var opts = null; 
     var options = {
         "fields": {}
     };
@@ -437,8 +438,6 @@ function showForm(value) {
         "connector": connector
     };
     //alert(JSON.stringify(value, null, "  "));
-    $("#schema").val(JSON.stringify(schema, null, "  "));
-    $("#options").val(JSON.stringify(options, null, "  "));
     var exists = $("#form2").alpaca("exists");
     if (exists) {
         $("#form2").alpaca("destroy");
@@ -462,7 +461,8 @@ var fieldSchema =
             "default": "text",
             "required": true,
             "title": "Type",
-            "enum": ["label","text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number",
+            "enum": ["label", "text", "checkbox", "multicheckbox", "select", "radio", "textarea", "email", "date", "number", "file",
+
                         /*"image", "file", "url", "icon", "guid", "address",
                         "array", "table", "relation",*/
                         "summernote", /* "ckeditor", "gallery", "documents", "object" ,
@@ -631,7 +631,7 @@ var fieldOptions =
         "fieldClass": "fieldname"
     },
     "fieldtype": {
-        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number",
+        "optionLabels": ["Label", "Text", "Checkbox", "Multi checkbox", "Dropdown list (select)", "Radio buttons", "Text area", "Email address", "Date", "Number", "File",
                             /*"Image (upload & autocomplete)", "File (upload & autocomplete)", "Url (autocomplete for pages)", "Font Awesome Icons", "Guid (auto id)", "Address (autocomplete & geocode)",
                             "List (array)", "Table (array)", "Relation (Additional Data)", */
                             "Rich Text", /* "CK Editor", "Image Gallery", "Documents", "Group (object)" ,
@@ -653,7 +653,7 @@ var fieldOptions =
         "rightLabel": "Required"
     },
     "defaultHtml": {
-        "title": "Default",
+        "label": "Text",
         "type": "summernote",
         "dependencies": {
             "fieldtype": ["label"]
@@ -664,8 +664,7 @@ var fieldOptions =
             maxHeight: null,
             focus: true,
             toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],                
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']]
@@ -687,9 +686,11 @@ var fieldOptions =
         }
     },
     "subfields": {
+        "type": "accordion",        
         "collapsible": true,
         "items": {
             "fieldClass": "listfielddiv"
+            
         },
         "dependencies": {
             "fieldtype": ["array", "table", "object"]
@@ -709,6 +710,8 @@ var fieldOptions =
     },
     "dependencies": {
         "type": "table",
+        "collapsible": true,
+        "lazyLoading":true,
         "items" : {
             "fields": {
                 "fieldname": {
@@ -738,6 +741,7 @@ var formbuilderConfig = {
     "options": {
         "fields": {
             "formfields": {
+                "type": "accordion",
                 "toolbarSticky": true,
                 "items": {
                     //"collapsible": true,
@@ -748,14 +752,13 @@ var formbuilderConfig = {
         }
     },
     //"view": "dnn-edit",
-    //"view": "bootstrap-edit-horizontal",
+    "view": "dnnbootstrap-edit-horizontal",
     "postRender": function (control) {
         var self = control;
         control.childrenByPropertyId["formfields"].on("change", function () {
             //alert("The value of title was changed to: " + this.getValue());
             var value = self.getValue();
             //$.cookie('alpacadata', JSON.stringify(value), { expires: 7, path: '/' });
-            $('#builder').val(JSON.stringify(value, null, "  "));
             showForm(value);
                         
         });
