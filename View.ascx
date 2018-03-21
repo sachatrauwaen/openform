@@ -12,6 +12,7 @@
 <dnncl:DnnCssInclude ID="DnnCssInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.css" />
 <dnncl:DnnJsInclude ID="DnnJsInclude10" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnJsInclude ID="DnnJsInclude9" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/SummernoteField.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude11" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/CheckboxField.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>

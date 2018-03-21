@@ -94,6 +94,15 @@ namespace Satrabel.OpenForm {
         protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude9;
         
         /// <summary>
+        /// Contrôle DnnJsInclude11.
+        /// </summary>
+        /// <remarks>
+        /// Champ généré automatiquement.
+        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
+        /// </remarks>
+        protected global::DotNetNuke.Web.Client.ClientResourceManagement.DnnJsInclude DnnJsInclude11;
+        
+        /// <summary>
         /// Contrôle pHelp.
         /// </summary>
         /// <remarks>
