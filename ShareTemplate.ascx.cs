@@ -17,7 +17,7 @@ using Satrabel.OpenContent.Components;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Common.Utilities;
-using ICSharpCode.SharpZipLib.Zip;
+//using ICSharpCode.SharpZipLib.Zip;
 using System.Web;
 using Satrabel.OpenContent.Components.Rss;
 using System.Net;
@@ -142,7 +142,9 @@ namespace Satrabel.OpenForm
                     {
                         folder = FolderManager.Instance.AddFolder(PortalId, FolderName);
                     }
-                    FileSystemUtils.UnzipResources(new ZipInputStream(fuFile.FileContent), folder.PhysicalPath);
+                    //FileSystemUtils.UnzipResources(new ZipInputStream(fuFile.FileContent), folder.PhysicalPath);
+                    var zip = new ZipUtils();
+                    zip.UnzipFiles(fuFile.FileContent, folder.PhysicalPath);
                 }
             }
             catch (PermissionsNotMetException)
@@ -218,7 +220,9 @@ namespace Satrabel.OpenForm
                     var req = (HttpWebRequest)WebRequest.Create(FileName);
                     Stream stream = req.GetResponse().GetResponseStream();
 
-                    FileSystemUtils.UnzipResources(new ZipInputStream(stream), folder.PhysicalPath);
+                    //FileSystemUtils.UnzipResources(new ZipInputStream(stream), folder.PhysicalPath);
+                    var zip = new ZipUtils();
+                    zip.UnzipFiles(stream, folder.PhysicalPath);
                 }
             }
             catch (PermissionsNotMetException)
@@ -261,31 +265,11 @@ namespace Satrabel.OpenForm
             try
             {
                 //Log.AddInfo(string.Format(Util.WRITER_CreateArchive, ZipFileShortName));
-                strmZipFile = File.Create(zipFileName);
-                ZipOutputStream strmZipStream = null;
-                try
-                {
-                    strmZipStream = new ZipOutputStream(strmZipFile);
-                    strmZipStream.SetLevel(CompressionLevel);
+                
+                var zip = new ZipUtils();
+                zip.ZipFiles(CompressionLevel, strmZipFile, Directory.GetFiles(Folder));
 
-                    foreach (var item in Directory.GetFiles(Folder))
-                    {
-                        FileSystemUtils.AddToZip(ref strmZipStream, Path.GetFullPath(item), Path.GetFileName(item), "");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
-                    //Log.AddFailure(string.Format(Util.WRITER_SaveFileError, ex));
-                }
-                finally
-                {
-                    if (strmZipStream != null)
-                    {
-                        strmZipStream.Finish();
-                        strmZipStream.Close();
-                    }
-                }
+                
                 //Log.EndJob(Util.WRITER_CreatedPackage);
                 WriteFileToHttpContext(zipFileName, ContentDisposition.Attachment);
             }
