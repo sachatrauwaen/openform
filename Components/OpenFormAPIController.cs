@@ -250,7 +250,7 @@ namespace Satrabel.OpenForm.Components
                             }
                         }
                         // language options
-                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnLanguageUtils.GetCurrentCultureCode() + ".json";
                         if (File.Exists(optionsFilename))
                         {
                             string fileContent = File.ReadAllText(optionsFilename);
