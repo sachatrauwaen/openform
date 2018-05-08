@@ -44,8 +44,7 @@
         </div>
         <span class="ResultMessage"></span>
         <div class="ResultTracking"></div>
-        <asp:HiddenField ID="hfOpenForm" runat="server" />
-        <asp:TextBox ID="tbOpenForm" runat="server" CssClass="hidden"></asp:TextBox>
+        <asp:HiddenField ID="hfOpenForm" runat="server" />        
         <input type="hidden" name="__OPENFORM<%=ModuleId %>" id="__OPENFORM<%=ModuleId %>" value="" />
     </asp:Panel>
 

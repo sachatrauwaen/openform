@@ -202,15 +202,6 @@ namespace Satrabel.OpenForm {
         protected global::System.Web.UI.WebControls.HiddenField hfOpenForm;
         
         /// <summary>
-        /// Contrôle tbOpenForm.
-        /// </summary>
-        /// <remarks>
-        /// Champ généré automatiquement.
-        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbOpenForm;
-        
-        /// <summary>
         /// Contrôle phResult.
         /// </summary>
         /// <remarks>
