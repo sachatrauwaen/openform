@@ -67,7 +67,7 @@ namespace Satrabel.OpenForm
                     OpenFormController ctrl =new OpenFormController();
                     var content = ctrl.GetContent(id, ModuleId);
                      */
-                    string json = Request["__OPENFORM"];
+                    string json = Request["__OPENFORM"+ModuleId];
                     phForm.Visible = false;
                     phResult.Visible = true;
                     string formData = "";

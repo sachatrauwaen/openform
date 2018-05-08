@@ -46,7 +46,7 @@
         <div class="ResultTracking"></div>
         <asp:HiddenField ID="hfOpenForm" runat="server" />
         <asp:TextBox ID="tbOpenForm" runat="server" CssClass="hidden"></asp:TextBox>
-        <input type="hidden" name="__OPENFORM" id="__OPENFORM" value="" />
+        <input type="hidden" name="__OPENFORM<%=ModuleId %>" id="__OPENFORM<%=ModuleId %>" value="" />
     </asp:Panel>
 
     <script type="text/javascript">
@@ -98,7 +98,7 @@
                                 if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
                                     var value = selfControl.getValue();
                                     $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
-                                    $('#__OPENFORM').val(JSON.stringify(value));
+                                    $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
                                     if (recaptcha) {
                                         value.recaptcha = recap;
                                     }
