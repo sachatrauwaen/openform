@@ -67,7 +67,7 @@ namespace Satrabel.OpenForm
                     OpenFormController ctrl =new OpenFormController();
                     var content = ctrl.GetContent(id, ModuleId);
                      */
-                    string json = hfOpenForm.Value;
+                    string json = Request["__OPENFORM"];
                     phForm.Visible = false;
                     phResult.Visible = true;
                     string formData = "";
@@ -138,8 +138,6 @@ namespace Satrabel.OpenForm
                 scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, template).ToArray());
                 scriptList.Visible = true;
             }
-
-
             if (string.IsNullOrEmpty(template))
             {
                 ScopeWrapper.Visible = false;
