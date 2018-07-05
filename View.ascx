@@ -8,6 +8,7 @@
 <dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
 <dnncl:DnnJsInclude ID="DnnJsInclude5" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/DateField.js" Priority="110" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude6" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/CheckboxField.js" Priority="110" ForceProvider="DnnPageHeaderProvider" />
            
 <dnncl:DnnCssInclude ID="DnnCssInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.css" />
 <dnncl:DnnJsInclude ID="DnnJsInclude10" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />

@@ -273,7 +273,7 @@ var baseFields = function (index, value, oldOptions) {
         });
     }
     if (value.fieldtype == "checkbox") {
-        field.label = value.title;
+        field.rightLabel = value.title;
     }
     if (value.fieldtype == "radio") {
         field.vertical = value.vertical;
