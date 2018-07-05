@@ -664,10 +664,11 @@ var fieldOptions =
             maxHeight: null,
             focus: true,
             toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],                
+                ['style', ['bold', 'underline', 'clear']],                
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']]
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link']]
             ]
         }
     },
