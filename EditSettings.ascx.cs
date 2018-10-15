@@ -30,7 +30,7 @@ namespace Satrabel.OpenForm
             //ServicesFramework.Instance.RequestAjaxScriptSupport();
             //ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext.PortalId, "DesktopModules/OpenForm/", "settings");
-            alpaca.RegisterAll();
+            alpaca.RegisterAll(true, true);
         }
 
         protected override void OnLoad(EventArgs e)

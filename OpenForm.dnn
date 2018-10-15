@@ -1,8 +1,8 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="03.03.01">
+    <package name="OpenForm" type="Module" version="03.04.00">
       <friendlyName>OpenForm</friendlyName>
-      <description>OpenForm module. Requires OpenContent v3.2.x</description>
+      <description>OpenForm module. Requires OpenContent v3.4.5 or higher</description>
       <iconFile>~/Images/icon_extensions.png</iconFile>
       <owner>
         <name>Satrabel.be</name>
