@@ -8,6 +8,7 @@
 <dnncl:DnnJsInclude ID="DnnJsInclude3" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js" Priority="109" ForceProvider="DnnPageHeaderProvider" />
 <dnncl:DnnCssInclude ID="DnnCssInclude4" runat="server" FilePath="~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
 <dnncl:DnnJsInclude ID="DnnJsInclude5" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/DateField.js" Priority="110" ForceProvider="DnnPageHeaderProvider" />
+<dnncl:DnnJsInclude ID="DnnJsInclude6" runat="server" FilePath="~/DesktopModules/OpenContent/alpaca/js/fields/dnn/CheckboxField.js" Priority="110" ForceProvider="DnnPageHeaderProvider" />
            
 <dnncl:DnnCssInclude ID="DnnCssInclude1" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.css" />
 <dnncl:DnnJsInclude ID="DnnJsInclude10" runat="server" FilePath="~/DesktopModules/OpenContent/js/summernote/summernote.js" Priority="113" ForceProvider="DnnPageHeaderProvider" />
@@ -44,7 +45,8 @@
         </div>
         <span class="ResultMessage"></span>
         <div class="ResultTracking"></div>
-        <asp:HiddenField ID="hfOpenForm" runat="server" />
+        <asp:HiddenField ID="hfOpenForm" runat="server" />        
+        <input type="hidden" name="__OPENFORM<%=ModuleId %>" id="__OPENFORM<%=ModuleId %>" value="" />
     </asp:Panel>
 
     <script type="text/javascript">
@@ -96,6 +98,7 @@
                                 if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
                                     var value = selfControl.getValue();
                                     $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
+                                    $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
                                     if (recaptcha) {
                                         value.recaptcha = recap;
                                     }
@@ -110,7 +113,7 @@
 
                                     });
                                     fd.append("data", JSON.stringify(value));
-                                    self.FormSubmit(fd);
+                                    self.FormSubmit(fd, value);
                                     $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                                 }
                             });
@@ -123,7 +126,7 @@
                 //alert("Uh-oh, something broke: " + status);
             });
 
-            self.FormSubmit = function (formdata) {
+            self.FormSubmit = function (formdata, value) {
                 $.ajax({
                     type: "POST",
                     url: sf.getServiceRoot('OpenForm') + "OpenFormAPI/Submit",
@@ -136,7 +139,11 @@
                         console.log(data.Errors);
                     }
                     if (data.Tracking || data.AfterSubmit) {
+                        //var jsonData = JSON.stringify(value);
                         <%= PostBackStr() %>
+                        //WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("dnn$ctr472$View$lbSave", jsonData, false, "", "http://localhost:54068/fr-fr/openform/result/submit", false, true))
+
+                        //window.location = window.location + "/submit/" + encodeURIComponent(JSON.stringify(value));
                     } else {
                         $('.OpenForm', moduleScope).hide();
                         $('.ResultMessage', moduleScope).html(data.Message);
