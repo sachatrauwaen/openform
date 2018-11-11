@@ -81,10 +81,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\OpenContent.dll</HintPath>
     </Reference>
-    <Reference Include="SharpZipLib, Version=0.81.0.1407, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

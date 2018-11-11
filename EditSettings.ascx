@@ -90,7 +90,7 @@
                             "schema": config.schema,
                             "options": config.options,
                             "data": config.data,
-                            "view": "dnn-edit",
+                            "view": "dnnbootstrap-edit",
                             "connector": connector,
                             "postRender": function (control) {
                             }
