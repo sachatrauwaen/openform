@@ -128,7 +128,7 @@ namespace Satrabel.OpenForm.Components
             StringBuilder formDataS = new StringBuilder();
             if (form != null)
             {
-                formDataS.Append("<table boder=\"1\">");
+                formDataS.Append("<table border=\"1\">");
                 foreach (var item in JObject.Parse(form).Properties())
                 {
                     if (item.Name == "Files")
