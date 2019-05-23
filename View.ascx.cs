@@ -28,6 +28,9 @@ using Localization = DotNetNuke.Services.Localization.Localization;
 using System.Web.Hosting;
 using System.Linq;
 using Satrabel.OpenContent.Components.Razor;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using Satrabel.OpenContent.Components.Json;
 
 #endregion
 
@@ -48,8 +51,94 @@ namespace Satrabel.OpenForm
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             //JavaScript.RequestRegistration(CommonJs.DnnPlugins); ;
             //JavaScript.RequestRegistration(CommonJs.jQueryFileUpload);
+            RegisterFields();
 
         }
+
+        private void RegisterFields()
+        {
+            Scripts = new List<string>();
+
+            List<string> fieldTypes = new List<string>();
+            JToken options = GetOptions();
+            if (options != null)
+            {
+                fieldTypes = FieldTypes(options);
+            }
+
+            Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/js/lib/handlebars/handlebars.min.js"));
+            Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/js/alpaca/bootstrap/alpaca.min.js"));
+            Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/alpaca/js/fields/dnn/CheckboxField.js"));
+
+            if (fieldTypes.Contains("date") || fieldTypes.Contains("datetime") || fieldTypes.Contains("time"))
+            {
+                //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/alpaca/js/fields/dnn/DateField.js", FileOrder.Js.DefaultPriority+10, "DnnPageHeaderProvider");
+                //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/js/lib/moment/min/moment-with-locales.min.js", FileOrder.Js.DefaultPriority+10, "DnnPageHeaderProvider");
+                //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js", FileOrder.Js.DefaultPriority + 11, "DnnPageHeaderProvider");
+                ClientResourceManager.RegisterStyleSheet(Page, "~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css", FileOrder.Css.DefaultPriority+11);
+                Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/alpaca/js/fields/dnn/DateField.js"));
+                Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/js/lib/moment/min/moment-with-locales.min.js"));
+                Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/js/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"));                
+            }
+            if (fieldTypes.Contains("summernote") || fieldTypes.Contains("mlsummernote"))
+            {
+                //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/alpaca/js/fields/dnn/SummernoteField.js", FileOrder.Js.DefaultPriority+10, "DnnPageHeaderProvider");
+                //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/js/summernote/summernote.min.js", FileOrder.Js.DefaultPriority+10, "DnnPageHeaderProvider");
+                ClientResourceManager.RegisterStyleSheet(Page, "~/DesktopModules/OpenContent/js/summernote/summernote.css", FileOrder.Css.DefaultPriority+10);
+                Scripts.Add(Page.ResolveUrl("~/DesktopModules/OpenContent/alpaca/js/fields/dnn/SummernoteField.js"));
+                Scripts.Add(Page.ResolveUrl( "~/DesktopModules/OpenContent/js/summernote/summernote.min.js"));
+            }
+        }
+        private JToken GetOptions()
+        {
+            string Template = ModuleContext.Settings["template"] as string;
+            string templateFilename = HostingEnvironment.MapPath("~/" + Template);
+            //string templateFilename = "~/" + Template;
+            string optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options.json";
+
+            // default options
+            JToken optionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
+            
+
+            // language options
+            optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + $"options.{DnnLanguageUtils.GetCurrentCultureCode()}.json";
+            JToken languageOptionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
+            optionsJson = optionsJson.JsonMerge(languageOptionsJson);
+
+            return optionsJson;
+        }
+
+        private static List<string> FieldTypes(JToken options)
+        {
+            var types = new List<string>();
+            var fields = options["fields"];
+            if (fields != null)
+            {
+                foreach (JProperty fieldProp in fields.Children())
+                {
+                    var field = fieldProp.First();
+                    var fieldtype = field["type"];
+                    if (fieldtype != null)
+                    {
+                        types.Add(fieldtype.ToString());
+                    }
+                    var subtypes = FieldTypes(field);
+                    types.AddRange(subtypes);
+                }
+            }
+            else if (options["items"] != null)
+            {
+                if (options["items"]["type"] != null)
+                {
+                    var fieldtype = options["items"]["type"] as JValue;
+                    types.Add(fieldtype.Value.ToString());
+                }
+                var subtypes = FieldTypes(options["items"]);
+                types.AddRange(subtypes);
+            }
+            return types;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -67,7 +156,7 @@ namespace Satrabel.OpenForm
                     OpenFormController ctrl =new OpenFormController();
                     var content = ctrl.GetContent(id, ModuleId);
                      */
-                    string json = Request["__OPENFORM"+ModuleId];
+                    string json = Request["__OPENFORM" + ModuleId];
                     phForm.Visible = false;
                     phResult.Visible = true;
                     string formData = "";
@@ -77,8 +166,11 @@ namespace Satrabel.OpenForm
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
                     if (settings != null && settings.Settings != null)
                     {
-                        HandlebarsEngine hbs = new HandlebarsEngine();
-                        lMessage.Text = hbs.Execute(settings.Settings.Message, data);
+                        if (!string.IsNullOrEmpty(settings.Settings.Message))
+                        {
+                            HandlebarsEngine hbs = new HandlebarsEngine();
+                            lMessage.Text = hbs.Execute(settings.Settings.Message, data);
+                        }
                         lTracking.Text = settings.Settings.Tracking;
                     }
                     var razorscript = new FileUri(Path.GetDirectoryName(Template), "aftersubmit.cshtml");
@@ -309,6 +401,8 @@ namespace Satrabel.OpenForm
         {
             return Localization.GetString(resourceKey, LocalResourceFile);
         }
+
+        public List<string> Scripts { get; set; }
 
     }
 }
