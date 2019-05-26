@@ -102,9 +102,11 @@ namespace Satrabel.OpenForm
 
             // language options
             optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + $"options.{DnnLanguageUtils.GetCurrentCultureCode()}.json";
-            JToken languageOptionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
-            optionsJson = optionsJson.JsonMerge(languageOptionsJson);
-
+            if (File.Exists(optionsFilename))
+            {
+                JToken languageOptionsJson = JsonUtils.GetJsonFromFile(optionsFilename);
+                optionsJson = optionsJson.JsonMerge(languageOptionsJson);
+            }
             return optionsJson;
         }
 

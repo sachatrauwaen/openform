@@ -187,6 +187,16 @@
     <Content Include="AlpacaFormBuilder.ascx" />
     <Content Include="Edit.ascx" />
     <Content Include="EditData.ascx" />
+    <Content Include="images\edit.png" />
+    <Content Include="images\editcontent2.png" />
+    <Content Include="images\editsettings2.png" />
+    <Content Include="images\edittemplate.png" />
+    <Content Include="images\exchange.png" />
+    <Content Include="images\formbuilder.png" />
+    <Content Include="images\help.png" />
+    <Content Include="images\icon_extensions.png" />
+    <Content Include="images\settings.gif" />
+    <Content Include="images\settings.png" />
     <Content Include="js\alpaca-bundle.js" />
     <Content Include="js\alpaca-bundle.min.js">
       <DependentUpon>alpaca-bundle.js</DependentUpon>
@@ -245,9 +255,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\AlpacaFormBuilder.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bundleconfig.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

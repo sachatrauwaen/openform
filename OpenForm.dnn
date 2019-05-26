@@ -3,7 +3,7 @@
     <package name="OpenForm" type="Module" version="03.05.00">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module. Requires OpenContent v3.4.5 or higher</description>
-      <iconFile>~/Images/icon_extensions.png</iconFile>
+      <iconFile>~/DesktopModules/OpenForm/Images/icon_extensions.png</iconFile>
       <owner>
         <name>Satrabel.be</name>
         <organization>Satrabel.be</organization>
