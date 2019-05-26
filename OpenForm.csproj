@@ -77,9 +77,10 @@
       <HintPath>ref\dnn740\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenContent, Version=0.0.1.40237, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenContent, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\OpenContent.dll</HintPath>
+      <HintPath>ref\OpenContent.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -186,6 +187,20 @@
     <Content Include="AlpacaFormBuilder.ascx" />
     <Content Include="Edit.ascx" />
     <Content Include="EditData.ascx" />
+    <Content Include="images\edit.png" />
+    <Content Include="images\editcontent2.png" />
+    <Content Include="images\editsettings2.png" />
+    <Content Include="images\edittemplate.png" />
+    <Content Include="images\exchange.png" />
+    <Content Include="images\formbuilder.png" />
+    <Content Include="images\help.png" />
+    <Content Include="images\icon_extensions.png" />
+    <Content Include="images\settings.gif" />
+    <Content Include="images\settings.png" />
+    <Content Include="js\alpaca-bundle.js" />
+    <Content Include="js\alpaca-bundle.min.js">
+      <DependentUpon>alpaca-bundle.js</DependentUpon>
+    </Content>
     <Content Include="js\builder\formbuilder.css" />
     <Content Include="js\builder\formbuilder.html" />
     <Content Include="js\builder\formbuilder.js" />

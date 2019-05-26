@@ -14,7 +14,7 @@
     </XmlRead>
 
     <!--in VS 2012 we exclude the packages folder -->
-    <ItemGroup>     
+    <ItemGroup>
       <InstallInclude Include="**\*.ascx" Exclude="packages\**" />
       <InstallInclude Include="**\*.asmx" Exclude="packages\**" />
       <InstallInclude Include="**\*.css" Exclude="packages\**" />
@@ -44,7 +44,7 @@
       <SourceInclude Include="**\*.txt" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
       <SourceInclude Include="**\images\**" />
       <SourceInclude Include="**\*.cs" />
-	  <SourceInclude Include="**\Packages\**" />
+      <SourceInclude Include="**\Packages\**" />
       <SourceInclude Include="**\*.cs.designer" />
       <SourceInclude Include="**\*.csproj" />
       <SourceInclude Include="**\*.targets" />
@@ -62,7 +62,6 @@
     <CreateItem Include="**\ReleaseNotes.txt">
       <Output TaskParameter="Include" ItemName="PackageTxtFiles" />
     </CreateItem>
-
 
     <CreateItem Include="**\*.sqldataprovider">
       <Output TaskParameter="Include" ItemName="SqlDataProviderFiles" />
@@ -92,10 +91,6 @@
     <!-- Copy the Install package to the Packages folder -->
     <Copy SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(Version)_Install.$(Extension)" DestinationFolder="install/" />
     
-    <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
-    <RemoveDir Directories ="$(MSBuildProjectDirectory)\ResourcesZip" />
-
-    
     <Copy SourceFiles="$(MSBuildDnnBinPath)\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin"/>
     <Copy SourceFiles="@(SqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\%(RecursiveDir)" />
     <Copy SourceFiles="@(PackageManifestFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
@@ -123,8 +118,9 @@
 
     <Delete Files="$(MSBuildProjectDirectory)\Resources.Zip" />
 
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" ContinueOnError="True"/>
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
-
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\ResourcesZip" ContinueOnError="True"/>
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\ResourcesZip" />
     
   </Target>

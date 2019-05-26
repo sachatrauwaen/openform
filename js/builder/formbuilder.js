@@ -124,7 +124,7 @@ function getSchema(formdef) {
                 prop.default = prop.enum[0];
             }
             */
-        }
+        }       
         if (value.dependencies) {
             var deps = [];
             for (var i = 0; i < value.dependencies.length; i++) {
@@ -295,6 +295,9 @@ var baseFields = function (index, value, oldOptions) {
         } else {
             field.view = "bootstrap-create-horizontal";
         }
+    }
+    if (value.noneLabel) {
+        field.noneLabel = value.noneLabel;
     }
     if (value.dependencies) {
         
@@ -537,6 +540,11 @@ var fieldSchema =
             },
             "dependencies": "fieldtype"
         },
+        "noneLabel": {
+            "type": "string",
+            "title": "None Label",            
+            "dependencies": "fieldtype"
+        },
         "subfields": {
             "type": "array",
             "title": "Fields",
@@ -644,6 +652,11 @@ var fieldOptions =
         "type": "table",
         "dependencies": {
             "fieldtype": ["select", "radio", "multicheckbox"]
+        }
+    },
+    "noneLabel": {
+        "dependencies": {
+            "fieldtype": ["select"]
         }
     },
     "advanced": {

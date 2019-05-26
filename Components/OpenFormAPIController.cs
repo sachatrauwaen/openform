@@ -250,7 +250,7 @@ namespace Satrabel.OpenForm.Components
                             }
                         }
                         // language options
-                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnUtils.GetCurrentCultureCode() + ".json";
+                        optionsFilename = Path.GetDirectoryName(templateFilename) + "\\" + "options." + DnnLanguageUtils.GetCurrentCultureCode() + ".json";
                         if (File.Exists(optionsFilename))
                         {
                             string fileContent = File.ReadAllText(optionsFilename);
@@ -281,8 +281,12 @@ namespace Satrabel.OpenForm.Components
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-
                                     body = hbs.Execute(notification.EmailBody, data);
+                                }
+                                string subject = notification.EmailSubject;
+                                if (!string.IsNullOrEmpty(notification.EmailSubject))
+                                {
+                                    subject = hbs.Execute(notification.EmailSubject, data);
                                 }
                                 var attachements = new List<Attachment>();
                                 foreach (var item in statuses)
@@ -290,9 +294,7 @@ namespace Satrabel.OpenForm.Components
                                     var file = FileManager.Instance.GetFile(item.id);
                                     attachements.Add(new Attachment(FileManager.Instance.GetFileContent(file), item.name));
                                 }
-
-                                //string send = FormUtils.SendMail(from.ToString(), to.ToString(), reply?.ToString() ?? "", notification.EmailSubject, body);
-                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), notification.EmailSubject, body, attachements);
+                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), subject, body, attachements);
                                 if (!string.IsNullOrEmpty(send))
                                 {
                                     res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
