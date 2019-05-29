@@ -38,8 +38,8 @@ namespace Satrabel.OpenForm
             alpaca.RegisterAll(true, loadBootstrap, loadGlyphicons);
             ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenForm/js/builder/formbuilder.js", FileOrder.Js.DefaultPriority);
             ClientResourceManager.RegisterStyleSheet(Page, "~/DesktopModules/OpenForm/js/builder/formbuilder.css", FileOrder.Css.DefaultPriority);
-            ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/js/bootstrap/js/bootstrap.min.js", FileOrder.Js.DefaultPriority);
-            ClientResourceManager.RegisterStyleSheet(Page, "~/DesktopModules/OpenContent/js/bootstrap/css/bootstrap.min.css", FileOrder.Css.DefaultPriority);
+            //ClientResourceManager.RegisterScript(Page, "~/DesktopModules/OpenContent/js/bootstrap/js/bootstrap.min.js", FileOrder.Js.DefaultPriority);
+            //ClientResourceManager.RegisterStyleSheet(Page, "~/DesktopModules/OpenContent/js/bootstrap/css/bootstrap.min.css", FileOrder.Css.DefaultPriority);
         }
     }
 }
