@@ -32,22 +32,27 @@ namespace Satrabel.OpenForm
             {
                 if (!Page.IsPostBack)
                 {
-                    var dynData = GetDataAsListOfDynamics();
-                    gvData.DataSource = ToDataTable(dynData);
-                    gvData.DataBind();
-                    for (int i = 0; i < gvData.Rows.Count; i++)
-                    {
-                        for (int j = 0; j < gvData.Rows[i].Cells.Count; j++)
-                        {
-                            string encoded = gvData.Rows[i].Cells[j].Text;
-                            gvData.Rows[i].Cells[j].Text = Context.Server.HtmlDecode(encoded);
-                        }
-                    }
+                    DataBindGrid();
                 }
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
+        private void DataBindGrid()
+        {
+            var dynData = GetDataAsListOfDynamics();
+            gvData.DataSource = ToDataTable(dynData);
+            gvData.DataBind();
+            for (int i = 0; i < gvData.Rows.Count; i++)
+            {
+                for (int j = 1; j < gvData.Rows[i].Cells.Count; j++)
+                {
+                    string encoded = gvData.Rows[i].Cells[j].Text;
+                    gvData.Rows[i].Cells[j].Text = Context.Server.HtmlDecode(encoded);
+                }
             }
         }
 
@@ -71,6 +76,7 @@ namespace Satrabel.OpenForm
                 dynamic o = new ExpandoObject();
                 var dict = (IDictionary<string, object>)o;
                 o.CreatedOnDate = item.CreatedOnDate;
+                o.Id = item.ContentId;
                 //o.Json = item.Json;
                 dynamic d = JsonUtils.JsonToDynamic(item.Json);
                 //o.Data = d;
@@ -172,5 +178,15 @@ namespace Satrabel.OpenForm
         }
 
         #endregion
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            var btn = (Button)sender;
+            int id = int.Parse(btn.CommandArgument);
+            OpenFormController ctrl = new OpenFormController();
+            var data = ctrl.GetContent(id, ModuleId);
+            ctrl.DeleteContent(data);
+            DataBindGrid();
+        }
     }
 }

@@ -188,24 +188,12 @@ namespace Satrabel.OpenForm.Components
             {
                 Log.Logger.Error(exc);
             }
-            
+
             try
             {
                 form["IPAddress"] = Request.GetIPAddress();
                 int moduleId = ActiveModule.ModuleID;
-                OpenFormController ctrl = new OpenFormController();
-                var content = new OpenFormInfo()
-                {
-                    ModuleId = moduleId,
-                    Json = form.ToString(),
-                    CreatedByUserId = UserInfo.UserID,
-                    CreatedOnDate = DateTime.Now,
-                    LastModifiedByUserId = UserInfo.UserID,
-                    LastModifiedOnDate = DateTime.Now,
-                    Html = "",
-                    Title = "Form submitted - " + DateTime.Now.ToString()
-                };
-                ctrl.AddContent(content);
+
                 var res = new ResultDTO()
                 {
                     Message = "Form submitted."
@@ -218,6 +206,24 @@ namespace Satrabel.OpenForm.Components
                 if (!string.IsNullOrEmpty(jsonSettings))
                 {
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
+
+                    if (!settings.Settings.NotSaveSubmissions)
+                    {
+                        OpenFormController ctrl = new OpenFormController();
+                        var content = new OpenFormInfo()
+                        {
+                            ModuleId = moduleId,
+                            Json = form.ToString(),
+                            CreatedByUserId = UserInfo.UserID,
+                            CreatedOnDate = DateTime.Now,
+                            LastModifiedByUserId = UserInfo.UserID,
+                            LastModifiedOnDate = DateTime.Now,
+                            Html = "",
+                            Title = "Form submitted - " + DateTime.Now.ToString()
+                        };
+                        ctrl.AddContent(content);
+                    }
+
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
                     string formData = "";
@@ -403,7 +409,7 @@ namespace Satrabel.OpenForm.Components
             }
         }
 
-        
+
         private void UploadWholeFile(HttpContextBase context, ICollection<FilesStatus> statuses)
         {
             IFileManager _fileManager = FileManager.Instance;
@@ -448,7 +454,7 @@ namespace Satrabel.OpenForm.Components
                     {
                         fileIcon = IconController.IconURL("File", "32x32");
                     }
-                    
+
                     statuses.Add(new FilesStatus
                     {
                         success = true,
@@ -518,6 +524,7 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public string SiteKey { get; set; }
         public string SecretKey { get; set; }
+        public bool NotSaveSubmissions { get; set; }
 
     }
 
