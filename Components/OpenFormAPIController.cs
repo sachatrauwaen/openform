@@ -128,6 +128,7 @@ namespace Satrabel.OpenForm.Components
         }
 
         [HttpGet]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
         public HttpResponseMessage Settings()
         {
             string Data = (string)ActiveModule.ModuleSettings["data"];
