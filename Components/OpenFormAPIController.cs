@@ -166,6 +166,10 @@ namespace Satrabel.OpenForm.Components
         }
         public HttpResponseMessage Submit()
         {
+            var res = new ResultDTO()
+            {
+                Message = "Form submitted."
+            };
             var form = JObject.Parse(HttpContextSource.Current.Request.Form["data"].ToString());
             var statuses = new List<FilesStatus>();
             try
@@ -187,6 +191,7 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
+                res.Errors.Add(exc.Message);
                 Log.Logger.Error(exc);
             }
 
@@ -195,10 +200,7 @@ namespace Satrabel.OpenForm.Components
                 form["IPAddress"] = Request.GetIPAddress();
                 int moduleId = ActiveModule.ModuleID;
 
-                var res = new ResultDTO()
-                {
-                    Message = "Form submitted."
-                };
+
                 string template = (string)ActiveModule.ModuleSettings["template"];
                 var razorscript = new FileUri(Path.GetDirectoryName(template), "aftersubmit.cshtml");
                 res.AfterSubmit = razorscript.FileExists;
@@ -309,7 +311,7 @@ namespace Satrabel.OpenForm.Components
                             }
                             catch (Exception exc)
                             {
-                                res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
+                                res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message +  (UserInfo.IsSuperUser ? " - " + exc.StackTrace : ""));
                                 Log.Logger.Error(exc);
                             }
                         }
