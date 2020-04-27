@@ -60,8 +60,9 @@ namespace Satrabel.OpenForm
         {
             var dynData = GetDataAsListOfDynamics();
             DataTable datatable = ToDataTable(dynData);
-            string filename=GetFileNameFromFormName();
-            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+            string filename = GetFileNameFromFormName();
+            var excelBytes = ExcelUtils.CreateExcel(datatable);
+            ExcelUtils.PushDataAsExcelOntoHttpResponse(excelBytes, filename, HttpContext.Current);
         }
 
         #region Private Methods
@@ -77,20 +78,26 @@ namespace Satrabel.OpenForm
                 var dict = (IDictionary<string, object>)o;
                 o.CreatedOnDate = item.CreatedOnDate;
                 o.Id = item.ContentId;
-                //o.Json = item.Json;
-                dynamic d = JsonUtils.JsonToDynamic(item.Json);
-                //o.Data = d;
-                Dictionary<String, Object> jdic = Dyn2Dict(d);
-                foreach (var p in jdic)
+                try
                 {
-                    dict[p.Key] = p.Value;
+                    dynamic d = JsonUtils.JsonToDynamic(item.Json);
+                    Dictionary<string, object> jdic = Dyn2Dict(d);
+                    foreach (var p in jdic)
+                    {
+                        dict[p.Key] = p.Value;
+                    }
                 }
+                catch (Exception e)
+                {
+                    o.Error = $"Failed to Convert item [{item.ContentId}] to dynamic. Item.CreatedOnDate: {item.CreatedOnDate}";
+                }
+
                 dynData.Add(o);
             }
             return dynData;
         }
 
-        private Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
+        private static Dictionary<string, object> Dyn2Dict(dynamic dynObj)
         {
             var dictionary = new Dictionary<string, object>();
             foreach (var name in dynObj.GetDynamicMemberNames())
@@ -106,7 +113,7 @@ namespace Satrabel.OpenForm
             return site.Target(site, target);
         }
 
-        private string GetFileNameFromFormName()
+        private static string GetFileNameFromFormName()
         {
             //todo determine that current form and create a filename based on the name of the form.
             return "submissions.xlsx";
