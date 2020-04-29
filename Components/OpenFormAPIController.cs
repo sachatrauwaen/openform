@@ -290,12 +290,28 @@ namespace Satrabel.OpenForm.Components
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-                                    body = hbs.Execute(notification.EmailBody, data);
+                                    try
+                                    {
+                                        body = hbs.Execute(notification.EmailBody, data);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception("Email Body : " + ex.Message, ex);
+                                    }
+
                                 }
                                 string subject = notification.EmailSubject;
                                 if (!string.IsNullOrEmpty(notification.EmailSubject))
                                 {
-                                    subject = hbs.Execute(notification.EmailSubject, data);
+                                    try
+                                    {
+                                        subject = hbs.Execute(notification.EmailSubject, data);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception("Email Subject : " + ex.Message, ex);
+                                    }
+
                                 }
                                 var attachements = new List<Attachment>();
                                 foreach (var item in statuses)
@@ -311,7 +327,7 @@ namespace Satrabel.OpenForm.Components
                             }
                             catch (Exception exc)
                             {
-                                res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message +  (UserInfo.IsSuperUser ? " - " + exc.StackTrace : ""));
+                                res.Errors.Add("Error in Email Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + (UserInfo.IsSuperUser ? " - " + exc.StackTrace : ""));
                                 Log.Logger.Error(exc);
                             }
                         }
