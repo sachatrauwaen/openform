@@ -162,10 +162,15 @@
                         }).done(function (data) {
                             if (data.Errors && data.Errors.length > 0) {
                                 console.log(data.Errors);
+                                $('.OpenForm', moduleScope).hide();
+                                $('.ResultMessage', moduleScope).html("<b>Error on submit</b><br />"+data.Errors.join("<br />"));
+                                $('.ResultTracking', moduleScope).html(data.Tracking);
+                                $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                             }
-                            if (data.Tracking || data.AfterSubmit) {
-                            //var jsonData = JSON.stringify(value);
-                        <%= PostBackStr() %>
+                            else {
+                                if (data.Tracking || data.AfterSubmit) {
+                                    //var jsonData = JSON.stringify(value);
+                                    <%= PostBackStr() %>
                                     //WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("dnn$ctr472$View$lbSave", jsonData, false, "", "http://localhost:54068/fr-fr/openform/result/submit", false, true))
 
                                     //window.location = window.location + "/submit/" + encodeURIComponent(JSON.stringify(value));
@@ -175,12 +180,11 @@
                                     $('.ResultTracking', moduleScope).html(data.Tracking);
                                     $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                                 }
-                            }).fail(function (xhr, result, status) {
-                                alert("Uh-oh, something broke: " + status);
-                            });
+                            }
+                        }).fail(function (xhr, result, status) {
+                            alert("Uh-oh, something broke: " + status);
+                        });
                     };
-
-
                 }, function (x, y, z) {
                     console.log(x);
                     console.log(y);
