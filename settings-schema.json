@@ -127,7 +127,7 @@
               "type": "string"
             },
             "NotSaveSubmissions": {
-              "title": "Not Save Submissions",
+              "title": "Do Not Save Submissions",
               "type": "boolean"
             }
           }
