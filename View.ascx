@@ -64,7 +64,7 @@
             };
 
             var res = scripts.reduce(function (prev, cur) { // chain to res later to hook on done
-                return prev.then(function (data) { return getCachedScript( cur) });
+                return prev.then(function (data) { return getCachedScript(cur) });
             }, $.Deferred().resolve());
 
             //getCachedScript("/DesktopModules/OpenContent/js/lib/handlebars/handlebars.min.js")
@@ -95,18 +95,18 @@
                         connector = new ConnectorClass("default");
                         connector.servicesFramework = sf;
 
-                        var view = config.view;
-                        if (view) {
-                            view.parent = "bootstrap-create";
+                        if (config.view) {
+                            config.view.parent = "bootstrap-create";
                         } else {
-                            view = "bootstrap-create";
+                            config.view = "bootstrap-create";
                         }
 
+                        $(document).trigger("preRender.openform", [config, <%=ModuleId %>, sf]);
                         $(".alpaca", moduleScope).alpaca({
                             "schema": config.schema,
                             "options": config.options,
                             "data": config.data,
-                            "view": view,
+                            "view": config.view,
                             "connector": connector,
                             "postRender": function (control) {
                                 var selfControl = control;
@@ -123,33 +123,33 @@
                                         if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
                                             var value = selfControl.getValue();
                                             $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
-                                        $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
-                                        if (recaptcha) {
-                                            value.recaptcha = recap;
-                                        }
-                                        $(saveButton).addClass('disabled');
-                                        $(saveButton).text("<%= GetString("Sending") %>");
-                                        $(saveButton).off();
-                                        var fd = new FormData();
-                                        $(".alpaca .alpaca-field-file input[type='file']").each(function () {
-                                            var file_data = $(this).prop("files")[0];
-                                            var name = $(this).attr("name");
-                                            fd.append(name, file_data);
+                                            $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
+                                            if (recaptcha) {
+                                                value.recaptcha = recap;
+                                            }
+                                            $(saveButton).addClass('disabled');
+                                            $(saveButton).text("<%= GetString("Sending") %>");
+                                            $(saveButton).off();
+                                            var fd = new FormData();
+                                            $(".alpaca .alpaca-field-file input[type='file']").each(function () {
+                                                var file_data = $(this).prop("files")[0];
+                                                var name = $(this).attr("name");
+                                                fd.append(name, file_data);
 
-                                        });
-                                        fd.append("data", JSON.stringify(value));
-                                        self.FormSubmit(fd, value);
-                                        $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                            });
+                                            fd.append("data", JSON.stringify(value));
+                                            self.FormSubmit(fd, value);
+                                            $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
                                         }
                                     });
                                     return false;
                                 });
                                 $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf]);
-                                }
-                            });
-                        }).fail(function (xhr, result, status) {
-                            //alert("Uh-oh, something broke: " + status);
+                            }
                         });
+                    }).fail(function (xhr, result, status) {
+                        //alert("Uh-oh, something broke: " + status);
+                    });
 
                     self.FormSubmit = function (formdata, value) {
                         $.ajax({
@@ -163,7 +163,7 @@
                             if (data.Errors && data.Errors.length > 0) {
                                 console.log(data.Errors);
                                 $('.OpenForm', moduleScope).hide();
-                                $('.ResultMessage', moduleScope).html("<b>Error on submit</b><br />"+data.Errors.join("<br />"));
+                                $('.ResultMessage', moduleScope).html("<b>Error on submit</b><br />" + data.Errors.join("<br />"));
                                 $('.ResultTracking', moduleScope).html(data.Tracking);
                                 $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                             }
