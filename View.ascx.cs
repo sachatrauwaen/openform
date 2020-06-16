@@ -201,6 +201,7 @@ namespace Satrabel.OpenForm
             }
             catch (Exception ex)
             {
+                App.Services.Logger.Error(ex);
                 //LoggingUtils.RenderEngineException(this, ex);
                 string stack = string.Join("\n", ex.StackTrace.Split('\n').Where(s => s.Contains("\\Portals\\") && s.Contains("in")).Select(s => s.Substring(s.IndexOf("in"))).ToArray());
                 //throw new TemplateException("Failed to render Razor template " + template.FilePath + "\n" + stack, ex, model, template.FilePath);

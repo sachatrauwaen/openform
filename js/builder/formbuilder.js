@@ -677,7 +677,7 @@ var fieldOptions =
             maxHeight: null,
             focus: true,
             toolbar: [
-                ['style', ['bold', 'underline', 'clear']],                
+                ['style', ['bold', 'italic', 'underline', 'clear']],                
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
