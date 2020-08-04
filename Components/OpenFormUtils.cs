@@ -231,7 +231,8 @@ namespace Satrabel.OpenForm.Components
                         }
                         catch (System.Exception)
                         {
-                            Debugger.Break();
+                            if (Debugger.IsAttached)
+                                Debugger.Break();
                         }
                     }
                 }
