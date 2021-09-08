@@ -31,6 +31,7 @@ using Satrabel.OpenContent.Components.Razor;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Satrabel.OpenContent.Components.Json;
+using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -143,6 +144,7 @@ namespace Satrabel.OpenForm
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            pTempleteExchange.Visible = UserInfo.IsSuperUser;
             string Template = ModuleContext.Settings["template"] as string;
             if (!Page.IsPostBack)
             {
@@ -406,6 +408,41 @@ namespace Satrabel.OpenForm
 
         public List<string> Scripts { get; set; }
 
+        protected void bCopyTemplate_Click(object sender, EventArgs e)
+        {
+
+            string Folder = Server.MapPath(Path.GetDirectoryName(scriptList.SelectedValue));
+            
+            var TemplateName = tbTemplateName.Text;
+            
+            string FolderName = GetModuleSubDir() + "/Templates/" + TemplateName;
+            var folder = FolderManager.Instance.GetFolder(PortalId, FolderName);
+            int idx = 1;
+            while (folder != null)
+            {
+                FolderName = GetModuleSubDir() + "/Templates/" + TemplateName + idx;
+                folder = FolderManager.Instance.GetFolder(PortalId, FolderName);
+                idx++;
+            }
+            if (folder == null)
+            {
+                folder = FolderManager.Instance.AddFolder(PortalId, FolderName);
+            }
+            foreach (var item in Directory.GetFiles(Folder))
+            {
+                File.Copy(item, folder.PhysicalPath + Path.GetFileName(item));
+            }
+            scriptList.Items.Clear();
+            scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, "/Portals/" + PortalId + "/" + FolderName.Replace("\\", "/") + "/schema.json").ToArray());
+            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Copy Successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
+        }
+
+        protected virtual string GetModuleSubDir()
+        {
+            string dir = Path.GetDirectoryName(ModuleContext.Configuration.ModuleControl.ControlSrc);
+            dir = dir.Substring(dir.IndexOf("DesktopModules") + 15);
+            return dir;
+        }
     }
 }
 

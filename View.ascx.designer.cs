@@ -22,6 +22,15 @@ namespace Satrabel.OpenForm {
         protected global::System.Web.UI.WebControls.Panel pHelp;
         
         /// <summary>
+        /// Contrôle pTempleteExchange.
+        /// </summary>
+        /// <remarks>
+        /// Champ généré automatiquement.
+        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pTempleteExchange;
+        
+        /// <summary>
         /// Contrôle scriptListLabel.
         /// </summary>
         /// <remarks>
@@ -56,6 +65,33 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList scriptList;
+        
+        /// <summary>
+        /// Contrôle Label2.
+        /// </summary>
+        /// <remarks>
+        /// Champ généré automatiquement.
+        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label2;
+        
+        /// <summary>
+        /// Contrôle tbTemplateName.
+        /// </summary>
+        /// <remarks>
+        /// Champ généré automatiquement.
+        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbTemplateName;
+        
+        /// <summary>
+        /// Contrôle bCopy.
+        /// </summary>
+        /// <remarks>
+        /// Champ généré automatiquement.
+        /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button bCopy;
         
         /// <summary>
         /// Contrôle Label1.
