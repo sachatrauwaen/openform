@@ -218,7 +218,7 @@ namespace Satrabel.OpenForm
             string settings = ModuleContext.Settings["data"] as string;
             bool settingsDefined = !string.IsNullOrEmpty(settings);
 
-            if (!templateDefined || !settingsDefined)
+            if ((!templateDefined || !settingsDefined) && ModuleContext.IsEditable )
             {
                 pHelp.Visible = true;
             }
@@ -227,12 +227,13 @@ namespace Satrabel.OpenForm
                 hlTempleteExchange.NavigateUrl = ModuleContext.EditUrl("ShareTemplate");
                 hlTempleteExchange.Visible = true;
             }
-            if (pHelp.Visible && ModuleContext.EditMode)
+            if (pHelp.Visible && ModuleContext.IsEditable)
             {
                 hlEditSettings.NavigateUrl = ModuleContext.EditUrl("EditSettings");
                 hlEditSettings.Visible = true;
                 scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, template).ToArray());
                 scriptList.Visible = true;
+                
             }
             if (string.IsNullOrEmpty(template))
             {
@@ -435,6 +436,8 @@ namespace Satrabel.OpenForm
             scriptList.Items.Clear();
             scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, "/Portals/" + PortalId + "/" + FolderName.Replace("\\", "/") + "/schema.json").ToArray());
             DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Copy Successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
+            ModuleController mc = new ModuleController();
+            mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
         }
 
         protected virtual string GetModuleSubDir()

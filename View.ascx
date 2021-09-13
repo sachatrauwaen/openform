@@ -18,6 +18,7 @@
             <asp:HyperLink ID="hlTempleteExchange" runat="server" Visible="false">Template Exchange</asp:HyperLink>
         </div>
     </asp:Panel>
+    
     <div style="margin-bottom:10px;">
         <asp:Label ID="Label3" runat="server" Text="Use a existing template : " />
         <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
