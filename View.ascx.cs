@@ -433,8 +433,12 @@ namespace Satrabel.OpenForm
             {
                 File.Copy(item, folder.PhysicalPath + Path.GetFileName(item));
             }
+
+            var current = PortalSettings.HomeDirectory + FolderName.Replace("\\", "/") + "/schema.json";
+
             scriptList.Items.Clear();
-            scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, "/Portals/" + PortalId + "/" + FolderName.Replace("\\", "/") + "/schema.json").ToArray());
+            scriptList.Items.AddRange(OpenFormUtils.GetTemplatesFiles(PortalSettings, ModuleId, current).ToArray());
+            
             DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Copy Successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
             ModuleController mc = new ModuleController();
             mc.UpdateModuleSetting(ModuleId, "template", scriptList.SelectedValue);
