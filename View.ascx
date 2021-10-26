@@ -11,20 +11,30 @@
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
-    <ol>
-        <li>
-            <asp:Label ID="scriptListLabel" runat="server" Text="Get a template > " />
+
+    <asp:Panel ID="pTempleteExchange" runat="server" Visible="false">
+        <div style="margin-bottom:10px;">
+            <asp:Label ID="scriptListLabel" runat="server" Text="Get a template : " />
             <asp:HyperLink ID="hlTempleteExchange" runat="server" Visible="false">Template Exchange</asp:HyperLink>
-        </li>
-        <li>
-            <asp:Label ID="Label3" runat="server" Text="Chose a template > " />
-            <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
-        </li>
-        <li>
-            <asp:Label ID="Label1" runat="server" Text="Define settings > " />
-            <asp:HyperLink ID="hlEditSettings" runat="server" Visible="false">Template Settings</asp:HyperLink>
-        </li>
-    </ol>
+        </div>
+    </asp:Panel>
+    
+    <div style="margin-bottom:10px;">
+        <asp:Label ID="Label3" runat="server" Text="Use a existing template : " />
+        <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
+        
+    </div>
+    <div style="margin-bottom:10px;">
+        <asp:Label ID="Label2" runat="server" Text="Or make a copy, New template name : " />
+        <asp:TextBox ID="tbTemplateName" runat="server"></asp:TextBox>
+        <asp:Button ID="bCopy" runat="server" OnClick="bCopyTemplate_Click" Text="Copy" />
+    </div>
+
+    <div style="margin-bottom:10px;">
+        <asp:Label ID="Label1" runat="server" Text="Define settings : " />
+        <asp:HyperLink ID="hlEditSettings" runat="server" Visible="false">Template Settings</asp:HyperLink>
+    </div>
+    <hr />
 </asp:Panel>
 
 <asp:PlaceHolder runat="server" ID="phForm">
