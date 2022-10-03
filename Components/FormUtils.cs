@@ -142,22 +142,24 @@ namespace Satrabel.OpenForm.Components
             string smtpPassword = Host.SMTPPassword;
             bool smtpEnableSSL = Host.EnableSMTPSSL;
 
-            string res = Mail.SendMail(mailFrom,
-                            mailTo,
-                            cc,
-                            bcc,
-                            replyTo,
-                            priority,
-                            subject,
-                            bodyFormat,
-                            bodyEncoding,
-                            body,
-                            attachments,
-                            smtpServer,
-                            smtpAuthentication,
-                            smtpUsername,
-                            smtpPassword,
-                            smtpEnableSSL);
+            string res = Mail.SendMail(
+                mailFrom: mailFrom,
+                mailSender: mailFrom,
+                mailTo: mailTo,
+                cc: cc,
+                bcc: bcc,
+                replyTo: replyTo,
+                priority: priority,
+                subject: subject,
+                bodyFormat: bodyFormat,
+                bodyEncoding: bodyEncoding,
+                body: body,
+                attachments: attachments,
+                smtpServer: smtpServer,
+                smtpAuthentication: smtpAuthentication,
+                smtpUsername: smtpUsername,
+                smtpPassword: smtpPassword,
+                smtpEnableSSL: smtpEnableSSL);
 
             //Mail.SendEmail(replyTo, mailFrom, mailTo, subject, body);
             return res;
