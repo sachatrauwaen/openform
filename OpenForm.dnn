@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="OpenForm" type="Module" version="03.06.00">
+    <package name="OpenForm" type="Module" version="03.06.01">
       <friendlyName>OpenForm</friendlyName>
       <description>OpenForm module. Requires OpenContent v3.4.5 or higher</description>
       <iconFile>~/DesktopModules/OpenForm/Images/icon_extensions.png</iconFile>
