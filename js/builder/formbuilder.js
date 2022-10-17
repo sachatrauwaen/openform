@@ -681,8 +681,11 @@ var fieldOptions =
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link']]
-            ]
+                ['insert', ['link']],
+                ['view', ['codeview']]
+            ],
+            codeviewFilter: false,
+            codeviewIframeFilter: true
         }
     },
     "horizontal": {
