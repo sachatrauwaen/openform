@@ -303,7 +303,10 @@ namespace Satrabel.OpenForm
                 }
                 scriptList.Items.Add(new ListItem("Stylesheet", "template.css"));
                 scriptList.Items.Add(new ListItem("Javascript", "template.js"));
-                scriptList.Items.Add(new ListItem("After Submit", "aftersubmit.cshtml"));
+                if (UserInfo.IsSuperUser)
+                {
+                    scriptList.Items.Add(new ListItem("After Submit", "aftersubmit.cshtml"));
+                }
             }
         }
         protected void cmdSave_Click(object sender, EventArgs e)

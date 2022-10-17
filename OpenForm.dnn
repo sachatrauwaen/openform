@@ -88,7 +88,7 @@
                     <controlSrc>DesktopModules/OpenForm/EditTemplate.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Edit Template</controlTitle>
-                    <controlType>Host</controlType>
+                    <controlType>Admin</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
