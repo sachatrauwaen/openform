@@ -334,7 +334,7 @@ namespace Satrabel.OpenForm
                                "~/DesktopModules/OpenForm/images/edittemplate.png",
                                ModuleContext.EditUrl("EditTemplate"),
                                false,
-                               SecurityAccessLevel.Host,
+                               SecurityAccessLevel.Admin,
                                true,
                                false);
 
