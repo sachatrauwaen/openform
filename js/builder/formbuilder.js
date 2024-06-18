@@ -407,13 +407,19 @@ function getView(formdef) {
         var template = "<div>";
         $.each(formdef.formfields, function (index, value) {
             var cols = value.position ? parseInt(value.position[0]) : 1;
+            /*
             if (cols != lastCols) {
                 row++;
                 template += getViewTemplate(row, cols);
-                lastCols = cols;
-                
+                lastCols = cols;                
             }
-            var col = value.position ? value.position[4] : 1;
+            */
+            var col = value.position ? parseInt(value.position[4]) : 1;
+            if (col == 1) {
+                row++;
+                template += getViewTemplate(row, cols);
+                lastCols = cols;
+            }
             view.layout.bindings[value.fieldname] = "#pos_" + row + "_" + col;
         });
         template += "</div>";
