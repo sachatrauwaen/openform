@@ -159,4 +159,7 @@
   <data name="Builder.Action" xml:space="preserve">
     <value>Form Builder</value>
   </data>
+  <data name="errInvalid.Text" xml:space="preserve">
+    <value>Certains champs sont obligatoires ou invalides.</value>
+  </data>
 </root>

@@ -2,16 +2,18 @@
 // <généré automatiquement>
 //     Ce code a été généré par un outil.
 //
-//     Les modifications apportées à ce fichier peuvent provoquer un comportement incorrect et seront perdues si
+//     Les changements apportés à ce fichier peuvent provoquer un comportement incorrect et seront perdues si
 //     le code est régénéré.
 // </généré automatiquement>
 //------------------------------------------------------------------------------
 
-namespace Satrabel.OpenForm {
-    
-    
-    public partial class View {
-        
+namespace Satrabel.OpenForm
+{
+
+
+    public partial class View
+    {
+
         /// <summary>
         /// Contrôle pHelp.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pHelp;
-        
+
         /// <summary>
         /// Contrôle pTempleteExchange.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pTempleteExchange;
-        
+
         /// <summary>
         /// Contrôle scriptListLabel.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label scriptListLabel;
-        
+
         /// <summary>
         /// Contrôle hlTempleteExchange.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink hlTempleteExchange;
-        
+
         /// <summary>
         /// Contrôle Label3.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label3;
-        
+
         /// <summary>
         /// Contrôle scriptList.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList scriptList;
-        
+
         /// <summary>
         /// Contrôle Label2.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label2;
-        
+
         /// <summary>
         /// Contrôle tbTemplateName.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox tbTemplateName;
-        
+
         /// <summary>
         /// Contrôle bCopy.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button bCopy;
-        
+
         /// <summary>
         /// Contrôle Label1.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-        
+
         /// <summary>
         /// Contrôle hlEditSettings.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink hlEditSettings;
-        
+
         /// <summary>
         /// Contrôle phForm.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phForm;
-        
+
         /// <summary>
         /// Contrôle ScopeWrapper.
         /// </summary>
@@ -128,7 +130,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel ScopeWrapper;
-        
+
         /// <summary>
         /// Contrôle lReCaptcha.
         /// </summary>
@@ -137,7 +139,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal lReCaptcha;
-        
+
         /// <summary>
         /// Contrôle lbSave.
         /// </summary>
@@ -146,7 +148,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lbSave;
-        
+
         /// <summary>
         /// Contrôle hfOpenForm.
         /// </summary>
@@ -155,7 +157,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfOpenForm;
-        
+
         /// <summary>
         /// Contrôle phResult.
         /// </summary>
@@ -164,7 +166,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phResult;
-        
+
         /// <summary>
         /// Contrôle lMessage.
         /// </summary>
@@ -173,7 +175,7 @@ namespace Satrabel.OpenForm {
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal lMessage;
-        
+
         /// <summary>
         /// Contrôle lTracking.
         /// </summary>

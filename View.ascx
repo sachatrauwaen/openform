@@ -13,24 +13,24 @@
     <h3>Get started</h3>
 
     <asp:Panel ID="pTempleteExchange" runat="server" Visible="false">
-        <div style="margin-bottom:10px;">
+        <div style="margin-bottom: 10px;">
             <asp:Label ID="scriptListLabel" runat="server" Text="Get a template : " />
             <asp:HyperLink ID="hlTempleteExchange" runat="server" Visible="false">Template Exchange</asp:HyperLink>
         </div>
     </asp:Panel>
-    
-    <div style="margin-bottom:10px;">
+
+    <div style="margin-bottom: 10px;">
         <asp:Label ID="Label3" runat="server" Text="Use a existing template : " />
         <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
-        
+
     </div>
-    <div style="margin-bottom:10px;">
+    <div style="margin-bottom: 10px;">
         <asp:Label ID="Label2" runat="server" Text="Or make a copy, New template name : " />
         <asp:TextBox ID="tbTemplateName" runat="server"></asp:TextBox>
         <asp:Button ID="bCopy" runat="server" OnClick="bCopyTemplate_Click" Text="Copy" />
     </div>
 
-    <div style="margin-bottom:10px;">
+    <div style="margin-bottom: 10px;">
         <asp:Label ID="Label1" runat="server" Text="Define settings : " />
         <asp:HyperLink ID="hlEditSettings" runat="server" Visible="false">Template Settings</asp:HyperLink>
     </div>
@@ -48,6 +48,11 @@
                 </li>
             </ul>
         </div>
+        <ul class="dnnActions dnnClear openform-validation" id="fieldvalidation-<%=ModuleId %>" style="display: none; color: #b94a48;"">
+            <li>
+                 <asp:Label runat="server" CssClass="openform-validation-message" resourcekey="errInvalid"></asp:Label>
+            </li>
+        </ul>
         <span class="ResultMessage"></span>
         <div class="ResultTracking"></div>
         <asp:HiddenField ID="hfOpenForm" runat="server" />
@@ -125,6 +130,7 @@
                                     if ($(saveButton).hasClass('disabled')) {
                                         return false;
                                     }
+                                    $('#fieldvalidation-<%=ModuleId %>').hide();
                                     selfControl.refreshValidationState(true, function () {
                                         var recaptcha = typeof (grecaptcha) != "undefined";
                                         if (recaptcha) {
@@ -150,6 +156,8 @@
                                             fd.append("data", JSON.stringify(value));
                                             self.FormSubmit(fd, value);
                                             $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                        } else {
+                                            $('#fieldvalidation-<%=ModuleId %>').show();
                                         }
                                     });
                                     return false;
@@ -179,7 +187,7 @@
                             }
                             else {
                                 if (data.Tracking || data.AfterSubmit) {
-                                    //var jsonData = JSON.stringify(value);
+                    //var jsonData = JSON.stringify(value);
                                     <%= PostBackStr() %>
                                     //WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("dnn$ctr472$View$lbSave", jsonData, false, "", "http://localhost:54068/fr-fr/openform/result/submit", false, true))
 

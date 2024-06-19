@@ -279,6 +279,38 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Edit.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\Edit.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\EditTemplate.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\EditTemplate.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\EditData.ascx.resx" />
+    <Content Include="App_LocalResources\EditSettings.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\EditSettings.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\EditData.ascx.de-DE.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Settings.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\Settings.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\ShareTemplate.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\ShareTemplate.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\View.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\View.ascx.es-ES.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\View.ascx.nl-BE.resx" />
+    <Content Include="App_LocalResources\View.ascx.nl-NL.resx" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
