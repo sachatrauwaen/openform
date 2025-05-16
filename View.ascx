@@ -11,20 +11,30 @@
 
 <asp:Panel ID="pHelp" runat="server" Visible="false">
     <h3>Get started</h3>
-    <ol>
-        <li>
-            <asp:Label ID="scriptListLabel" runat="server" Text="Get a template > " />
+
+    <asp:Panel ID="pTempleteExchange" runat="server" Visible="false">
+        <div style="margin-bottom: 10px;">
+            <asp:Label ID="scriptListLabel" runat="server" Text="Get a template : " />
             <asp:HyperLink ID="hlTempleteExchange" runat="server" Visible="false">Template Exchange</asp:HyperLink>
-        </li>
-        <li>
-            <asp:Label ID="Label3" runat="server" Text="Chose a template > " />
-            <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
-        </li>
-        <li>
-            <asp:Label ID="Label1" runat="server" Text="Define settings > " />
-            <asp:HyperLink ID="hlEditSettings" runat="server" Visible="false">Template Settings</asp:HyperLink>
-        </li>
-    </ol>
+        </div>
+    </asp:Panel>
+
+    <div style="margin-bottom: 10px;">
+        <asp:Label ID="Label3" runat="server" Text="Use a existing template : " />
+        <asp:DropDownList ID="scriptList" runat="server" Visible="false" AutoPostBack="true" OnSelectedIndexChanged="scriptList_SelectedIndexChanged" />
+
+    </div>
+    <div style="margin-bottom: 10px;">
+        <asp:Label ID="Label2" runat="server" Text="Or make a copy, New template name : " />
+        <asp:TextBox ID="tbTemplateName" runat="server"></asp:TextBox>
+        <asp:Button ID="bCopy" runat="server" OnClick="bCopyTemplate_Click" Text="Copy" />
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <asp:Label ID="Label1" runat="server" Text="Define settings : " />
+        <asp:HyperLink ID="hlEditSettings" runat="server" Visible="false">Template Settings</asp:HyperLink>
+    </div>
+    <hr />
 </asp:Panel>
 
 <asp:PlaceHolder runat="server" ID="phForm">
@@ -38,6 +48,11 @@
                 </li>
             </ul>
         </div>
+        <ul class="dnnActions dnnClear openform-validation" id="fieldvalidation-<%=ModuleId %>" style="display: none; color: #b94a48;"">
+            <li>
+                 <asp:Label runat="server" CssClass="openform-validation-message" resourcekey="errInvalid"></asp:Label>
+            </li>
+        </ul>
         <span class="ResultMessage"></span>
         <div class="ResultTracking"></div>
         <asp:HiddenField ID="hfOpenForm" runat="server" />
@@ -64,7 +79,7 @@
             };
 
             var res = scripts.reduce(function (prev, cur) { // chain to res later to hook on done
-                return prev.then(function (data) { return getCachedScript( cur) });
+                return prev.then(function (data) { return getCachedScript(cur) });
             }, $.Deferred().resolve());
 
             //getCachedScript("/DesktopModules/OpenContent/js/lib/handlebars/handlebars.min.js")
@@ -95,18 +110,18 @@
                         connector = new ConnectorClass("default");
                         connector.servicesFramework = sf;
 
-                        var view = config.view;
-                        if (view) {
-                            view.parent = "bootstrap-create";
+                        if (config.view) {
+                            config.view.parent = "bootstrap-create";
                         } else {
-                            view = "bootstrap-create";
+                            config.view = "bootstrap-create";
                         }
 
+                        $(document).trigger("preRender.openform", [config, <%=ModuleId %>, sf]);
                         $(".alpaca", moduleScope).alpaca({
                             "schema": config.schema,
                             "options": config.options,
                             "data": config.data,
-                            "view": view,
+                            "view": config.view,
                             "connector": connector,
                             "postRender": function (control) {
                                 var selfControl = control;
@@ -115,6 +130,7 @@
                                     if ($(saveButton).hasClass('disabled')) {
                                         return false;
                                     }
+                                    $('#fieldvalidation-<%=ModuleId %>').hide();
                                     selfControl.refreshValidationState(true, function () {
                                         var recaptcha = typeof (grecaptcha) != "undefined";
                                         if (recaptcha) {
@@ -123,33 +139,35 @@
                                         if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
                                             var value = selfControl.getValue();
                                             $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
-                                        $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
-                                        if (recaptcha) {
-                                            value.recaptcha = recap;
-                                        }
-                                        $(saveButton).addClass('disabled');
-                                        $(saveButton).text("<%= GetString("Sending") %>");
-                                        $(saveButton).off();
-                                        var fd = new FormData();
-                                        $(".alpaca .alpaca-field-file input[type='file']").each(function () {
-                                            var file_data = $(this).prop("files")[0];
-                                            var name = $(this).attr("name");
-                                            fd.append(name, file_data);
+                                            $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
+                                            if (recaptcha) {
+                                                value.recaptcha = recap;
+                                            }
+                                            $(saveButton).addClass('disabled');
+                                            $(saveButton).text("<%= GetString("Sending") %>");
+                                            $(saveButton).off();
+                                            var fd = new FormData();
+                                            $(".alpaca .alpaca-field-file input[type='file']").each(function () {
+                                                var file_data = $(this).prop("files")[0];
+                                                var name = $(this).attr("name");
+                                                fd.append(name, file_data);
 
-                                        });
-                                        fd.append("data", JSON.stringify(value));
-                                        self.FormSubmit(fd, value);
-                                        $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                            });
+                                            fd.append("data", JSON.stringify(value));
+                                            self.FormSubmit(fd, value);
+                                            $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
+                                        } else {
+                                            $('#fieldvalidation-<%=ModuleId %>').show();
                                         }
                                     });
                                     return false;
                                 });
                                 $(document).trigger("postRender.openform", [control, <%=ModuleId %>, sf]);
-                                }
-                            });
-                        }).fail(function (xhr, result, status) {
-                            //alert("Uh-oh, something broke: " + status);
+                            }
                         });
+                    }).fail(function (xhr, result, status) {
+                        //alert("Uh-oh, something broke: " + status);
+                    });
 
                     self.FormSubmit = function (formdata, value) {
                         $.ajax({
@@ -162,10 +180,15 @@
                         }).done(function (data) {
                             if (data.Errors && data.Errors.length > 0) {
                                 console.log(data.Errors);
+                                $('.OpenForm', moduleScope).hide();
+                                $('.ResultMessage', moduleScope).html("<b>Error on submit</b><br />" + data.Errors.join("<br />"));
+                                $('.ResultTracking', moduleScope).html(data.Tracking);
+                                $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                             }
-                            if (data.Tracking || data.AfterSubmit) {
-                            //var jsonData = JSON.stringify(value);
-                        <%= PostBackStr() %>
+                            else {
+                                if (data.Tracking || data.AfterSubmit) {
+                    //var jsonData = JSON.stringify(value);
+                                    <%= PostBackStr() %>
                                     //WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("dnn$ctr472$View$lbSave", jsonData, false, "", "http://localhost:54068/fr-fr/openform/result/submit", false, true))
 
                                     //window.location = window.location + "/submit/" + encodeURIComponent(JSON.stringify(value));
@@ -175,12 +198,11 @@
                                     $('.ResultTracking', moduleScope).html(data.Tracking);
                                     $(document.body).scrollTop(Math.max($('.OpenForm', moduleScope).offset().top - 100, 0));
                                 }
-                            }).fail(function (xhr, result, status) {
-                                alert("Uh-oh, something broke: " + status);
-                            });
+                            }
+                        }).fail(function (xhr, result, status) {
+                            alert("Uh-oh, something broke: " + status);
+                        });
                     };
-
-
                 }, function (x, y, z) {
                     console.log(x);
                     console.log(y);

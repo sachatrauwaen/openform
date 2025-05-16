@@ -14,6 +14,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Common;
 using Satrabel.OpenForm.Components;
 using Satrabel.OpenContent.Components.Alpaca;
+using Satrabel.OpenContent.Components.Settings;
 
 #endregion
 
@@ -29,8 +30,14 @@ namespace Satrabel.OpenForm
             hlCancel.NavigateUrl = Globals.NavigateURL();
             //ServicesFramework.Instance.RequestAjaxScriptSupport();
             //ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+
+            var ocGlobalSettings = new DnnGlobalSettingsRepository(ModuleContext.PortalId);
+            bool bootstrap = ocGlobalSettings.GetEditLayout() != AlpacaLayoutEnum.DNN;
+            bool loadBootstrap = bootstrap && ocGlobalSettings.GetLoadBootstrap();
+            bool loadGlyphicons = bootstrap && ocGlobalSettings.GetLoadGlyphicons();
+
             AlpacaEngine alpaca = new AlpacaEngine(Page, ModuleContext.PortalId, "DesktopModules/OpenForm/", "settings");
-            alpaca.RegisterAll(true, true);
+            alpaca.RegisterAll(true, loadBootstrap, loadGlyphicons);
         }
 
         protected override void OnLoad(EventArgs e)

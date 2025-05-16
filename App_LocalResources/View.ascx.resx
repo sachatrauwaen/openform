@@ -165,4 +165,7 @@
   <data name="Sending.Text" xml:space="preserve">
     <value>Sending...</value>
   </data>
+  <data name="errInvalid.Text" xml:space="preserve">
+    <value>Some fields are required or invalid.</value>
+  </data>
 </root>

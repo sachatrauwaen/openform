@@ -128,6 +128,7 @@ namespace Satrabel.OpenForm.Components
         }
 
         [HttpGet]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
         public HttpResponseMessage Settings()
         {
             string Data = (string)ActiveModule.ModuleSettings["data"];
@@ -165,6 +166,10 @@ namespace Satrabel.OpenForm.Components
         }
         public HttpResponseMessage Submit()
         {
+            var res = new ResultDTO()
+            {
+                Message = "Form submitted."
+            };
             var form = JObject.Parse(HttpContextSource.Current.Request.Form["data"].ToString());
             var statuses = new List<FilesStatus>();
             try
@@ -186,30 +191,16 @@ namespace Satrabel.OpenForm.Components
             }
             catch (Exception exc)
             {
+                res.Errors.Add(exc.Message);
                 Log.Logger.Error(exc);
             }
-            
+
             try
             {
                 form["IPAddress"] = Request.GetIPAddress();
                 int moduleId = ActiveModule.ModuleID;
-                OpenFormController ctrl = new OpenFormController();
-                var content = new OpenFormInfo()
-                {
-                    ModuleId = moduleId,
-                    Json = form.ToString(),
-                    CreatedByUserId = UserInfo.UserID,
-                    CreatedOnDate = DateTime.Now,
-                    LastModifiedByUserId = UserInfo.UserID,
-                    LastModifiedOnDate = DateTime.Now,
-                    Html = "",
-                    Title = "Form submitted - " + DateTime.Now.ToString()
-                };
-                ctrl.AddContent(content);
-                var res = new ResultDTO()
-                {
-                    Message = "Form submitted."
-                };
+
+
                 string template = (string)ActiveModule.ModuleSettings["template"];
                 var razorscript = new FileUri(Path.GetDirectoryName(template), "aftersubmit.cshtml");
                 res.AfterSubmit = razorscript.FileExists;
@@ -218,6 +209,24 @@ namespace Satrabel.OpenForm.Components
                 if (!string.IsNullOrEmpty(jsonSettings))
                 {
                     SettingsDTO settings = JsonConvert.DeserializeObject<SettingsDTO>(jsonSettings);
+
+                    if (!settings.Settings.NotSaveSubmissions)
+                    {
+                        OpenFormController ctrl = new OpenFormController();
+                        var content = new OpenFormInfo()
+                        {
+                            ModuleId = moduleId,
+                            Json = form.ToString(),
+                            CreatedByUserId = UserInfo.UserID,
+                            CreatedOnDate = DateTime.Now,
+                            LastModifiedByUserId = UserInfo.UserID,
+                            LastModifiedOnDate = DateTime.Now,
+                            Html = "",
+                            Title = "Form submitted - " + DateTime.Now.ToString()
+                        };
+                        ctrl.AddContent(content);
+                    }
+
                     HandlebarsEngine hbs = new HandlebarsEngine();
                     dynamic data = null;
                     string formData = "";
@@ -281,12 +290,28 @@ namespace Satrabel.OpenForm.Components
                                 string body = formData;
                                 if (!string.IsNullOrEmpty(notification.EmailBody))
                                 {
-                                    body = hbs.Execute(notification.EmailBody, data);
+                                    try
+                                    {
+                                        body = hbs.Execute(notification.EmailBody, data);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception("Email Body : " + ex.Message, ex);
+                                    }
+
                                 }
                                 string subject = notification.EmailSubject;
                                 if (!string.IsNullOrEmpty(notification.EmailSubject))
                                 {
-                                    subject = hbs.Execute(notification.EmailSubject, data);
+                                    try
+                                    {
+                                        subject = hbs.Execute(notification.EmailSubject, data);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        throw new Exception("Email Subject : " + ex.Message, ex);
+                                    }
+
                                 }
                                 var attachements = new List<Attachment>();
                                 foreach (var item in statuses)
@@ -302,7 +327,7 @@ namespace Satrabel.OpenForm.Components
                             }
                             catch (Exception exc)
                             {
-                                res.Errors.Add("Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + " - " + (UserInfo.IsSuperUser ? exc.StackTrace : ""));
+                                res.Errors.Add("Error in Email Notification " + (settings.Notifications.IndexOf(notification) + 1) + " : " + exc.Message + (UserInfo.IsSuperUser ? " - " + exc.StackTrace : ""));
                                 Log.Logger.Error(exc);
                             }
                         }
@@ -403,7 +428,7 @@ namespace Satrabel.OpenForm.Components
             }
         }
 
-        
+
         private void UploadWholeFile(HttpContextBase context, ICollection<FilesStatus> statuses)
         {
             IFileManager _fileManager = FileManager.Instance;
@@ -448,7 +473,7 @@ namespace Satrabel.OpenForm.Components
                     {
                         fileIcon = IconController.IconURL("File", "32x32");
                     }
-                    
+
                     statuses.Add(new FilesStatus
                     {
                         success = true,
@@ -518,6 +543,7 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public string SiteKey { get; set; }
         public string SecretKey { get; set; }
+        public bool NotSaveSubmissions { get; set; }
 
     }
 

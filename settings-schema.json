@@ -109,24 +109,28 @@
         "Settings": {
             "title": "Settings",
             "type": "object",
-            "properties": {
-                "Message": {
-                    "title": "Message After Submit",
-                    "type": "string"
-                },
-                "Tracking": {
-                    "title": "Tracking script (Adwords, ...)",
-                    "type": "string"
-                },
-                "SiteKey": { 
-                    "title": "reCaptcha Site Key",
-                    "type": "string"
-                },
-                "SecretKey": { 
-                     "title": "reCaptcha Secret Key",
-                    "type": "string"
-                }
+          "properties": {
+            "Message": {
+              "title": "Message After Submit",
+              "type": "string"
+            },
+            "Tracking": {
+              "title": "Tracking script (Adwords, ...)",
+              "type": "string"
+            },
+            "SiteKey": {
+              "title": "reCaptcha Site Key",
+              "type": "string"
+            },
+            "SecretKey": {
+              "title": "reCaptcha Secret Key",
+              "type": "string"
+            },
+            "NotSaveSubmissions": {
+              "title": "Do Not Save Submissions",
+              "type": "boolean"
             }
+          }
         }
     }
 }

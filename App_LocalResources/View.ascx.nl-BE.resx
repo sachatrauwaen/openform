@@ -119,9 +119,12 @@
   </resheader>
   <data name="cmdCancel.Text" xml:space="preserve">
     <value>Annuleren</value>
-  </data>  
+  </data>
   <data name="cmdSave.Text" xml:space="preserve">
     <value>Verzenden</value>
+  </data>
+  <data name="errInvalid.Text" xml:space="preserve">
+    <value>Sommige velden zijn verplicht of ongeldig.</value>
   </data>
   <data name="Sending.Text" xml:space="preserve">
     <value>Verzending...</value>

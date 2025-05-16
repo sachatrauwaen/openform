@@ -32,17 +32,7 @@ namespace Satrabel.OpenForm
             {
                 if (!Page.IsPostBack)
                 {
-                    var dynData = GetDataAsListOfDynamics();
-                    gvData.DataSource = ToDataTable(dynData);
-                    gvData.DataBind();
-                    for (int i = 0; i < gvData.Rows.Count; i++)
-                    {
-                        for (int j = 0; j < gvData.Rows[i].Cells.Count; j++)
-                        {
-                            string encoded = gvData.Rows[i].Cells[j].Text;
-                            gvData.Rows[i].Cells[j].Text = Context.Server.HtmlDecode(encoded);
-                        }
-                    }
+                    DataBindGrid();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -51,12 +41,28 @@ namespace Satrabel.OpenForm
             }
         }
 
+        private void DataBindGrid()
+        {
+            var dynData = GetDataAsListOfDynamics();
+            gvData.DataSource = ToDataTable(dynData);
+            gvData.DataBind();
+            for (int i = 0; i < gvData.Rows.Count; i++)
+            {
+                for (int j = 1; j < gvData.Rows[i].Cells.Count; j++)
+                {
+                    string encoded = gvData.Rows[i].Cells[j].Text;
+                    gvData.Rows[i].Cells[j].Text = Context.Server.HtmlDecode(encoded);
+                }
+            }
+        }
+
         protected void ExcelDownload_Click(object sender, EventArgs e)
         {
             var dynData = GetDataAsListOfDynamics();
             DataTable datatable = ToDataTable(dynData);
-            string filename=GetFileNameFromFormName();
-            ExcelUtils.OutputFile(datatable, filename, HttpContext.Current);
+            string filename = GetFileNameFromFormName();
+            var excelBytes = ExcelUtils.CreateExcel(datatable);
+            ExcelUtils.PushDataAsExcelOntoHttpResponse(excelBytes, filename, HttpContext.Current);
         }
 
         #region Private Methods
@@ -71,20 +77,27 @@ namespace Satrabel.OpenForm
                 dynamic o = new ExpandoObject();
                 var dict = (IDictionary<string, object>)o;
                 o.CreatedOnDate = item.CreatedOnDate;
-                //o.Json = item.Json;
-                dynamic d = JsonUtils.JsonToDynamic(item.Json);
-                //o.Data = d;
-                Dictionary<String, Object> jdic = Dyn2Dict(d);
-                foreach (var p in jdic)
+                o.Id = item.ContentId;
+                try
                 {
-                    dict[p.Key] = p.Value;
+                    dynamic d = JsonUtils.JsonToDynamic(item.Json);
+                    Dictionary<string, object> jdic = Dyn2Dict(d);
+                    foreach (var p in jdic)
+                    {
+                        dict[p.Key] = p.Value;
+                    }
                 }
+                catch (Exception e)
+                {
+                    o.Error = $"Failed to Convert item [{item.ContentId}] to dynamic. Item.CreatedOnDate: {item.CreatedOnDate}";
+                }
+
                 dynData.Add(o);
             }
             return dynData;
         }
 
-        private Dictionary<String, Object> Dyn2Dict(dynamic dynObj)
+        private static Dictionary<string, object> Dyn2Dict(dynamic dynObj)
         {
             var dictionary = new Dictionary<string, object>();
             foreach (var name in dynObj.GetDynamicMemberNames())
@@ -100,7 +113,7 @@ namespace Satrabel.OpenForm
             return site.Target(site, target);
         }
 
-        private string GetFileNameFromFormName()
+        private static string GetFileNameFromFormName()
         {
             //todo determine that current form and create a filename based on the name of the form.
             return "submissions.xlsx";
@@ -172,5 +185,15 @@ namespace Satrabel.OpenForm
         }
 
         #endregion
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            var btn = (Button)sender;
+            int id = int.Parse(btn.CommandArgument);
+            OpenFormController ctrl = new OpenFormController();
+            var data = ctrl.GetContent(id, ModuleId);
+            ctrl.DeleteContent(data);
+            DataBindGrid();
+        }
     }
 }
