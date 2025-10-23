@@ -234,14 +234,45 @@ namespace Satrabel.OpenForm.Components
                     {
                         if (!string.IsNullOrEmpty(settings.Settings.SiteKey))
                         {
-                            Recaptcha recaptcha = new Recaptcha(settings.Settings.SiteKey, settings.Settings.SecretKey);
-                            RecaptchaValidationResult validationResult = recaptcha.Validate(form["recaptcha"].ToString());
-                            if (!validationResult.Succeeded)
+                            string token = form["recaptcha"]?.ToString();
+                            if (string.IsNullOrEmpty(token))
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, new { Errors = new[] { "Missing reCAPTCHA token." } });
+
+                            if (settings.Settings.UseRecaptchaV3)
                             {
-                                return Request.CreateResponse(HttpStatusCode.Forbidden);
+                                // reCAPTCHA v3
+                                var recaptcha = new RecaptchaV3.NET.Recaptcha
+                                {
+                                    SiteKey = settings.Settings.SiteKey,
+                                    SecretKey = settings.Settings.SecretKey
+                                };
+                                var result = recaptcha.Validate(token, Request.GetIPAddress());
+
+                                float threshold = settings.Settings.RecaptchaScoreThreshold > 0
+                                ? settings.Settings.RecaptchaScoreThreshold
+                                : 0.5f;
+
+                                if (!result.Succeeded || result.Score < threshold)
+                                {
+                                    Log.Logger.Warn($"reCAPTCHA v3 failed: score={result.Score}, threshold={threshold}, action={result.Action}");
+                                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { Errors = new[] { "reCAPTCHA v3 validation failed." } });
+                                }
                             }
+                            else
+                            {
+                                // reCAPTCHA v2
+                                var recaptcha = new RecaptchaV2.NET.Recaptcha(settings.Settings.SiteKey, settings.Settings.SecretKey);
+                                var result = recaptcha.Validate(token);
+                                if (!result.Succeeded)
+                                {
+                                    Log.Logger.Warn("reCAPTCHA v2 validation failed.");
+                                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { Errors = new[] { "reCAPTCHA v2 validation failed." } });
+                                }
+                            }
+
                             form.Remove("recaptcha");
                         }
+
                         string templateFilename = HostingEnvironment.MapPath("~/" + template);
                         string schemaFilename = Path.GetDirectoryName(templateFilename) + "\\" + "schema.json";
                         JObject schemaJson = JsonUtils.GetJsonFromFile(schemaFilename);
@@ -543,6 +574,8 @@ namespace Satrabel.OpenForm.Components
         public string Tracking { get; set; }
         public string SiteKey { get; set; }
         public string SecretKey { get; set; }
+        public bool UseRecaptchaV3 { get; set; }
+        public float RecaptchaScoreThreshold { get; set; } = 0.5f;
         public bool NotSaveSubmissions { get; set; }
 
     }

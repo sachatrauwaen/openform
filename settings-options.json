@@ -107,6 +107,14 @@
         },
         "Tracking": {
           "type": "textarea"
+        },
+        "UseRecaptchaV3": {
+          "type": "checkbox",
+          "rightLabel": "Use invisible reCAPTCHA v3 instead of v2 checkbox"
+        },
+        "RecaptchaScoreThreshold": {
+          "helper": "Adjusts how strict reCAPTCHA v3 is. 0.5 = balanced, 0.9 = very strict.",
+          "placeholder": "e.g. 0.7"
         }
       }
     }

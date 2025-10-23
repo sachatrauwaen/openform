@@ -132,33 +132,72 @@
                                     }
                                     $('#fieldvalidation-<%=ModuleId %>').hide();
                                     selfControl.refreshValidationState(true, function () {
-                                        var recaptcha = typeof (grecaptcha) != "undefined";
-                                        if (recaptcha) {
-                                            var recap = grecaptcha.getResponse();
+                                        if (!selfControl.isValid(true)) {
+                                            $('#fieldvalidation-<%=ModuleId %>').show();
+                                            return false;
                                         }
-                                        if (selfControl.isValid(true) && (!recaptcha || recap.length > 0)) {
-                                            var value = selfControl.getValue();
-                                            $('#<%=hfOpenForm.ClientID %>').val(JSON.stringify(value));
-                                            $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
-                                            if (recaptcha) {
-                                                value.recaptcha = recap;
+
+                                        // Create the base form data
+                                        var value = selfControl.getValue();
+                                        $('#<%=hfOpenForm.ClientID%>').val(JSON.stringify(value));
+                                        $('#__OPENFORM<%=ModuleId %>').val(JSON.stringify(value));
+
+                                        // Disable the button & show sending state
+                                        $(saveButton).addClass('disabled');
+                                        $(saveButton).text("<%= GetString("Sending") %>");
+                                        $(saveButton).off();
+
+                                        // Execute reCAPTCHA v3 (if available)
+                                        var siteKey = $('#recaptchaSiteKey').val();
+
+                                        function tryExecuteRecaptcha(attempt) {
+                                            attempt = attempt || 1;
+
+                                            if (typeof grecaptcha === "undefined") {
+                                                console.warn("reCAPTCHA not yet defined; retrying in 200 ms...");
+                                                return setTimeout(function () { tryExecuteRecaptcha(attempt + 1); }, 200);
                                             }
-                                            $(saveButton).addClass('disabled');
-                                            $(saveButton).text("<%= GetString("Sending") %>");
-                                            $(saveButton).off();
+
+                                            grecaptcha.ready(function () {
+                                                try {
+                                                    grecaptcha.execute(siteKey, { action: 'form_submit' }).then(function (token) {
+                                                        value.recaptcha = token;
+                                                        submitForm(value);
+                                                    }).catch(function (err) {
+                                                        console.error("execute() failed:", err);
+                                                        if (attempt < 5) {
+                                                            setTimeout(function () { tryExecuteRecaptcha(attempt + 1); }, 250);
+                                                        } else {
+                                                            alert("reCAPTCHA failed to initialise. Please reload and try again.");
+                                                        }
+                                                    });
+                                                } catch (ex) {
+                                                    console.warn("No reCAPTCHA client yet; retrying…");
+                                                    if (attempt < 5) {
+                                                        setTimeout(function () { tryExecuteRecaptcha(attempt + 1); }, 250);
+                                                    } else {
+                                                        alert("reCAPTCHA still not ready after several attempts.");
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        // helper to post form
+                                        function submitForm(value) {
                                             var fd = new FormData();
                                             $(".alpaca .alpaca-field-file input[type='file']").each(function () {
                                                 var file_data = $(this).prop("files")[0];
                                                 var name = $(this).attr("name");
                                                 fd.append(name, file_data);
-
                                             });
                                             fd.append("data", JSON.stringify(value));
                                             self.FormSubmit(fd, value);
                                             $(document).trigger("postSubmit.openform", [value, <%=ModuleId %>, sf]);
-                                        } else {
-                                            $('#fieldvalidation-<%=ModuleId %>').show();
                                         }
+
+                                        // kick off token request
+                                        tryExecuteRecaptcha();
+
                                     });
                                     return false;
                                 });

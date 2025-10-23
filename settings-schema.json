@@ -126,6 +126,17 @@
               "title": "reCaptcha Secret Key",
               "type": "string"
             },
+            "UseRecaptchaV3": {
+              "title": "Use reCaptcha v3",
+              "type": "boolean"
+            },
+            "RecaptchaScoreThreshold": {
+              "title": "reCAPTCHA v3 Minimum Score (0.0–1.0)",
+              "type": "number",
+              "default": 0.5,
+              "description": "Minimum acceptable score for reCAPTCHA v3 validation. Higher values are stricter (e.g., 0.7–0.9).",
+              "dependencies": "UseRecaptchaV3"
+            },
             "NotSaveSubmissions": {
               "title": "Do Not Save Submissions",
               "type": "boolean"

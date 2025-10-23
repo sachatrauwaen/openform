@@ -248,12 +248,29 @@ namespace Satrabel.OpenForm
                 SettingsDTO set = JsonConvert.DeserializeObject<SettingsDTO>(settings);
                 if (!string.IsNullOrEmpty(set.Settings.SiteKey))
                 {
-                    ClientResourceManager.RegisterScript(Page, "https://www.google.com/recaptcha/api.js", FileOrder.Js.DefaultPriority, "DnnPageHeaderProvider");
+                    if (set.Settings.UseRecaptchaV3)
+                    {
+                        // Use reCAPTCHA v3
+                        string siteKey = set.Settings.SiteKey;
 
-                    lReCaptcha.Text = "<div class=\"g-recaptcha\" data-sitekey=\"" + set.Settings.SiteKey + "\"></div>";
+                        Page.Header.Controls.Add(new LiteralControl(
+                            $"<script src='https://www.google.com/recaptcha/api.js?render={siteKey}' async defer></script>"
+                        ));
+
+                        lReCaptcha.Text = $"<input type='hidden' id='recaptchaSiteKey' value='{siteKey}' />";
+                    }
+                    else
+                    {
+                        // Use reCAPTCHA v2
+                        ClientResourceManager.RegisterScript(Page,
+                            "https://www.google.com/recaptcha/api.js",
+                            FileOrder.Js.DefaultPriority,
+                            "DnnPageHeaderProvider");
+
+                        lReCaptcha.Text = $"<div class='g-recaptcha' data-sitekey='{set.Settings.SiteKey}'></div>";
+                    }
                 }
             }
-
         }
 
         protected void cmdSave_Click(object sender, EventArgs e)
