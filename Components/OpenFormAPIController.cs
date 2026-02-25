@@ -288,7 +288,7 @@ namespace Satrabel.OpenForm.Components
                                     reply = FormUtils.GenerateMailAddress(notification.ReplyTo, notification.ReplyToEmail, notification.ReplyToName, notification.ReplyToEmailField, notification.ReplyToNameField, form);
                                 }
                                 string body = formData;
-                                if (!string.IsNullOrEmpty(notification.EmailBody))
+                                if (!IsHtmlEmpty(notification.EmailBody))
                                 {
                                     try
                                     {
@@ -357,6 +357,23 @@ namespace Satrabel.OpenForm.Components
                 Log.Logger.Error(exc);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc);
             }
+        }
+
+        public static bool IsHtmlEmpty(string html)
+        {
+            if (string.IsNullOrWhiteSpace(html))
+                return true;
+
+            // Remove HTML tags
+            string text = Regex.Replace(html, "<.*?>", string.Empty);
+
+            // Decode HTML entities (&nbsp;, etc.)
+            text = WebUtility.HtmlDecode(text);
+
+            // Remove whitespace characters
+            text = text.Trim();
+
+            return string.IsNullOrEmpty(text);
         }
 
         [ValidateAntiForgeryToken]
