@@ -64,7 +64,7 @@ namespace Satrabel.OpenForm.Components
             return adr;
         }
 
-        private static MailAddress GenerateMailAddress(string email, string title)
+        public static MailAddress GenerateMailAddress(string email, string title)
         {
             email = email.Trim(); //normalize email
 

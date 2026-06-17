@@ -47,10 +47,11 @@
             "helper": "Name part of the email address"
           },
           "ToEmail": {
-            "type": "email",
+            "type": "text",
             "dependencies": {
               "To": "custom"
-            }
+            },
+            "helper": "Email address of the recipient (comma separated for multiple emails)"
           },
           "ToNameField": {
             "dependencies": {

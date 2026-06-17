@@ -281,7 +281,18 @@ namespace Satrabel.OpenForm.Components
                             try
                             {
                                 MailAddress from = FormUtils.GenerateMailAddress(notification.From, notification.FromEmail, notification.FromName, notification.FromEmailField, notification.FromNameField, form);
-                                MailAddress to = FormUtils.GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
+                                string toEmails = "";
+                                if (notification.To == "custom" && !string.IsNullOrEmpty(notification.ToEmail))
+                                {
+                                    var toEmailList = notification.ToEmail.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                    toEmails = string.Join(",", toEmailList.Select(toEmail => FormUtils.GenerateMailAddress(toEmail, notification.ToName).ToString()).ToArray());
+                                }
+                                else
+                                {
+                                    MailAddress to = FormUtils.GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
+                                    toEmails = to.ToString();
+                                }
+                                //MailAddress to = FormUtils.GenerateMailAddress(notification.To, notification.ToEmail, notification.ToName, notification.ToEmailField, notification.ToNameField, form);
                                 MailAddress reply = null;
                                 if (!string.IsNullOrEmpty(notification.ReplyTo))
                                 {
@@ -319,10 +330,10 @@ namespace Satrabel.OpenForm.Components
                                     var file = FileManager.Instance.GetFile(item.id);
                                     attachements.Add(new Attachment(FileManager.Instance.GetFileContent(file), item.name));
                                 }
-                                string send = FormUtils.SendMail(from.ToString(), to.ToString(), (reply == null ? "" : reply.ToString()), subject, body, attachements);
+                                string send = FormUtils.SendMail(from.ToString(), toEmails, (reply == null ? "" : reply.ToString()), subject, body, attachements);
                                 if (!string.IsNullOrEmpty(send))
                                 {
-                                    res.Errors.Add("From:" + from.ToString() + " - To:" + to.ToString() + " - " + send);
+                                    res.Errors.Add("From:" + from.ToString() + " - To:" + toEmails + " - " + send);
                                 }
                             }
                             catch (Exception exc)
